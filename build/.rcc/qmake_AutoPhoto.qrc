@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/AutoPhoto">
+    <file alias="qmldir">/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/AutoPhoto/qmldir</file>
+  </qresource>
+</RCC>
+

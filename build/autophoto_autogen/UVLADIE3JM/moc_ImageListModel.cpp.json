@@ -1,0 +1,109 @@
+{
+    "classes": [
+        {
+            "className": "ImageListModel",
+            "enums": [
+                {
+                    "isClass": false,
+                    "isFlag": false,
+                    "name": "Role",
+                    "values": [
+                        "FilePathRole",
+                        "FileUrlRole",
+                        "FileNameRole",
+                        "StatusRole"
+                    ]
+                }
+            ],
+            "methods": [
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "folderUrl",
+                            "type": "QUrl"
+                        }
+                    ],
+                    "name": "loadFolder",
+                    "returnType": "bool"
+                },
+                {
+                    "access": "public",
+                    "name": "clear",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "index",
+                            "type": "int"
+                        }
+                    ],
+                    "name": "itemPath",
+                    "returnType": "QString"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "index",
+                            "type": "int"
+                        }
+                    ],
+                    "name": "itemUrl",
+                    "returnType": "QUrl"
+                },
+                {
+                    "access": "public",
+                    "name": "paths",
+                    "returnType": "QStringList"
+                }
+            ],
+            "object": true,
+            "properties": [
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 0,
+                    "name": "count",
+                    "notify": "countChanged",
+                    "read": "count",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "int",
+                    "user": false
+                }
+            ],
+            "qualifiedClassName": "ImageListModel",
+            "signals": [
+                {
+                    "access": "public",
+                    "name": "countChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "message",
+                            "type": "QString"
+                        }
+                    ],
+                    "name": "folderLoadFailed",
+                    "returnType": "void"
+                }
+            ],
+            "superClasses": [
+                {
+                    "access": "public",
+                    "name": "QAbstractListModel"
+                }
+            ]
+        }
+    ],
+    "inputFile": "ImageListModel.h",
+    "outputRevision": 68
+}

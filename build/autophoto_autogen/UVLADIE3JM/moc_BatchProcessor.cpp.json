@@ -1,0 +1,233 @@
+{
+    "classes": [
+        {
+            "className": "BatchProcessor",
+            "methods": [
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "inputFiles",
+                            "type": "QStringList"
+                        },
+                        {
+                            "name": "outputFolder",
+                            "type": "QString"
+                        },
+                        {
+                            "name": "renamePattern",
+                            "type": "QString"
+                        },
+                        {
+                            "name": "blurFaces",
+                            "type": "bool"
+                        },
+                        {
+                            "name": "blurMode",
+                            "type": "QString"
+                        },
+                        {
+                            "name": "strength",
+                            "type": "int"
+                        }
+                    ],
+                    "name": "start",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "pause",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "resume",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "stop",
+                    "returnType": "void"
+                }
+            ],
+            "object": true,
+            "properties": [
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 0,
+                    "name": "running",
+                    "notify": "runningChanged",
+                    "read": "running",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "bool",
+                    "user": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 1,
+                    "name": "paused",
+                    "notify": "pausedChanged",
+                    "read": "paused",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "bool",
+                    "user": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 2,
+                    "name": "progress",
+                    "notify": "progressChanged",
+                    "read": "progress",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "int",
+                    "user": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 3,
+                    "name": "totalImages",
+                    "notify": "totalsChanged",
+                    "read": "totalImages",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "int",
+                    "user": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 4,
+                    "name": "processedImages",
+                    "notify": "totalsChanged",
+                    "read": "processedImages",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "int",
+                    "user": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 5,
+                    "name": "failedImages",
+                    "notify": "totalsChanged",
+                    "read": "failedImages",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "int",
+                    "user": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 6,
+                    "name": "workerCount",
+                    "notify": "workerCountChanged",
+                    "read": "workerCount",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "int",
+                    "user": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 7,
+                    "name": "statusText",
+                    "notify": "statusTextChanged",
+                    "read": "statusText",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QString",
+                    "user": false
+                }
+            ],
+            "qualifiedClassName": "BatchProcessor",
+            "signals": [
+                {
+                    "access": "public",
+                    "name": "runningChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "pausedChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "progressChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "totalsChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "workerCountChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "statusTextChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "cancelled",
+                            "type": "bool"
+                        }
+                    ],
+                    "name": "finished",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "message",
+                            "type": "QString"
+                        }
+                    ],
+                    "name": "failed",
+                    "returnType": "void"
+                }
+            ],
+            "superClasses": [
+                {
+                    "access": "public",
+                    "name": "QObject"
+                }
+            ]
+        }
+    ],
+    "inputFile": "BatchProcessor.h",
+    "outputRevision": 68
+}

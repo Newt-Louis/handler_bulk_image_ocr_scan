@@ -1,0 +1,14 @@
+-rootPath
+/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan
+-cmake-output
+-output-file
+/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/.qt_plugins/Qt6_QmlPlugins_Imports_autophoto.cmake
+-importPath
+/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/AutoPhoto
+-importPath
+/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build
+-importPath
+/usr/lib/x86_64-linux-gnu/qt6/qml
+-qrcFiles
+/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/.rcc/qmake_AutoPhoto.qrc
+/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/.rcc/autophoto_raw_qml_0.qrc

@@ -1,0 +1,183 @@
+{
+    "classes": [
+        {
+            "className": "PreviewController",
+            "methods": [
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "filePath",
+                            "type": "QString"
+                        }
+                    ],
+                    "name": "requestPreview",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "clear",
+                    "returnType": "void"
+                }
+            ],
+            "object": true,
+            "properties": [
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 0,
+                    "name": "previewUrl",
+                    "notify": "previewUrlChanged",
+                    "read": "previewUrl",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QUrl",
+                    "user": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 1,
+                    "name": "busy",
+                    "notify": "busyChanged",
+                    "read": "busy",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "bool",
+                    "user": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 2,
+                    "name": "blurFaces",
+                    "notify": "blurFacesChanged",
+                    "read": "blurFaces",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "bool",
+                    "user": false,
+                    "write": "setBlurFaces"
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 3,
+                    "name": "blurMode",
+                    "notify": "blurModeChanged",
+                    "read": "blurMode",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QString",
+                    "user": false,
+                    "write": "setBlurMode"
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 4,
+                    "name": "strength",
+                    "notify": "strengthChanged",
+                    "read": "strength",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "int",
+                    "user": false,
+                    "write": "setStrength"
+                }
+            ],
+            "qualifiedClassName": "PreviewController",
+            "signals": [
+                {
+                    "access": "public",
+                    "name": "previewUrlChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "busyChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "blurFacesChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "blurModeChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "name": "strengthChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "message",
+                            "type": "QString"
+                        }
+                    ],
+                    "name": "previewFailed",
+                    "returnType": "void"
+                }
+            ],
+            "slots": [
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "enabled",
+                            "type": "bool"
+                        }
+                    ],
+                    "name": "setBlurFaces",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "mode",
+                            "type": "QString"
+                        }
+                    ],
+                    "name": "setBlurMode",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "strength",
+                            "type": "int"
+                        }
+                    ],
+                    "name": "setStrength",
+                    "returnType": "void"
+                }
+            ],
+            "superClasses": [
+                {
+                    "access": "public",
+                    "name": "QObject"
+                }
+            ]
+        }
+    ],
+    "inputFile": "PreviewController.h",
+    "outputRevision": 68
+}
