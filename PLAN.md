@@ -56,10 +56,3 @@ cmake --build build --target autophoto
 ```bash
 cmake --build build --target autophoto_qmllint
 ```
-Ví dụ chỉnh sửa code hoặc phát triển thêm tính năng mới trên nhiều file code khác, file này làm ví dụ.
-git add .
-dấu '.' là ý nói toàn bộ các file tính từ vị trí đứng hiện tại là bên trong thư mục hanled_image_ocr_scan này.
-git commit -m 'tên của lần commit này'
-là đánh dấu các thay đổi ở lần save này.
-lần đầu có -u là vì nó chưa được theo dõi lên repo trên github (gửi lên kho github trên internet)
-chưa save file nên không commit những khúc sau này.
