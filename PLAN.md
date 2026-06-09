@@ -56,3 +56,4 @@ cmake --build build --target autophoto
 ```bash
 cmake --build build --target autophoto_qmllint
 ```
+Ví dụ chỉnh sửa code hoặc phát triển thêm tính năng mới trên nhiều file code khác, file này làm ví dụ.
