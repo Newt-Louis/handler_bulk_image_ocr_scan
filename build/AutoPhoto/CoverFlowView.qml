@@ -89,18 +89,31 @@ Item {
                 border.width: index === pathView.currentIndex ? 2 : 1
 
                 Image {
-                    id: image
+                    id: baseImage
                     anchors.fill: parent
                     anchors.margins: 10
-                    source: index === pathView.currentIndex && root.previewUrl.toString().length > 0
-                        ? root.previewUrl
-                        : fileUrl
+                    source: fileUrl
                     fillMode: Image.PreserveAspectFit
                     asynchronous: true
                     autoTransform: false
                     smooth: true
                     mipmap: true
-                    cache: index !== pathView.currentIndex
+                    cache: true
+                }
+
+                Image {
+                    id: processedImage
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    source: index === pathView.currentIndex && root.previewUrl.toString().length > 0
+                        ? root.previewUrl
+                        : ""
+                    fillMode: Image.PreserveAspectFit
+                    asynchronous: true
+                    autoTransform: false
+                    smooth: true
+                    visible: status === Image.Ready
+                    cache: false
                 }
 
                 BusyIndicator {

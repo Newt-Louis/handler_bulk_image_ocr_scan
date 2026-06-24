@@ -127,6 +127,7 @@ void PreviewController::requestPreview(const QString &filePath)
     }
 
     m_sourcePath = filePath;
+    regenerateFast();
     regenerate();
 }
 
@@ -241,6 +242,73 @@ void PreviewController::setOutputFormat(const QString &format)
     m_outputFormat = normalized;
     emit outputFormatChanged();
     regenerate();
+}
+
+void PreviewController::regenerateFast()
+{
+    if (m_sourcePath.isEmpty()) {
+        return;
+    }
+
+    const QString sourcePath = m_sourcePath;
+    const QString fastPath = fastCacheFilePath(sourcePath);
+    const QPointer<PreviewController> guard(this);
+
+    if (QFileInfo::exists(fastPath)) {
+        setPreviewUrl(QUrl::fromLocalFile(fastPath));
+        return;
+    }
+
+    QThread *worker = QThread::create([sourcePath, fastPath, guard] {
+#ifdef AUTOPHOTO_HAS_OPENCV
+        QImage image = readImageWithResolvedOrientation(sourcePath);
+        if (image.isNull()) {
+            return;
+        }
+        image = image.scaled(QSize(1200, 1200), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        QDir().mkpath(QFileInfo(fastPath).absolutePath());
+        image.save(fastPath, "JPG", 85);
+        if (!guard) {
+            return;
+        }
+        QObject *target = guard.data();
+        if (!target) {
+            return;
+        }
+        QMetaObject::invokeMethod(target, [guard, fastPath] {
+            PreviewController *self = guard.data();
+            if (!self) {
+                return;
+            }
+            self->setPreviewUrl(QUrl::fromLocalFile(fastPath));
+        }, Qt::QueuedConnection);
+#else
+        QImage image = readImageWithResolvedOrientation(sourcePath);
+        if (image.isNull()) {
+            return;
+        }
+        image = image.scaled(QSize(1200, 1200), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        QDir().mkpath(QFileInfo(fastPath).absolutePath());
+        image.save(fastPath, "JPG", 85);
+        if (!guard) {
+            return;
+        }
+        QObject *target = guard.data();
+        if (!target) {
+            return;
+        }
+        QMetaObject::invokeMethod(target, [guard, fastPath] {
+            PreviewController *self = guard.data();
+            if (!self) {
+                return;
+            }
+            self->setPreviewUrl(QUrl::fromLocalFile(fastPath));
+        }, Qt::QueuedConnection);
+#endif
+    });
+
+    connect(worker, &QThread::finished, worker, &QObject::deleteLater);
+    worker->start();
 }
 
 void PreviewController::regenerate()
@@ -387,4 +455,19 @@ QString PreviewController::cacheFilePath(const QString &sourcePath, quint64 requ
     ).toHex();
 
     return QDir(cacheRoot).filePath(QStringLiteral("preview-%1.jpg").arg(QString::fromLatin1(hash)));
+}
+
+QString PreviewController::fastCacheFilePath(const QString &sourcePath) const
+{
+    QString cacheRoot = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+    if (cacheRoot.isEmpty()) {
+        cacheRoot = QDir::tempPath() + QStringLiteral("/autophoto");
+    }
+
+    const QByteArray hash = QCryptographicHash::hash(
+        QStringLiteral("%1:fast-thumbnail-v1").arg(sourcePath).toUtf8(),
+        QCryptographicHash::Sha1
+    ).toHex();
+
+    return QDir(cacheRoot).filePath(QStringLiteral("fast-%1.jpg").arg(QString::fromLatin1(hash)));
 }

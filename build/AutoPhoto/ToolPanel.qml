@@ -17,7 +17,7 @@ Rectangle {
     property int detectionSensitivity: 35
     property bool sizeFilterEnabled: true
     property bool skinColorFilterEnabled: true
-    property bool cascadeCrossCheckEnabled: false
+    property bool cascadeCrossCheckEnabled: true
     property int compressionLevel: 0
     property string outputFormat: "jpg"
     property string renamePattern: "autophoto"
@@ -41,30 +41,35 @@ Rectangle {
     Material.theme: Material.Light
     Material.accent: Material.Teal
 
-    ScrollView {
+    Flickable {
+        id: flickable
         anchors.fill: parent
-        anchors.margins: 16
+        anchors.margins: 12
+        contentHeight: contentColumn.implicitHeight
         clip: true
+        flickableDirection: Flickable.VerticalFlick
+        boundsBehavior: Flickable.StopAtBounds
 
-        ColumnLayout {
-            width: Math.max(root.width - 32, 280)
-            spacing: 16
+        Column {
+            id: contentColumn
+            width: flickable.width
+            spacing: 10
 
             Label {
-                Layout.fillWidth: true
+                width: parent.width
                 text: "Batch Setup"
                 color: "#111827"
-                font.pixelSize: 22
+                font.pixelSize: 20
                 font.weight: Font.DemiBold
             }
 
             GroupBox {
-                Layout.fillWidth: true
+                width: parent.width
                 title: "Images"
 
                 ColumnLayout {
                     anchors.fill: parent
-                    spacing: 10
+                    spacing: 6
 
                     Button {
                         Layout.fillWidth: true
@@ -78,17 +83,18 @@ Rectangle {
                         text: root.imageCount + " image(s) loaded"
                         color: "#4b5563"
                         elide: Text.ElideRight
+                        font.pixelSize: 12
                     }
                 }
             }
 
             GroupBox {
-                Layout.fillWidth: true
+                width: parent.width
                 title: "Output"
 
                 ColumnLayout {
                     anchors.fill: parent
-                    spacing: 10
+                    spacing: 6
 
                     Button {
                         Layout.fillWidth: true
@@ -102,6 +108,7 @@ Rectangle {
                         text: root.outputFolder.length > 0 ? root.outputFolder : "No output folder"
                         color: root.outputFolder.length > 0 ? "#4b5563" : "#b45309"
                         elide: Text.ElideMiddle
+                        font.pixelSize: 11
                     }
 
                     TextField {
@@ -110,29 +117,31 @@ Rectangle {
                         enabled: !root.running
                         placeholderText: "Rename pattern"
                         selectByMouse: true
+                        font.pixelSize: 12
                         onTextChanged: root.renamePattern = text
                     }
                 }
             }
 
             GroupBox {
-                Layout.fillWidth: true
+                width: parent.width
                 title: "Face Blur"
 
                 ColumnLayout {
                     anchors.fill: parent
-                    spacing: 12
+                    spacing: 6
 
                     Switch {
                         text: "Blur faces"
                         checked: root.blurFaces
                         enabled: !root.running
+                        font.pixelSize: 12
                         onToggled: root.blurFaces = checked
                     }
 
                     RowLayout {
                         Layout.fillWidth: true
-                        spacing: 8
+                        spacing: 6
 
                         ButtonGroup { id: blurGroup }
 
@@ -141,6 +150,7 @@ Rectangle {
                             text: "Gaussian"
                             checked: root.blurMode !== "pixelate"
                             enabled: !root.running && root.blurFaces
+                            font.pixelSize: 11
                             ButtonGroup.group: blurGroup
                             onClicked: root.blurMode = "gaussian"
                         }
@@ -150,6 +160,7 @@ Rectangle {
                             text: "Pixelate"
                             checked: root.blurMode === "pixelate"
                             enabled: !root.running && root.blurFaces
+                            font.pixelSize: 11
                             ButtonGroup.group: blurGroup
                             onClicked: root.blurMode = "pixelate"
                         }
@@ -157,18 +168,20 @@ Rectangle {
 
                     RowLayout {
                         Layout.fillWidth: true
-                        spacing: 8
+                        spacing: 6
 
                         Label {
                             Layout.fillWidth: true
                             text: "Strength"
                             color: "#374151"
+                            font.pixelSize: 12
                         }
 
                         Label {
                             text: root.strength
                             color: "#0f766e"
                             font.weight: Font.DemiBold
+                            font.pixelSize: 12
                         }
                     }
 
@@ -184,18 +197,20 @@ Rectangle {
 
                     RowLayout {
                         Layout.fillWidth: true
-                        spacing: 8
+                        spacing: 6
 
                         Label {
                             Layout.fillWidth: true
                             text: "Detection sensitivity"
                             color: "#374151"
+                            font.pixelSize: 12
                         }
 
                         Label {
                             text: root.detectionSensitivity + "%"
                             color: "#0f766e"
                             font.weight: Font.DemiBold
+                            font.pixelSize: 12
                         }
                     }
 
@@ -214,14 +229,15 @@ Rectangle {
                         text: "False positive filters"
                         color: "#374151"
                         font.weight: Font.DemiBold
-                        font.pixelSize: 13
-                        topPadding: 4
+                        font.pixelSize: 12
+                        topPadding: 2
                     }
 
                     Switch {
                         text: "Size filter"
                         checked: root.sizeFilterEnabled
                         enabled: !root.running && root.blurFaces
+                        font.pixelSize: 12
                         onToggled: root.sizeFilterEnabled = checked
                     }
 
@@ -229,6 +245,7 @@ Rectangle {
                         text: "Skin-color filter"
                         checked: root.skinColorFilterEnabled
                         enabled: !root.running && root.blurFaces
+                        font.pixelSize: 12
                         onToggled: root.skinColorFilterEnabled = checked
                     }
 
@@ -236,33 +253,36 @@ Rectangle {
                         text: "Cascade cross-check"
                         checked: root.cascadeCrossCheckEnabled
                         enabled: !root.running && root.blurFaces
+                        font.pixelSize: 12
                         onToggled: root.cascadeCrossCheckEnabled = checked
                     }
                 }
             }
 
             GroupBox {
-                Layout.fillWidth: true
+                width: parent.width
                 title: "Image Compression"
 
                 ColumnLayout {
                     anchors.fill: parent
-                    spacing: 10
+                    spacing: 6
 
                     RowLayout {
                         Layout.fillWidth: true
-                        spacing: 8
+                        spacing: 6
 
                         Label {
                             Layout.fillWidth: true
                             text: "Compression"
                             color: "#374151"
+                            font.pixelSize: 12
                         }
 
                         Label {
                             text: root.compressionLevel + "%"
                             color: "#0f766e"
                             font.weight: Font.DemiBold
+                            font.pixelSize: 12
                         }
                     }
 
@@ -286,7 +306,7 @@ Rectangle {
                             return "~90% smaller"
                         }
                         color: "#6b7280"
-                        font.pixelSize: 12
+                        font.pixelSize: 11
                     }
 
                     ComboBox {
@@ -294,10 +314,22 @@ Rectangle {
                         id: formatCombo
                         model: ["JPG", "PNG", "WEBP"]
                         enabled: !root.running
+                        font.pixelSize: 12
                         onCurrentIndexChanged: root.outputFormat = model[currentIndex].toLowerCase()
                     }
                 }
             }
         }
+    }
+
+    ScrollBar {
+        anchors.right: flickable.right
+        anchors.top: flickable.top
+        anchors.bottom: flickable.bottom
+        anchors.margins: 2
+        width: 6
+        policy: ScrollBar.AsNeeded
+        size: flickable.height / flickable.contentHeight
+        position: flickable.originY / (flickable.contentHeight - flickable.height)
     }
 }

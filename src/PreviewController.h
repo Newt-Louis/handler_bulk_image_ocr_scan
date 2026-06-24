@@ -63,9 +63,11 @@ signals:
 
 private:
     void regenerate();
+    void regenerateFast();
     void setBusy(bool busy);
     void setPreviewUrl(const QUrl &url);
     QString cacheFilePath(const QString &sourcePath, quint64 requestId) const;
+    QString fastCacheFilePath(const QString &sourcePath) const;
 
     QUrl m_previewUrl;
     QString m_sourcePath;
@@ -76,7 +78,7 @@ private:
     float m_detectionSensitivity = 0.35f;
     bool m_sizeFilterEnabled = true;
     bool m_skinColorFilterEnabled = true;
-    bool m_cascadeCrossCheckEnabled = false;
+    bool m_cascadeCrossCheckEnabled = true;
     int m_compressionLevel = 0;
     QString m_outputFormat = QStringLiteral("jpg");
     quint64 m_requestId = 0;

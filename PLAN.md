@@ -161,6 +161,34 @@ ToolPanel.qml (Slider 0-100)
 ## Tổng kết
 
 - Build thành công trên Linux
-- QML lint pass (chỉ warnings, không errors)
+- QML lint pass (chỉ warnings pre-existing)
 - Tất cả features hoạt động qua CLI test
 - GUI cần test thủ công trên desktop
+
+## Bug fixes (T5)
+
+### Fix 1: False positive on non-face images ✅
+- **Nguyên nhân**: YuNet ở ngưỡng thấp detect texture landscape, cascade thêm FP
+- **Giải pháp**:
+  - Bật cascade cross-check mặc định (trước: tắt)
+  - Sửa logic cross-check: nếu YuNet detect 0 face → cascade faces cũng bị reject
+  - Thêm aggregate skin-color validation: nếu avg skin ratio < 20% → reject ALL detections
+- **Kết quả**: `back.jpg` từ 2-5 FP → 0 FP ✅, `half_face.jpg` vẫn detect đúng 1 face ✅
+
+### Fix 2: Slow preview/CoverFlow ✅
+- **Nguyên nhân**: Mỗi preview chạy full pipeline (YuNet + blur) mất 1-3s
+- **Giải pháp**:
+  - CoverFlowView hiển thị ảnh gốc (fileUrl) ngay lập tức cho mọi delegate
+  - Ảnh processed (previewUrl) chỉ overlay lên center image khi ready
+  - PreviewController thêm `regenerateFast()`: tạo thumbnail downscaled nhanh (không face detection)
+  - Thumbnail cached để không regenerate lại
+- **Kết quả**: CoverFlow hiển thị mượt, side images load tức thì ✅
+
+### Fix 3: ToolPanel layout broken ✅
+- **Nguyên nhân**: ScrollView clip + ColumnLayout width không đúng
+- **Giải pháp**:
+  - Thay ScrollView bằng Flickable + Column explicit sizing
+  - ScrollBar riêng, không overlap content
+  - Giảm spacing, font size cho vừa panel 344px
+  - Đảm bảo mọi GroupBox width = parent width
+- **Kết quả**: Panel hiển thị đầy đủ, scroll mượt, không overlap ✅

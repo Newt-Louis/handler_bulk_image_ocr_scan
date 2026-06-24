@@ -485,24 +485,58 @@ ProcessingResult ImageProcessor::processFile(const QString &sourcePath, const QS
         if (m_options.sizeFilterEnabled) {
             faces = filterByBoxSize(faces, image.size());
         }
-        if (m_options.cascadeCrossCheckEnabled && !yuNetFaces.empty()) {
-            std::vector<cv::Rect> validated;
-            for (const cv::Rect &face : faces) {
-                bool hasYuNetMatch = false;
-                for (const cv::Rect &yn : yuNetFaces) {
-                    if (intersectionOverUnion(face, yn) > 0.15) {
-                        hasYuNetMatch = true;
-                        break;
+        if (m_options.cascadeCrossCheckEnabled) {
+            if (yuNetFaces.empty()) {
+                faces.clear();
+            } else {
+                std::vector<cv::Rect> validated;
+                for (const cv::Rect &face : faces) {
+                    bool hasYuNetMatch = false;
+                    for (const cv::Rect &yn : yuNetFaces) {
+                        if (intersectionOverUnion(face, yn) > 0.15) {
+                            hasYuNetMatch = true;
+                            break;
+                        }
+                    }
+                    if (hasYuNetMatch) {
+                        validated.push_back(face);
                     }
                 }
-                if (hasYuNetMatch) {
-                    validated.push_back(face);
-                }
+                faces = validated;
             }
-            faces = validated;
         }
         if (m_options.skinColorFilterEnabled) {
+            const int beforeSkinFilter = static_cast<int>(faces.size());
             faces = filterBySkinColor(image, faces, m_options.detectionSensitivity);
+            const int afterSkinFilter = static_cast<int>(faces.size());
+            if (beforeSkinFilter > 0 && afterSkinFilter == 0) {
+                faces.clear();
+            } else if (beforeSkinFilter > 2 && afterSkinFilter < beforeSkinFilter / 4) {
+                faces.clear();
+            } else if (afterSkinFilter > 0) {
+                double totalSkinRatio = 0.0;
+                int validRoiCount = 0;
+                for (const cv::Rect &face : faces) {
+                    cv::Rect expanded = face;
+                    const int padX = static_cast<int>(expanded.width * 0.3);
+                    const int padY = static_cast<int>(expanded.height * 0.3);
+                    expanded.x = std::max(0, expanded.x - padX);
+                    expanded.y = std::max(0, expanded.y - padY);
+                    expanded.width = std::min(image.cols - expanded.x, expanded.width + padX * 2);
+                    expanded.height = std::min(image.rows - expanded.y, expanded.height + padY * 2);
+                    expanded &= cv::Rect(0, 0, image.cols, image.rows);
+                    if (expanded.area() > 0) {
+                        totalSkinRatio += estimateSkinColorRatio(image, expanded);
+                        ++validRoiCount;
+                    }
+                }
+                if (validRoiCount > 0) {
+                    const double avgSkinRatio = totalSkinRatio / validRoiCount;
+                    if (avgSkinRatio < 0.20) {
+                        faces.clear();
+                    }
+                }
+            }
         }
 
         for (const cv::Rect &face : faces) {
