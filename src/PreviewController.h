@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QObject>
+#include <QTimer>
 #include <QUrl>
 
 class PreviewController final : public QObject
@@ -82,4 +83,5 @@ private:
     int m_compressionLevel = 0;
     QString m_outputFormat = QStringLiteral("jpg");
     quint64 m_requestId = 0;
+    QTimer m_debounceTimer;
 };

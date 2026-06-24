@@ -63,6 +63,9 @@ QImage applyPreviewEffect(const QImage &image, bool enabled, const QString &mode
 PreviewController::PreviewController(QObject *parent)
     : QObject(parent)
 {
+    m_debounceTimer.setSingleShot(true);
+    m_debounceTimer.setInterval(150);
+    connect(&m_debounceTimer, &QTimer::timeout, this, &PreviewController::regenerate);
 }
 
 QUrl PreviewController::previewUrl() const
@@ -146,20 +149,20 @@ void PreviewController::setBlurFaces(bool enabled)
 
     m_blurFaces = enabled;
     emit blurFacesChanged();
-    regenerate();
+    m_debounceTimer.start();
 }
 
 void PreviewController::setBlurMode(const QString &mode)
 {
     const QString normalized = mode == QLatin1String("pixelate") ? QStringLiteral("pixelate")
-                                                                 : QStringLiteral("gaussian");
+                                                                  : QStringLiteral("gaussian");
     if (m_blurMode == normalized) {
         return;
     }
 
     m_blurMode = normalized;
     emit blurModeChanged();
-    regenerate();
+    m_debounceTimer.start();
 }
 
 void PreviewController::setStrength(int strength)
@@ -171,7 +174,7 @@ void PreviewController::setStrength(int strength)
 
     m_strength = clamped;
     emit strengthChanged();
-    regenerate();
+    m_debounceTimer.start();
 }
 
 void PreviewController::setDetectionSensitivity(float sensitivity)
@@ -183,7 +186,7 @@ void PreviewController::setDetectionSensitivity(float sensitivity)
 
     m_detectionSensitivity = clamped;
     emit detectionSensitivityChanged();
-    regenerate();
+    m_debounceTimer.start();
 }
 
 void PreviewController::setSizeFilterEnabled(bool enabled)
@@ -194,7 +197,7 @@ void PreviewController::setSizeFilterEnabled(bool enabled)
 
     m_sizeFilterEnabled = enabled;
     emit sizeFilterEnabledChanged();
-    regenerate();
+    m_debounceTimer.start();
 }
 
 void PreviewController::setSkinColorFilterEnabled(bool enabled)
@@ -205,7 +208,7 @@ void PreviewController::setSkinColorFilterEnabled(bool enabled)
 
     m_skinColorFilterEnabled = enabled;
     emit skinColorFilterEnabledChanged();
-    regenerate();
+    m_debounceTimer.start();
 }
 
 void PreviewController::setCascadeCrossCheckEnabled(bool enabled)
@@ -216,7 +219,7 @@ void PreviewController::setCascadeCrossCheckEnabled(bool enabled)
 
     m_cascadeCrossCheckEnabled = enabled;
     emit cascadeCrossCheckEnabledChanged();
-    regenerate();
+    m_debounceTimer.start();
 }
 
 void PreviewController::setCompressionLevel(int level)
@@ -228,7 +231,7 @@ void PreviewController::setCompressionLevel(int level)
 
     m_compressionLevel = clamped;
     emit compressionLevelChanged();
-    regenerate();
+    m_debounceTimer.start();
 }
 
 void PreviewController::setOutputFormat(const QString &format)
@@ -241,7 +244,7 @@ void PreviewController::setOutputFormat(const QString &format)
 
     m_outputFormat = normalized;
     emit outputFormatChanged();
-    regenerate();
+    m_debounceTimer.start();
 }
 
 void PreviewController::regenerateFast()
@@ -314,6 +317,11 @@ void PreviewController::regenerateFast()
 void PreviewController::regenerate()
 {
     if (m_sourcePath.isEmpty()) {
+        return;
+    }
+
+    if (!m_blurFaces && m_compressionLevel <= 0) {
+        regenerateFast();
         return;
     }
 

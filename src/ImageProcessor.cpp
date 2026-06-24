@@ -14,6 +14,8 @@
 
 #include <algorithm>
 #include <cmath>
+#include <mutex>
+#include <QCache>
 #include <vector>
 
 #ifdef AUTOPHOTO_HAS_OPENCV
@@ -24,6 +26,25 @@
 #endif
 
 namespace {
+
+struct FaceDetectionCacheKey {
+    QString filePath;
+    float sensitivity;
+    bool operator==(const FaceDetectionCacheKey &other) const {
+        return filePath == other.filePath && qFuzzyCompare(sensitivity, other.sensitivity);
+    }
+};
+
+uint qHash(const FaceDetectionCacheKey &key, uint seed = 0) {
+    return ::qHash(key.filePath, seed) ^ ::qHash(static_cast<uint>(key.sensitivity * 100.0f));
+}
+
+struct FaceDetectionCacheEntry {
+    std::vector<cv::Rect> faces;
+    cv::Size imageSize;
+};
+
+QCache<FaceDetectionCacheKey, FaceDetectionCacheEntry> s_faceCache(100);
 
 #ifdef AUTOPHOTO_HAS_OPENCV
 QString findYuNetModelPath()
@@ -231,10 +252,18 @@ std::vector<cv::Rect> filterBySkinColor(const cv::Mat &image, const std::vector<
     return result;
 }
 
-std::vector<cv::Rect> detectWithYuNet(const cv::Mat &image, const QString &modelPath, float scoreThreshold)
+std::vector<cv::Rect> detectWithYuNet(const cv::Mat &image, const QString &modelPath, float scoreThreshold, const QString &cacheKey = {})
 {
+    if (!cacheKey.isEmpty()) {
+        FaceDetectionCacheKey ck{cacheKey, scoreThreshold};
+        FaceDetectionCacheEntry *cached = s_faceCache.object(ck);
+        if (cached && cached->imageSize == image.size()) {
+            return cached->faces;
+        }
+    }
+
     cv::Mat detectImage = image;
-    const int maxDetectSide = 2400;
+    const int maxDetectSide = 1200;
     double scale = 1.0;
     const int longestSide = std::max(image.cols, image.rows);
     if (longestSide > maxDetectSide) {
@@ -254,11 +283,15 @@ std::vector<cv::Rect> detectWithYuNet(const cv::Mat &image, const QString &model
     cv::Mat paddedImage;
     cv::copyMakeBorder(detectImage, paddedImage, 0, bottom, 0, right, cv::BORDER_CONSTANT, 0);
 
-    thread_local cv::dnn::Net net;
-    thread_local QString loadedModelPath;
-    if (net.empty() || loadedModelPath != modelPath) {
-        net = cv::dnn::readNetFromONNX(modelPath.toStdString());
-        loadedModelPath = modelPath;
+    static cv::dnn::Net net;
+    static QString loadedModelPath;
+    static std::mutex netMutex;
+    {
+        std::lock_guard<std::mutex> lock(netMutex);
+        if (net.empty() || loadedModelPath != modelPath) {
+            net = cv::dnn::readNetFromONNX(modelPath.toStdString());
+            loadedModelPath = modelPath;
+        }
     }
     cv::Mat inputBlob = cv::dnn::blobFromImage(paddedImage);
     net.setInput(inputBlob);
@@ -320,6 +353,10 @@ std::vector<cv::Rect> detectWithYuNet(const cv::Mat &image, const QString &model
 
     std::vector<cv::Rect> result;
     if (candidateBoxes.empty()) {
+        if (!cacheKey.isEmpty()) {
+            FaceDetectionCacheEntry *entry = new FaceDetectionCacheEntry{{}, image.size()};
+            s_faceCache.insert(FaceDetectionCacheKey{cacheKey, scoreThreshold}, entry);
+        }
         return result;
     }
 
@@ -340,6 +377,10 @@ std::vector<cv::Rect> detectWithYuNet(const cv::Mat &image, const QString &model
         }
     }
 
+    if (!cacheKey.isEmpty()) {
+        auto *entry = new FaceDetectionCacheEntry{result, image.size()};
+        s_faceCache.insert(FaceDetectionCacheKey{cacheKey, scoreThreshold}, entry);
+    }
     return result;
 }
 
@@ -353,7 +394,7 @@ std::vector<cv::Rect> detectWithCascade(const cv::Mat &image, const QString &cas
     cv::Mat gray;
     cv::cvtColor(image, gray, cv::COLOR_BGR2GRAY);
 
-    const int maxDetectSide = 1600;
+    const int maxDetectSide = 800;
     double scale = 1.0;
     const int longestSide = std::max(gray.cols, gray.rows);
     if (longestSide > maxDetectSide) {
@@ -429,7 +470,7 @@ ProcessingResult ImageProcessor::processFile(const QString &sourcePath, const QS
         const QString yuNetModelPath = findYuNetModelPath();
         if (!yuNetModelPath.isEmpty()) {
             try {
-                faces = detectWithYuNet(image, yuNetModelPath, m_options.detectionSensitivity);
+                faces = detectWithYuNet(image, yuNetModelPath, m_options.detectionSensitivity, sourcePath);
                 yuNetFaces = faces;
                 detectorUsed = QStringLiteral("YuNet");
             } catch (const cv::Exception &error) {

@@ -356,6 +356,9 @@ CMakeFiles/autophoto.dir/src/main.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QString \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qstring.h \
  /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/PreviewController.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/QTimer \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qtimer.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qbasictimer.h \
  /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/SshTunnelController.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QCommandLineParser \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qcommandlineparser.h \

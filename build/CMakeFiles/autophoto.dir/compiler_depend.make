@@ -322,6 +322,7 @@ CMakeFiles/autophoto.dir/autophoto_autogen/mocs_compilation.cpp.o: autophoto_aut
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QPointer \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QStringList \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QThread \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QTimer \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QUrl \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qabstractitemmodel.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qalgorithms.h \
@@ -332,6 +333,7 @@ CMakeFiles/autophoto.dir/autophoto_autogen/mocs_compilation.cpp.o: autophoto_aut
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qatomic.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qatomic_cxx11.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbasicatomic.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qbasictimer.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbindingstorage.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearray.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearrayalgorithms.h \
@@ -407,6 +409,7 @@ CMakeFiles/autophoto.dir/autophoto_autogen/mocs_compilation.cpp.o: autophoto_aut
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtcoreexports.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtextstream.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qthread.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qtimer.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtmetamacros.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtypeinfo.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qurl.h \
@@ -4505,6 +4508,7 @@ CMakeFiles/autophoto.dir/src/ImageProcessor.cpp.o: /home/newt-louis/workspaces/s
   /usr/include/x86_64-linux-gnu/c++/13/bits/time_members.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QCache \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QCoreApplication \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QCryptographicHash \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QDir \
@@ -4527,6 +4531,7 @@ CMakeFiles/autophoto.dir/src/ImageProcessor.cpp.o: /home/newt-louis/workspaces/s
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearrayalgorithms.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearraylist.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearrayview.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qcache.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qcalendar.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qcborcommon.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qcborvalue.h \
@@ -5787,6 +5792,7 @@ CMakeFiles/autophoto.dir/src/main.cpp.o: /home/newt-louis/workspaces/software_pr
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QString \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QStringList \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QThread \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QTimer \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QUrl \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QtGlobal \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/q20algorithm.h \
@@ -5800,6 +5806,7 @@ CMakeFiles/autophoto.dir/src/main.cpp.o: /home/newt-louis/workspaces/software_pr
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qatomic.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qatomic_cxx11.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbasicatomic.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qbasictimer.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbindingstorage.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearray.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearrayalgorithms.h \
@@ -5897,6 +5904,7 @@ CMakeFiles/autophoto.dir/src/main.cpp.o: /home/newt-louis/workspaces/software_pr
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtcoreexports.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtextstream.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qthread.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qtimer.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtmetamacros.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtypeinfo.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qurl.h \
@@ -6833,6 +6841,14 @@ CMakeFiles/autophoto.dir/src/platform/PlatformFactory.cpp.o: /home/newt-louis/wo
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qeventloop.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qcoreevent.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qcryptographichash.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qcoreapplication_platform.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qcoreapplication.h:
+
 /usr/include/x86_64-linux-gnu/bits/timex.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h:
@@ -7253,6 +7269,8 @@ autophoto_autogen/UVLADIE3JM/moc_PreviewController.cpp:
 
 /usr/include/c++/13/bits/unique_lock.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtCore/QCache:
+
 /usr/include/c++/13/bits/basic_ios.h:
 
 autophoto_qmltyperegistrations.cpp:
@@ -7457,6 +7475,8 @@ autophoto_autogen/UVLADIE3JM/moc_BatchProcessor.cpp:
 
 /usr/include/x86_64-linux-gnu/qt6/QtGui/qpaintdevice.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qcache.h:
+
 /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h:
 
 /usr/include/c++/13/ext/type_traits.h:
@@ -7553,6 +7573,8 @@ autophoto_autogen/UVLADIE3JM/moc_BatchProcessor.cpp:
 
 /usr/include/x86_64-linux-gnu/c++/13/bits/ctype_base.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtCore/QTimer:
+
 /usr/include/c++/13/bits/predefined_ops.h:
 
 /usr/include/x86_64-linux-gnu/c++/13/bits/error_constants.h:
@@ -7622,6 +7644,8 @@ autophoto_autogen/UVLADIE3JM/moc_BatchProcessor.cpp:
 /usr/include/c++/13/bits/sstream.tcc:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qbasicatomic.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qbasictimer.h:
 
 /usr/include/opencv4/opencv2/core/async.hpp:
 
@@ -7763,6 +7787,8 @@ autophoto_autogen/UVLADIE3JM/moc_BatchProcessor.cpp:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qthread.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qtimer.h:
+
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qtmetamacros.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qutf8stringview.h:
@@ -7787,8 +7813,6 @@ autophoto_autogen/UVLADIE3JM/moc_BatchProcessor.cpp:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qpoint.h:
 
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qcoreevent.h:
-
 /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/QMetaType:
@@ -7810,10 +7834,6 @@ autophoto_autogen/UVLADIE3JM/moc_BatchProcessor.cpp:
 /usr/include/c++/13/bits/unordered_map.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtQml/qqml.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qcryptographichash.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qcoreapplication_platform.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtQml/qqmllist.h:
 
@@ -7966,5 +7986,3 @@ autophoto_autogen/UVLADIE3JM/moc_BatchProcessor.cpp:
 /usr/include/x86_64-linux-gnu/qt6/QtCore/q20algorithm.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/q20functional.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qcoreapplication.h:

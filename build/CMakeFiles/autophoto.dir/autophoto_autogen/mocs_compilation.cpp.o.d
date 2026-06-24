@@ -360,5 +360,8 @@ CMakeFiles/autophoto.dir/autophoto_autogen/mocs_compilation.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qurl.h \
  /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/autophoto_autogen/UVLADIE3JM/moc_PreviewController.cpp \
  /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/autophoto_autogen/UVLADIE3JM/../../../src/PreviewController.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/QTimer \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qtimer.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qbasictimer.h \
  /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/autophoto_autogen/UVLADIE3JM/moc_SshTunnelController.cpp \
  /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/autophoto_autogen/UVLADIE3JM/../../../src/SshTunnelController.h

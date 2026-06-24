@@ -98,7 +98,7 @@ void BatchProcessor::start(const QStringList &inputFiles,
     setPaused(false);
     setRunning(true);
     const unsigned int hardwareThreads = std::max(1u, std::thread::hardware_concurrency());
-    const int workerCount = std::max(1, std::min(static_cast<int>(inputFiles.size()), static_cast<int>(hardwareThreads)));
+    const int workerCount = std::max(1, std::min({static_cast<int>(inputFiles.size()), static_cast<int>(hardwareThreads), 2}));
     setWorkerCount(workerCount);
     setStatusText(tr("Starting %1 worker(s)").arg(workerCount));
 
@@ -179,6 +179,8 @@ void BatchProcessor::start(const QStringList &inputFiles,
                         : QObject::tr("Skipped %1: %2")
                             .arg(source.fileName(), result.error);
                     updateStatus(processedCount, failedCount, status);
+
+                    std::this_thread::sleep_for(std::chrono::milliseconds(20));
                 }
             });
         }
