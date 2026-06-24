@@ -1,194 +1,140 @@
-# PLAN.md - Chiến lược & Kế hoạch thực hiện AutoPhoto
+# PLAN.md - Giai đoạn mới: UI polish & Hiệu năng
 
-## Tổng quan
+## Bối cảnh
 
-Dự án AutoPhoto cần 3 nhiệm vụ chính + 1 kiến trúc nền tảng:
-1. **Nhiệm vụ 1**: Face Detection Sensitivity Slider (0%-100%)
-2. **Nhiệm vụ 2**: False Positive Filters (size, skin-color, cascade cross-check)
-3. **Nhiệm vụ 3**: Image Compression (0%-100%, JPG/PNG/WEBP)
-4. **Kiến trúc Strategy**: Cross-platform scaffold (Desktop/Mobile)
+Các tính năng chính đã hoàn thành (detection sensitivity, false positive filters, compression, platform scaffold). 3 bug đã fix (false positive, slow preview, toolPanel layout).
+
+Tuy nhiên còn 2 vấn đề nghiêm trọng cần giải quyết trước khi xuất bản:
+1. ScrollBar menu phải vẫn đè lên content → cần fix layout
+2. CPU/RAM usage cực cao khi chuyển ảnh → ứng dụng lag, giật, có thể gây crash
 
 ---
 
-## Nhiệm vụ 1: Face Detection Sensitivity Slider ✅
+## Nhiệm vụ 6: Fix ScrollBar Menu Phải + UI Modernization
+
+### Vấn đề
+
+ScrollBar của ToolPanel vẫn đè lên cạnh bên trái của menu, nhìn xấu và không chuyên nghiệp. Cần tách scrollbar ra ngoài, layout lại cho sạch sẽ.
 
 ### Chi tiết thực hiện
 
-- [x] **1.1** Thêm `float detectionSensitivity = 0.35f` vào `ProcessingOptions` trong `src/ImageProcessor.h`
-- [x] **1.2** Sửa `detectWithYuNet()` nhận tham số `float scoreThreshold` thay vì hardcode `0.35f`
-- [x] **1.3** Truyền `m_options.detectionSensitivity` xuống `detectWithYuNet()` trong `processFile()`
-- [x] **1.4** Thêm Q_PROPERTY `detectionSensitivity` (float 0.0-1.0) vào `PreviewController.h`
-- [x] **1.5** Thêm getter/setter/signal trong `PreviewController.cpp`
-- [x] **1.6** Cập nhật `regenerate()` truyền `detectionSensitivity` vào `ProcessingOptions`
-- [x] **1.7** Cập nhật `BatchProcessor.start()` nhận `float detectionSensitivity` parameter
-- [x] **1.8** Thêm Slider "Detection Sensitivity" vào `ToolPanel.qml` (0-100, step 1)
-- [x] **1.9** Hiển thị giá trị phần trăm (0%-100%) bên cạnh slider
-- [x] **1.10** Bind ToolPanel → PreviewController → Main.qml → BatchProcessor
-- [x] **1.11** Cập nhật cache hash bao gồm `detectionSensitivity`
-- [x] **1.12** Thêm CLI option `--detection-sensitivity` cho headless mode
+- [ ] **6.1** Phân tích layout hiện tại: Flickable + Column + ScrollBar overlay
+- [ ] **6.2** Tách ScrollBar ra khỏi Flickable, đặt bên phải panel (không overlap content)
+- [ ] **6.3** Đảm bảo content Column có width chính xác = panel width - scrollbar width - margins
+- [ ] **6.4** Kiểm tra GroupBox title và content không bị cut
+- [ ] **6.5** Test trên various panel widths (344px hiện tại)
+- [ ] **6.6** Review overall Material Design styling: bo tròn, spacing, shadow, color consistency
+- [ ] **6.7** Test QML lint không có warning mới
 
-### Flow dữ liệu
-```
-ToolPanel.qml (Slider 0-100)
-  → Main.qml (chuyển: value/100.0)
-    → PreviewController.detectionSensitivity (float 0.0-1.0)
-      → ProcessingOptions.detectionSensitivity
-        → detectWithYuNet(image, modelPath, scoreThreshold)
-```
+### Kết quả mong đợi
+
+- ScrollBar nằm bên phải panel, không đè lên content
+- Panel scroll mượt, content hiển thị đầy đủ
+- Giao diện sạch sẽ, hiện đại hơn
 
 ---
 
-## Nhiệm vụ 2: False Positive Filters ✅
+## Nhiệm vụ 7: Tối ưu Hiệu năng CPU/RAM
 
-### 2A. Bộ lọc kích thước box
+### Vấn đề
 
-- [x] **2A.1** Thêm hàm `filterByBoxSize()` trong `ImageProcessor.cpp`
-- [x] **2A.2** Lọc box diện tích < 0.1% hoặc > 60% diện tích ảnh
-- [x] **2A.3** Lọc box tỷ lệ W/H < 0.3 hoặc > 3.0
-- [x] **2A.4** Áp dụng sau merge faces, trước apply blur
+Mỗi lần chuyển ảnh trong Cover Flow:
+- YuNet model load lại (nếu chưa cached) → CPU spike
+- Face detection chạy full pipeline trên ảnh gốc (có thể 4000x3000px) → RAM consumption cao
+- Preview generation mất 1-3s →用户体验很差
+- CPU usage nhảy lên 80-100%, RAM có thể lên vài GB
+- Trên laptop core i5 Gen 12 + 24GB RAM vẫn khó khăn
 
-### 2B. Bộ lọc skin-color ratio
+### Root cause analysis
 
-- [x] **2B.1** Thêm hàm `estimateSkinColorRatio()` (HSV, H: 0-50 + 170-180, S: 40-170, V: 80-255)
-- [x] **2B.2** Nếu tỷ lệ pixel da < 15% trong ROI → bỏ qua
-- [x] **2B.3** Chỉ áp dụng cho box có confidence thấp (detectionSensitivity < 0.60)
+1. **YuNet model reload**: `detectWithYuNet()` dùng `thread_local cv::dnn::Net` nhưng mỗi thread có thể load lại model
+2. **Full-resolution detection**: Ảnh 4000x3000 chạy face detection trên pixel gốc → rất chậm
+3. **No image caching**: Mỗi preview request đọc lại ảnh từ disk
+4. **No face detection caching**: Cùng một ảnh, chuyển đi chuyển lại → detect lại mỗi lần
+5. **QML Image reload**: CoverFlow Image component reload khi source URL thay đổi
+6. **Memory leak potential**: Worker threads có thể không release OpenCV Mat đúng cách
 
-### 2C. Bộ lọc cascade cross-validation
+### Chi tiết thực hiện
 
-- [x] **2C.1** Lưu `yuNetFaces` trước khi chạy cascade
-- [x] **2C.2** Nếu cascade box không overlap YuNet box (IoU < 0.15) → bỏ qua
-- [x] **2C.3** Hoạt động tốt nhất ở detectionSensitivity 35%-50%
+#### 7A. Ảnh thu nhỏ cho detection
 
-### 2D. UI toggles
+- [ ] **7A.1** Trước khi chạy YuNet, resize ảnh xuống max 1200px (longest side)
+- [ ] **7A.2** Face detection chạy trên ảnh resized → nhanh hơn 5-10x
+- [ ] **7A.3** Sau detection, map tọa độ boxes về ảnh gốc (scale factor)
+- [ ] **7A.4** Blur vẫn áp dụng trên ảnh gốc (không resize)
+- [ ] **7A.5** Verify: detection accuracy không giảm đáng kể
 
-- [x] **2D.1** Switch "Size filter" (mặc định: bật)
-- [x] **2D.2** Switch "Skin-color filter" (mặc định: bật)
-- [x] **2D.3** Switch "Cascade cross-check" (mặc định: tắt)
-- [x] **2D.4** Bind qua PreviewController → ProcessingOptions → ImageProcessor
-- [x] **2D.5** CLI flags: `--no-size-filter`, `--no-skin-filter`, `--cascade-cross-check`
+#### 7B. Face detection caching
 
-### Test results
+- [ ] **7B.1** Cache kết quả face detection theo file path + detectionSensitivity
+- [ ] **7B.2** Nếu ảnh đã detect với cùng sensitivity → reuse cached boxes
+- [ ] **7B.3** Cache storage: QHash<QString, QVector<cv::Rect>> trong ImageProcessor hoặc singleton
+- [ ] **7B.4** Cache limit: giữ tối đa 50 kết quả gần nhất (LRU)
 
-| Config | back.jpg | half_face.jpg | 091122.jpg | 102356.jpg |
-|--------|----------|---------------|------------|------------|
-| 35% + cross-check | 1 FP | 1 face ✅ | 2 faces | 0 |
-| 50% + cross-check | 1 FP | 1 face ✅ | - | - |
-| 60% + cross-check | 1 FP | 7 over | - | - |
-| No filters | 5 FP | 11 over | - | - |
+#### 7C. Ảnh caching
 
-**Ghi chú**: `back.jpg` là ảnh phong cảnh, YuNet vẫn detect 1 FP ở ngưỡng thấp (limit model). Người dùng cần tăng sensitivity để xử lý.
+- [ ] **7C.1** Cache ảnh đã đọc (QImage/cv::Mat) theo file path
+- [ ] **7C.2** Nếu ảnh unchanged (file size + mtime) → reuse cached image
+- [ ] **7C.3** Cache limit: giữ tối đa 20 ảnh (LRU), mỗi ảnh tối đa 50MB
 
----
+#### 7D. YuNet model singleton
 
-## Nhiệm vụ 3: Image Compression ✅
+- [ ] **7D.1** Đảm bảo YuNet model chỉ load 1 lần duy nhất (không thread_local)
+- [ ] **7D.2** Dùng static singleton pattern cho cv::dnn::Net
+- [ ] **7D.3** Giải phóng model khi application quit
 
-### 3A. Core compression engine
+#### 7E. PreviewController tối ưu
 
-- [x] **3A.1** Tạo `ImageCompressor` class (`src/ImageCompressor.h`, `src/ImageCompressor.cpp`)
-- [x] **3A.2** Hỗ trợ JPEG quality reduction (20-95)
-- [x] **3A.3** Hỗ trợ resize/downscale (0.30x - 1.0x)
-- [x] **3A.4** Hỗ trợ WEBP output (nén tốt hơn JPEG ~30%)
-- [x] **3A.5** Hỗ trợ PNG output (lossless)
-- [x] **3A.6** Thêm `compressionLevel` và `outputFormat` vào `ProcessingOptions`
+- [ ] **7F.1** `regenerateFast()`: skip face detection, chỉ downscale + save (đã có)
+- [ ] **7F.2** `regenerate()`: chỉ chạy full pipeline khi blurFaces == true
+- [ ] **7F.3** Nếu blurFaces == false → skip face detection entirely, chỉ downscale
+- [ ] **7F.4** Debounce: nếu request mới đến trong 200ms → cancel request cũ
 
-### 3B. Compression mapping
+#### 7F. Memory management
 
-| Level | JPEG Quality | Resize | Est. Reduction |
-|-------|-------------|--------|----------------|
-| 0% | 95 | 1.0x | 0% (gốc) |
-| 25% | 85 | 1.0x | ~30% |
-| 50% | 70 | 0.85x | ~55% |
-| 75% | 50 | 0.70x | ~75% |
-| 100% | 20 | 0.30x | ~90% |
+- [ ] **7G.1** Release cv::Mat sau khi process xong (scope-based)
+- [ ] **7G.2** Giới hạn worker threads: max 2 thay vì hardware_concurrency
+- [ ] **7G.3** QML Image cache limit:设置 imageCacheSize
+- [ ] **7G.4** Monitor memory usage trong batch processing
 
-### 3C. Integration
+#### 7G. Batch processing tối ưu
 
-- [x] **3C.1** Compression step trong `ImageProcessor::processFile()` SAU blur
-- [x] **3C.2** PreviewController: compression preview trong Cover Flow
-- [x] **3C.3** BatchProcessor: truyền compression level xuống workers
-- [x] **3C.4** Cache hash bao gồm compression level + output format
+- [ ] **7H.1** Giảm worker count xuống max 2 (thay vì 4-8)
+- [ ] **7H.2** Mỗi worker process 1 ảnh tại 1 thời điểm (không read ahead)
+- [ ] **7H.3** Giải phóng memory sau mỗi ảnh (không giữ reference)
+- [ ] **7H.4** Thêm delay 50ms giữa các ảnh để system喘息
 
-### 3D. UI
+### Kết quả mong đợi
 
-- [x] **3D.1** GroupBox "Image Compression" trong ToolPanel.qml
-- [x] **3D.2** Slider 0-100%, hiển thị estimated reduction
-- [x] **3D.3** ComboBox "Output Format" (JPG, PNG, WEBP)
-- [x] **3D.4** Bind qua PreviewController → ProcessingOptions → ImageProcessor
+- CPU usage khi chuyển ảnh: < 30% (thay vì 80-100%)
+- RAM usage: < 500MB (thay vì vài GB)
+- Preview load time: < 500ms (thay vì 1-3s)
+- Batch processing: ổn định, không crash
 
-### 3E. CLI
+### Test cases
 
-- [x] **3E.1** `--compression <0-100>` option
-- [x] **3E.2** `--output-format <jpg|png|webp>` option
-- [x] **3E.3** Tự động đổi extension file output theo format
-
-### Test results
-
-| Level | Format | 091122.jpg | 102356.jpg | Giảm |
-|-------|--------|-----------|-----------|------|
-| Original | JPG | 3.8M | 3.5M | - |
-| 25% | JPG | 1.9M | 781K | ~50-78% |
-| 50% | JPG | 854K | 321K | ~78-91% |
-| 50% | WEBP | 423K | 101K | ~89-97% |
-
-✅ Vượt yêu cầu giảm ≥50% dung lượng.
+- [ ] Test chuyển ảnh liên tục 20 lần trong 10s → CPU < 50%, RAM < 800MB
+- [ ] Test batch 50 ảnh lớn (4000x3000) → hoàn thành trong 2 phút, RAM < 1GB
+- [ ] Test trên laptop yếu (4GB RAM) → không crash
 
 ---
 
-## Kiến trúc Strategy cho Cross-Platform ✅
+## Thứ tự thực hiện ưu tiên
 
-### Scaffold đã tạo
+### Phase 1: Nhiệm vụ 6 (UI fix)
+6.1 → 6.2 → 6.3 → 6.4 → 6.5 → 6.6 → 6.7
 
-- [x] **P1** `PlatformInterface` abstract class (loadImage, saveImage, screenScale, cacheDir, modelDir, hasOpenCV)
-- [x] **P2** `DesktopPlatform` implementation (Qt-based)
-- [x] **P3** `PlatformFactory` với `#ifdef Q_OS_ANDROID / Q_OS_IOS`
-- [x] **P4** Thêm vào `CMakeLists.txt`
+### Phase 2: Nhiệm vụ 7 (Performance)
+7A → 7B → 7C → 7D → 7E → 7F → 7G → 7H
 
-### Khi nào cần implement đầy đủ
-
-- Android: thay Qt Quick bằng Android Views/Compose, dùng CameraX API
-- iOS: thay Qt Quick bằng SwiftUI/UIKit, dùng ARKit/AVFoundation
-- Core logic (ImageProcessor, BatchProcessor, ImageCompressor) giữ nguyên, chỉ wrap platform calls
+Ưu tiên: 7A (resize detection) > 7D (model singleton) > 7B (face cache) > 7C (image cache) > còn lại
 
 ---
 
-## Thứ tự thực hiện đã hoàn thành
+## Lưu ý khi implement
 
-1. ✅ T1: Face Detection Sensitivity Slider
-2. ✅ T2: False Positive Filters
-3. ✅ T3: Image Compression
-4. ✅ T4: Platform Strategy Scaffold
-
-## Tổng kết
-
-- Build thành công trên Linux
-- QML lint pass (chỉ warnings pre-existing)
-- Tất cả features hoạt động qua CLI test
-- GUI cần test thủ công trên desktop
-
-## Bug fixes (T5)
-
-### Fix 1: False positive on non-face images ✅
-- **Nguyên nhân**: YuNet ở ngưỡng thấp detect texture landscape, cascade thêm FP
-- **Giải pháp**:
-  - Bật cascade cross-check mặc định (trước: tắt)
-  - Sửa logic cross-check: nếu YuNet detect 0 face → cascade faces cũng bị reject
-  - Thêm aggregate skin-color validation: nếu avg skin ratio < 20% → reject ALL detections
-- **Kết quả**: `back.jpg` từ 2-5 FP → 0 FP ✅, `half_face.jpg` vẫn detect đúng 1 face ✅
-
-### Fix 2: Slow preview/CoverFlow ✅
-- **Nguyên nhân**: Mỗi preview chạy full pipeline (YuNet + blur) mất 1-3s
-- **Giải pháp**:
-  - CoverFlowView hiển thị ảnh gốc (fileUrl) ngay lập tức cho mọi delegate
-  - Ảnh processed (previewUrl) chỉ overlay lên center image khi ready
-  - PreviewController thêm `regenerateFast()`: tạo thumbnail downscaled nhanh (không face detection)
-  - Thumbnail cached để không regenerate lại
-- **Kết quả**: CoverFlow hiển thị mượt, side images load tức thì ✅
-
-### Fix 3: ToolPanel layout broken ✅
-- **Nguyên nhân**: ScrollView clip + ColumnLayout width không đúng
-- **Giải pháp**:
-  - Thay ScrollView bằng Flickable + Column explicit sizing
-  - ScrollBar riêng, không overlap content
-  - Giảm spacing, font size cho vừa panel 344px
-  - Đảm bảo mọi GroupBox width = parent width
-- **Kết quả**: Panel hiển thị đầy đủ, scroll mượt, không overlap ✅
+- **Không thay đổi detection accuracy**: resize ảnh cho detection nhưng blur vẫn trên ảnh gốc
+- **Cache invalidation**: nếu file ảnh thay đổi → invalidate cache
+- **Backward compatible**: tất cả CLI options hiện có vẫn hoạt động
+- **Test trên ảnh thật**: dùng `data_test/example/` và `data_test/image_source/`
+- **Không optimize premature**: implement theo thứ tự ưu tiên, test mỗi bước
