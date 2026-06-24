@@ -43,7 +43,10 @@ Rectangle {
 
     Flickable {
         id: flickable
-        anchors.fill: parent
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.right: scrollBar.left
         anchors.margins: 12
         contentHeight: contentColumn.implicitHeight
         clip: true
@@ -323,11 +326,12 @@ Rectangle {
     }
 
     ScrollBar {
-        anchors.right: flickable.right
-        anchors.top: flickable.top
-        anchors.bottom: flickable.bottom
-        anchors.margins: 2
-        width: 6
+        id: scrollBar
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.margins: 4
+        width: 8
         policy: ScrollBar.AsNeeded
         size: flickable.height / flickable.contentHeight
         position: flickable.originY / (flickable.contentHeight - flickable.height)
