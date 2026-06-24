@@ -36,6 +36,7 @@ public:
     Q_INVOKABLE void start(const QStringList &inputFiles,
                            const QString &outputFolder,
                            const QString &renamePattern,
+                           bool rotateEnabled,
                            bool blurFaces,
                            const QString &blurMode,
                            int strength,
@@ -43,6 +44,7 @@ public:
                            bool sizeFilterEnabled,
                            bool skinColorFilterEnabled,
                            bool cascadeCrossCheckEnabled,
+                           bool compressionEnabled,
                            int compressionLevel,
                            const QString &outputFormat);
     Q_INVOKABLE void pause();

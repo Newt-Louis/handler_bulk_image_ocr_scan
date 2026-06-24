@@ -1,5 +1,6 @@
 #include "BatchProcessor.h"
 
+#include "BoundedBuffer.h"
 #include "ImageProcessor.h"
 
 #include <QDir>
@@ -8,9 +9,13 @@
 #include <QThread>
 #include <QtGlobal>
 
-#include <algorithm>
 #include <thread>
-#include <vector>
+
+struct PipelineData {
+    int index = 0;
+    QString sourcePath;
+    QString targetPath;
+};
 
 BatchProcessor::BatchProcessor(QObject *parent)
     : QObject(parent)
@@ -25,49 +30,19 @@ BatchProcessor::~BatchProcessor()
     }
 }
 
-bool BatchProcessor::running() const
-{
-    return m_running;
-}
-
-bool BatchProcessor::paused() const
-{
-    return m_paused;
-}
-
-int BatchProcessor::progress() const
-{
-    return m_progress;
-}
-
-int BatchProcessor::totalImages() const
-{
-    return m_totalImages;
-}
-
-int BatchProcessor::processedImages() const
-{
-    return m_processedImages;
-}
-
-int BatchProcessor::failedImages() const
-{
-    return m_failedImages;
-}
-
-int BatchProcessor::workerCount() const
-{
-    return m_workerCount;
-}
-
-QString BatchProcessor::statusText() const
-{
-    return m_statusText;
-}
+bool BatchProcessor::running() const { return m_running; }
+bool BatchProcessor::paused() const { return m_paused; }
+int BatchProcessor::progress() const { return m_progress; }
+int BatchProcessor::totalImages() const { return m_totalImages; }
+int BatchProcessor::processedImages() const { return m_processedImages; }
+int BatchProcessor::failedImages() const { return m_failedImages; }
+int BatchProcessor::workerCount() const { return m_workerCount; }
+QString BatchProcessor::statusText() const { return m_statusText; }
 
 void BatchProcessor::start(const QStringList &inputFiles,
                            const QString &outputFolder,
                            const QString &renamePattern,
+                           bool rotateEnabled,
                            bool blurFaces,
                            const QString &blurMode,
                            int strength,
@@ -75,20 +50,13 @@ void BatchProcessor::start(const QStringList &inputFiles,
                            bool sizeFilterEnabled,
                            bool skinColorFilterEnabled,
                            bool cascadeCrossCheckEnabled,
+                           bool compressionEnabled,
                            int compressionLevel,
                            const QString &outputFormat)
 {
-    if (m_running) {
-        return;
-    }
-    if (inputFiles.isEmpty()) {
-        emit failed(tr("No input images selected."));
-        return;
-    }
-    if (outputFolder.isEmpty()) {
-        emit failed(tr("Output folder is empty."));
-        return;
-    }
+    if (m_running) return;
+    if (inputFiles.isEmpty()) { emit failed(tr("No input images selected.")); return; }
+    if (outputFolder.isEmpty()) { emit failed(tr("Output folder is empty.")); return; }
 
     QDir().mkpath(outputFolder);
     m_cancelled = false;
@@ -97,12 +65,11 @@ void BatchProcessor::start(const QStringList &inputFiles,
     setTotals(0, 0, inputFiles.size());
     setPaused(false);
     setRunning(true);
-    const unsigned int hardwareThreads = std::max(1u, std::thread::hardware_concurrency());
-    const int workerCount = std::max(1, std::min({static_cast<int>(inputFiles.size()), static_cast<int>(hardwareThreads), 2}));
-    setWorkerCount(workerCount);
-    setStatusText(tr("Starting %1 worker(s)").arg(workerCount));
+    setWorkerCount(2);
+    setStatusText(tr("Starting pipeline..."));
 
     const ProcessingOptions options {
+        rotateEnabled,
         blurFaces,
         blurMode == QLatin1String("pixelate") ? QStringLiteral("pixelate") : QStringLiteral("gaussian"),
         qBound(1, strength, 100),
@@ -110,86 +77,99 @@ void BatchProcessor::start(const QStringList &inputFiles,
         sizeFilterEnabled,
         skinColorFilterEnabled,
         cascadeCrossCheckEnabled,
+        compressionEnabled,
         qBound(0, compressionLevel, 100),
         outputFormat
     };
 
-    BatchProcessor *processor = this;
-    QThread *worker = QThread::create([processor, inputFiles, outputFolder, renamePattern, options, workerCount] {
-        const int total = inputFiles.size();
-        std::atomic_int nextIndex = 0;
-        std::atomic_int processed = 0;
-        std::atomic_int failed = 0;
+    auto readBuffer = std::make_shared<BoundedBuffer<PipelineData>>(2);
+    auto writeBuffer = std::make_shared<BoundedBuffer<PipelineData>>(2);
+    auto fileIndex = std::make_shared<std::atomic_int>(0);
+    const int total = inputFiles.size();
 
-        auto updateStatus = [processor, total](int processedCount, int failedCount, const QString &message) {
-            const int done = processedCount + failedCount;
-            const int nextProgress = total > 0 ? static_cast<int>((done * 100.0) / total) : 0;
-            QMetaObject::invokeMethod(processor, [processor, nextProgress, processedCount, failedCount, total, message] {
-                processor->setProgress(nextProgress);
-                processor->setTotals(processedCount, failedCount, total);
-                processor->setStatusText(message);
+    BatchProcessor *processor = this;
+
+    QThread *worker = QThread::create([processor, inputFiles, outputFolder, renamePattern, options, readBuffer, writeBuffer, fileIndex, total] {
+        std::atomic_int processed{0};
+        std::atomic_int failed{0};
+
+        auto updateStatus = [processor, total, &processed, &failed](const QString &msg) {
+            const int p = processed.load();
+            const int f = failed.load();
+            const int done = p + f;
+            const int pct = total > 0 ? (done * 100 / total) : 0;
+            QMetaObject::invokeMethod(processor, [processor, pct, p, f, total, msg] {
+                processor->setProgress(pct);
+                processor->setTotals(p, f, total);
+                processor->setStatusText(msg);
             }, Qt::QueuedConnection);
         };
 
-        std::vector<std::thread> workers;
-        workers.reserve(static_cast<size_t>(workerCount));
+        std::thread writerThread([processor, &writeBuffer, &processed, &failed, &options, total, &updateStatus] {
+            while (true) {
+                auto data = writeBuffer->pop();
+                if (!data.has_value()) break;
 
-        for (int workerIndex = 0; workerIndex < workerCount; ++workerIndex) {
-            workers.emplace_back([&, workerIndex] {
-                ImageProcessor imageProcessor(options);
-
-                while (!processor->m_cancelled.load()) {
-                    {
-                        std::unique_lock<std::mutex> lock(processor->m_pauseMutex);
-                        processor->m_pauseCondition.wait(lock, [processor] {
-                            return !processor->m_pausedAtomic.load() || processor->m_cancelled.load();
-                        });
-                    }
-
-                    if (processor->m_cancelled.load()) {
-                        break;
-                    }
-
-                    const int i = nextIndex.fetch_add(1);
-                    if (i >= total) {
-                        break;
-                    }
-
-                    const QFileInfo source(inputFiles.at(i));
-                    const QString baseName = renamePattern.isEmpty()
-                        ? source.completeBaseName()
-                        : renamePattern;
-                    const QString number = QString::number(i + 1).rightJustified(4, QLatin1Char('0'));
-                    const QString ext = (options.compressionLevel > 0 && options.outputFormat != QLatin1String("jpg"))
-                        ? options.outputFormat
-                        : (source.suffix().isEmpty() ? QStringLiteral("jpg") : source.suffix());
-                    const QString fileName = QStringLiteral("%1_%2.%3")
-                        .arg(baseName, number, ext);
-                    const QString targetPath = QDir(outputFolder).filePath(fileName);
-
-                    const ProcessingResult result = imageProcessor.processFile(source.absoluteFilePath(), targetPath);
-                    const int processedCount = result.success ? processed.fetch_add(1) + 1 : processed.load();
-                    const int failedCount = result.success ? failed.load() : failed.fetch_add(1) + 1;
-
-                    const QString status = result.success
-                        ? QObject::tr("Processed %1 (%2 face(s), worker %3)")
-                            .arg(fileName)
-                            .arg(result.facesBlurred)
-                            .arg(workerIndex + 1)
-                        : QObject::tr("Skipped %1: %2")
-                            .arg(source.fileName(), result.error);
-                    updateStatus(processedCount, failedCount, status);
-
-                    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+                {
+                    std::unique_lock<std::mutex> lock(processor->m_pauseMutex);
+                    processor->m_pauseCondition.wait(lock, [processor] {
+                        return !processor->m_pausedAtomic.load() || processor->m_cancelled.load();
+                    });
                 }
-            });
+                if (processor->m_cancelled.load()) break;
+
+                PipelineData &item = data.value();
+                ImageProcessor processor_instance(options);
+                const ProcessingResult result = processor_instance.processFile(item.sourcePath, item.targetPath);
+
+                if (result.success) {
+                    processed.fetch_add(1);
+                } else {
+                    failed.fetch_add(1);
+                }
+
+                const QString status = result.success
+                    ? QObject::tr("Exported %1 (%2 face(s))")
+                        .arg(QFileInfo(item.targetPath).fileName())
+                        .arg(result.facesBlurred)
+                    : QObject::tr("Failed %1: %2")
+                        .arg(QFileInfo(item.sourcePath).fileName(), result.error);
+                updateStatus(status);
+            }
+        });
+
+        for (int i = 0; i < total; ++i) {
+            if (processor->m_cancelled.load()) break;
+
+            {
+                std::unique_lock<std::mutex> lock(processor->m_pauseMutex);
+                processor->m_pauseCondition.wait(lock, [processor] {
+                    return !processor->m_pausedAtomic.load() || processor->m_cancelled.load();
+                });
+            }
+            if (processor->m_cancelled.load()) break;
+
+            const QFileInfo source(inputFiles.at(i));
+            const QString baseName = renamePattern.isEmpty() ? source.completeBaseName() : renamePattern;
+            const QString number = QString::number(i + 1).rightJustified(4, QLatin1Char('0'));
+            const QString ext = (options.compressionEnabled && options.compressionLevel > 0 && options.outputFormat != QLatin1String("jpg"))
+                ? options.outputFormat
+                : (source.suffix().isEmpty() ? QStringLiteral("jpg") : source.suffix());
+            const QString fileName = QStringLiteral("%1_%2.%3").arg(baseName, number, ext);
+
+            PipelineData item;
+            item.index = i;
+            item.sourcePath = source.absoluteFilePath();
+            item.targetPath = QDir(outputFolder).filePath(fileName);
+
+            readBuffer->push(item);
+
+            updateStatus(tr("Queued %1...").arg(source.fileName()));
         }
 
-        for (std::thread &thread : workers) {
-            if (thread.joinable()) {
-                thread.join();
-            }
-        }
+        readBuffer->close();
+
+        writerThread.join();
 
         const bool cancelled = processor->m_cancelled.load();
         const int processedCount = processed.load();
@@ -197,14 +177,14 @@ void BatchProcessor::start(const QStringList &inputFiles,
         QMetaObject::invokeMethod(processor, [processor, cancelled, processedCount, failedCount, total] {
             processor->setRunning(false);
             processor->setPaused(false);
-            processor->setProgress(total > 0 ? static_cast<int>(((processedCount + failedCount) * 100.0) / total) : 0);
+            processor->setProgress(total > 0 ? ((processedCount + failedCount) * 100 / total) : 0);
             processor->setTotals(processedCount, failedCount, total);
             processor->setWorkerCount(0);
             processor->setStatusText(cancelled
                 ? processor->tr("Stopped")
                 : processor->tr("Completed: %1 exported, %2 failed").arg(processedCount).arg(failedCount));
             if (failedCount > 0) {
-                emit processor->failed(processor->tr("%1 image(s) failed. Successful images were still exported.").arg(failedCount));
+                emit processor->failed(processor->tr("%1 image(s) failed.").arg(failedCount));
             }
             emit processor->finished(cancelled);
         }, Qt::QueuedConnection);
@@ -213,9 +193,7 @@ void BatchProcessor::start(const QStringList &inputFiles,
     m_worker = worker;
     connect(worker, &QThread::finished, this, [this] {
         m_worker = nullptr;
-        if (!m_running) {
-            setWorkerCount(0);
-        }
+        if (!m_running) setWorkerCount(0);
     });
     connect(worker, &QThread::finished, worker, &QObject::deleteLater);
     worker->start();
@@ -223,9 +201,7 @@ void BatchProcessor::start(const QStringList &inputFiles,
 
 void BatchProcessor::pause()
 {
-    if (!m_running || m_paused) {
-        return;
-    }
+    if (!m_running || m_paused) return;
     m_pausedAtomic = true;
     setPaused(true);
     setStatusText(tr("Paused"));
@@ -233,87 +209,23 @@ void BatchProcessor::pause()
 
 void BatchProcessor::resume()
 {
-    if (!m_running || !m_paused) {
-        return;
-    }
-
-    {
-        std::lock_guard<std::mutex> lock(m_pauseMutex);
-        m_pausedAtomic = false;
-        setPaused(false);
-    }
+    if (!m_running || !m_paused) return;
+    { std::lock_guard<std::mutex> lock(m_pauseMutex); m_pausedAtomic = false; setPaused(false); }
     m_pauseCondition.notify_all();
     setStatusText(tr("Resuming"));
 }
 
 void BatchProcessor::stop()
 {
-    if (!m_running) {
-        return;
-    }
-
+    if (!m_running) return;
     m_cancelled = true;
-    {
-        std::lock_guard<std::mutex> lock(m_pauseMutex);
-        m_pausedAtomic = false;
-        setPaused(false);
-    }
+    { std::lock_guard<std::mutex> lock(m_pauseMutex); m_pausedAtomic = false; setPaused(false); }
     m_pauseCondition.notify_all();
 }
 
-void BatchProcessor::setRunning(bool running)
-{
-    if (m_running == running) {
-        return;
-    }
-    m_running = running;
-    emit runningChanged();
-}
-
-void BatchProcessor::setPaused(bool paused)
-{
-    if (m_paused == paused) {
-        return;
-    }
-    m_paused = paused;
-    emit pausedChanged();
-}
-
-void BatchProcessor::setProgress(int progress)
-{
-    const int clamped = qBound(0, progress, 100);
-    if (m_progress == clamped) {
-        return;
-    }
-    m_progress = clamped;
-    emit progressChanged();
-}
-
-void BatchProcessor::setTotals(int processedImages, int failedImages, int totalImages)
-{
-    if (m_processedImages == processedImages && m_failedImages == failedImages && m_totalImages == totalImages) {
-        return;
-    }
-    m_processedImages = processedImages;
-    m_failedImages = failedImages;
-    m_totalImages = totalImages;
-    emit totalsChanged();
-}
-
-void BatchProcessor::setWorkerCount(int workerCount)
-{
-    if (m_workerCount == workerCount) {
-        return;
-    }
-    m_workerCount = workerCount;
-    emit workerCountChanged();
-}
-
-void BatchProcessor::setStatusText(const QString &statusText)
-{
-    if (m_statusText == statusText) {
-        return;
-    }
-    m_statusText = statusText;
-    emit statusTextChanged();
-}
+void BatchProcessor::setRunning(bool running) { if (m_running == running) return; m_running = running; emit runningChanged(); }
+void BatchProcessor::setPaused(bool paused) { if (m_paused == paused) return; m_paused = paused; emit pausedChanged(); }
+void BatchProcessor::setProgress(int progress) { const int c = qBound(0, progress, 100); if (m_progress == c) return; m_progress = c; emit progressChanged(); }
+void BatchProcessor::setTotals(int p, int f, int t) { if (m_processedImages == p && m_failedImages == f && m_totalImages == t) return; m_processedImages = p; m_failedImages = f; m_totalImages = t; emit totalsChanged(); }
+void BatchProcessor::setWorkerCount(int w) { if (m_workerCount == w) return; m_workerCount = w; emit workerCountChanged(); }
+void BatchProcessor::setStatusText(const QString &s) { if (m_statusText == s) return; m_statusText = s; emit statusTextChanged(); }

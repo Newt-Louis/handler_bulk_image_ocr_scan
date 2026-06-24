@@ -26,7 +26,7 @@ QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 namespace {
 struct qt_meta_stringdata_BatchProcessor_t {
-    uint offsetsAndSizes[72];
+    uint offsetsAndSizes[76];
     char stringdata0[15];
     char stringdata1[15];
     char stringdata2[1];
@@ -43,26 +43,28 @@ struct qt_meta_stringdata_BatchProcessor_t {
     char stringdata13[11];
     char stringdata14[13];
     char stringdata15[14];
-    char stringdata16[10];
-    char stringdata17[9];
+    char stringdata16[14];
+    char stringdata17[10];
     char stringdata18[9];
-    char stringdata19[21];
-    char stringdata20[18];
-    char stringdata21[23];
-    char stringdata22[25];
-    char stringdata23[17];
-    char stringdata24[13];
-    char stringdata25[6];
-    char stringdata26[7];
-    char stringdata27[5];
-    char stringdata28[8];
-    char stringdata29[7];
-    char stringdata30[9];
-    char stringdata31[12];
-    char stringdata32[16];
-    char stringdata33[13];
-    char stringdata34[12];
-    char stringdata35[11];
+    char stringdata19[9];
+    char stringdata20[21];
+    char stringdata21[18];
+    char stringdata22[23];
+    char stringdata23[25];
+    char stringdata24[19];
+    char stringdata25[17];
+    char stringdata26[13];
+    char stringdata27[6];
+    char stringdata28[7];
+    char stringdata29[5];
+    char stringdata30[8];
+    char stringdata31[7];
+    char stringdata32[9];
+    char stringdata33[12];
+    char stringdata34[16];
+    char stringdata35[13];
+    char stringdata36[12];
+    char stringdata37[11];
 };
 #define QT_MOC_LITERAL(ofs, len) \
     uint(sizeof(qt_meta_stringdata_BatchProcessor_t::offsetsAndSizes) + ofs), len 
@@ -84,26 +86,28 @@ Q_CONSTINIT static const qt_meta_stringdata_BatchProcessor_t qt_meta_stringdata_
         QT_MOC_LITERAL(152, 10),  // "inputFiles"
         QT_MOC_LITERAL(163, 12),  // "outputFolder"
         QT_MOC_LITERAL(176, 13),  // "renamePattern"
-        QT_MOC_LITERAL(190, 9),  // "blurFaces"
-        QT_MOC_LITERAL(200, 8),  // "blurMode"
-        QT_MOC_LITERAL(209, 8),  // "strength"
-        QT_MOC_LITERAL(218, 20),  // "detectionSensitivity"
-        QT_MOC_LITERAL(239, 17),  // "sizeFilterEnabled"
-        QT_MOC_LITERAL(257, 22),  // "skinColorFilterEnabled"
-        QT_MOC_LITERAL(280, 24),  // "cascadeCrossCheckEnabled"
-        QT_MOC_LITERAL(305, 16),  // "compressionLevel"
-        QT_MOC_LITERAL(322, 12),  // "outputFormat"
-        QT_MOC_LITERAL(335, 5),  // "pause"
-        QT_MOC_LITERAL(341, 6),  // "resume"
-        QT_MOC_LITERAL(348, 4),  // "stop"
-        QT_MOC_LITERAL(353, 7),  // "running"
-        QT_MOC_LITERAL(361, 6),  // "paused"
-        QT_MOC_LITERAL(368, 8),  // "progress"
-        QT_MOC_LITERAL(377, 11),  // "totalImages"
-        QT_MOC_LITERAL(389, 15),  // "processedImages"
-        QT_MOC_LITERAL(405, 12),  // "failedImages"
-        QT_MOC_LITERAL(418, 11),  // "workerCount"
-        QT_MOC_LITERAL(430, 10)   // "statusText"
+        QT_MOC_LITERAL(190, 13),  // "rotateEnabled"
+        QT_MOC_LITERAL(204, 9),  // "blurFaces"
+        QT_MOC_LITERAL(214, 8),  // "blurMode"
+        QT_MOC_LITERAL(223, 8),  // "strength"
+        QT_MOC_LITERAL(232, 20),  // "detectionSensitivity"
+        QT_MOC_LITERAL(253, 17),  // "sizeFilterEnabled"
+        QT_MOC_LITERAL(271, 22),  // "skinColorFilterEnabled"
+        QT_MOC_LITERAL(294, 24),  // "cascadeCrossCheckEnabled"
+        QT_MOC_LITERAL(319, 18),  // "compressionEnabled"
+        QT_MOC_LITERAL(338, 16),  // "compressionLevel"
+        QT_MOC_LITERAL(355, 12),  // "outputFormat"
+        QT_MOC_LITERAL(368, 5),  // "pause"
+        QT_MOC_LITERAL(374, 6),  // "resume"
+        QT_MOC_LITERAL(381, 4),  // "stop"
+        QT_MOC_LITERAL(386, 7),  // "running"
+        QT_MOC_LITERAL(394, 6),  // "paused"
+        QT_MOC_LITERAL(401, 8),  // "progress"
+        QT_MOC_LITERAL(410, 11),  // "totalImages"
+        QT_MOC_LITERAL(422, 15),  // "processedImages"
+        QT_MOC_LITERAL(438, 12),  // "failedImages"
+        QT_MOC_LITERAL(451, 11),  // "workerCount"
+        QT_MOC_LITERAL(463, 10)   // "statusText"
     },
     "BatchProcessor",
     "runningChanged",
@@ -121,6 +125,7 @@ Q_CONSTINIT static const qt_meta_stringdata_BatchProcessor_t qt_meta_stringdata_
     "inputFiles",
     "outputFolder",
     "renamePattern",
+    "rotateEnabled",
     "blurFaces",
     "blurMode",
     "strength",
@@ -128,6 +133,7 @@ Q_CONSTINIT static const qt_meta_stringdata_BatchProcessor_t qt_meta_stringdata_
     "sizeFilterEnabled",
     "skinColorFilterEnabled",
     "cascadeCrossCheckEnabled",
+    "compressionEnabled",
     "compressionLevel",
     "outputFormat",
     "pause",
@@ -152,7 +158,7 @@ Q_CONSTINIT static const uint qt_meta_data_BatchProcessor[] = {
        0,       // classname
        0,    0, // classinfo
       12,   14, // methods
-       8,  126, // properties
+       8,  130, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
@@ -169,10 +175,10 @@ Q_CONSTINIT static const uint qt_meta_data_BatchProcessor[] = {
       10,    1,   95,    2, 0x06,   17 /* Public */,
 
  // methods: name, argc, parameters, tag, flags, initial metatype offsets
-      12,   12,   98,    2, 0x02,   19 /* Public */,
-      25,    0,  123,    2, 0x02,   32 /* Public */,
-      26,    0,  124,    2, 0x02,   33 /* Public */,
-      27,    0,  125,    2, 0x02,   34 /* Public */,
+      12,   14,   98,    2, 0x02,   19 /* Public */,
+      27,    0,  127,    2, 0x02,   34 /* Public */,
+      28,    0,  128,    2, 0x02,   35 /* Public */,
+      29,    0,  129,    2, 0x02,   36 /* Public */,
 
  // signals: parameters
     QMetaType::Void,
@@ -185,20 +191,20 @@ Q_CONSTINIT static const uint qt_meta_data_BatchProcessor[] = {
     QMetaType::Void, QMetaType::QString,   11,
 
  // methods: parameters
-    QMetaType::Void, QMetaType::QStringList, QMetaType::QString, QMetaType::QString, QMetaType::Bool, QMetaType::QString, QMetaType::Int, QMetaType::Float, QMetaType::Bool, QMetaType::Bool, QMetaType::Bool, QMetaType::Int, QMetaType::QString,   13,   14,   15,   16,   17,   18,   19,   20,   21,   22,   23,   24,
+    QMetaType::Void, QMetaType::QStringList, QMetaType::QString, QMetaType::QString, QMetaType::Bool, QMetaType::Bool, QMetaType::QString, QMetaType::Int, QMetaType::Float, QMetaType::Bool, QMetaType::Bool, QMetaType::Bool, QMetaType::Bool, QMetaType::Int, QMetaType::QString,   13,   14,   15,   16,   17,   18,   19,   20,   21,   22,   23,   24,   25,   26,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
 
  // properties: name, type, flags
-      28, QMetaType::Bool, 0x00015001, uint(0), 0,
-      29, QMetaType::Bool, 0x00015001, uint(1), 0,
-      30, QMetaType::Int, 0x00015001, uint(2), 0,
-      31, QMetaType::Int, 0x00015001, uint(3), 0,
-      32, QMetaType::Int, 0x00015001, uint(3), 0,
+      30, QMetaType::Bool, 0x00015001, uint(0), 0,
+      31, QMetaType::Bool, 0x00015001, uint(1), 0,
+      32, QMetaType::Int, 0x00015001, uint(2), 0,
       33, QMetaType::Int, 0x00015001, uint(3), 0,
-      34, QMetaType::Int, 0x00015001, uint(4), 0,
-      35, QMetaType::QString, 0x00015001, uint(5), 0,
+      34, QMetaType::Int, 0x00015001, uint(3), 0,
+      35, QMetaType::Int, 0x00015001, uint(3), 0,
+      36, QMetaType::Int, 0x00015001, uint(4), 0,
+      37, QMetaType::QString, 0x00015001, uint(5), 0,
 
        0        // eod
 };
@@ -252,9 +258,11 @@ Q_CONSTINIT const QMetaObject BatchProcessor::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
         QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
         QtPrivate::TypeAndForceComplete<bool, std::false_type>,
+        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
         QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
         QtPrivate::TypeAndForceComplete<int, std::false_type>,
         QtPrivate::TypeAndForceComplete<float, std::false_type>,
+        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
         QtPrivate::TypeAndForceComplete<bool, std::false_type>,
         QtPrivate::TypeAndForceComplete<bool, std::false_type>,
         QtPrivate::TypeAndForceComplete<bool, std::false_type>,
@@ -284,7 +292,7 @@ void BatchProcessor::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _
         case 5: _t->statusTextChanged(); break;
         case 6: _t->finished((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
         case 7: _t->failed((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
-        case 8: _t->start((*reinterpret_cast< std::add_pointer_t<QStringList>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[3])),(*reinterpret_cast< std::add_pointer_t<bool>>(_a[4])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[5])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[6])),(*reinterpret_cast< std::add_pointer_t<float>>(_a[7])),(*reinterpret_cast< std::add_pointer_t<bool>>(_a[8])),(*reinterpret_cast< std::add_pointer_t<bool>>(_a[9])),(*reinterpret_cast< std::add_pointer_t<bool>>(_a[10])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[11])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[12]))); break;
+        case 8: _t->start((*reinterpret_cast< std::add_pointer_t<QStringList>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[3])),(*reinterpret_cast< std::add_pointer_t<bool>>(_a[4])),(*reinterpret_cast< std::add_pointer_t<bool>>(_a[5])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[6])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[7])),(*reinterpret_cast< std::add_pointer_t<float>>(_a[8])),(*reinterpret_cast< std::add_pointer_t<bool>>(_a[9])),(*reinterpret_cast< std::add_pointer_t<bool>>(_a[10])),(*reinterpret_cast< std::add_pointer_t<bool>>(_a[11])),(*reinterpret_cast< std::add_pointer_t<bool>>(_a[12])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[13])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[14]))); break;
         case 9: _t->pause(); break;
         case 10: _t->resume(); break;
         case 11: _t->stop(); break;

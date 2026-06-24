@@ -18,6 +18,8 @@ class PreviewController final : public QObject
     Q_PROPERTY(bool cascadeCrossCheckEnabled READ cascadeCrossCheckEnabled WRITE setCascadeCrossCheckEnabled NOTIFY cascadeCrossCheckEnabledChanged)
     Q_PROPERTY(int compressionLevel READ compressionLevel WRITE setCompressionLevel NOTIFY compressionLevelChanged)
     Q_PROPERTY(QString outputFormat READ outputFormat WRITE setOutputFormat NOTIFY outputFormatChanged)
+    Q_PROPERTY(bool rotateEnabled READ rotateEnabled WRITE setRotateEnabled NOTIFY rotateEnabledChanged)
+    Q_PROPERTY(bool compressionEnabled READ compressionEnabled WRITE setCompressionEnabled NOTIFY compressionEnabledChanged)
 
 public:
     explicit PreviewController(QObject *parent = nullptr);
@@ -33,6 +35,8 @@ public:
     bool cascadeCrossCheckEnabled() const;
     int compressionLevel() const;
     QString outputFormat() const;
+    bool rotateEnabled() const;
+    bool compressionEnabled() const;
 
     Q_INVOKABLE void requestPreview(const QString &filePath);
     Q_INVOKABLE void clear();
@@ -47,6 +51,8 @@ public slots:
     void setCascadeCrossCheckEnabled(bool enabled);
     void setCompressionLevel(int level);
     void setOutputFormat(const QString &format);
+    void setRotateEnabled(bool enabled);
+    void setCompressionEnabled(bool enabled);
 
 signals:
     void previewUrlChanged();
@@ -60,6 +66,8 @@ signals:
     void cascadeCrossCheckEnabledChanged();
     void compressionLevelChanged();
     void outputFormatChanged();
+    void rotateEnabledChanged();
+    void compressionEnabledChanged();
     void previewFailed(const QString &message);
 
 private:
@@ -82,6 +90,8 @@ private:
     bool m_cascadeCrossCheckEnabled = true;
     int m_compressionLevel = 0;
     QString m_outputFormat = QStringLiteral("jpg");
+    bool m_rotateEnabled = true;
+    bool m_compressionEnabled = false;
     quint64 m_requestId = 0;
     QTimer m_debounceTimer;
 };

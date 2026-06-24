@@ -345,6 +345,12 @@
 			null
 		],
 		[
+			"/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/BoundedBuffer.h",
+			"MU",
+			"UVLADIE3JM/moc_BoundedBuffer.cpp",
+			null
+		],
+		[
 			"/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/ImageCompressor.h",
 			"MU",
 			"UVLADIE3JM/moc_ImageCompressor.cpp",

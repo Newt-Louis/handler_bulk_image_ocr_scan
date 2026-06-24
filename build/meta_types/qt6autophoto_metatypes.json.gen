@@ -20,6 +20,10 @@
                                 "type": "QString"
                             },
                             {
+                                "name": "rotateEnabled",
+                                "type": "bool"
+                            },
+                            {
                                 "name": "blurFaces",
                                 "type": "bool"
                             },
@@ -45,6 +49,10 @@
                             },
                             {
                                 "name": "cascadeCrossCheckEnabled",
+                                "type": "bool"
+                            },
+                            {
+                                "name": "compressionEnabled",
                                 "type": "bool"
                             },
                             {
@@ -551,6 +559,36 @@
                         "type": "QString",
                         "user": false,
                         "write": "setOutputFormat"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 11,
+                        "name": "rotateEnabled",
+                        "notify": "rotateEnabledChanged",
+                        "read": "rotateEnabled",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "write": "setRotateEnabled"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 12,
+                        "name": "compressionEnabled",
+                        "notify": "compressionEnabledChanged",
+                        "read": "compressionEnabled",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "write": "setCompressionEnabled"
                     }
                 ],
                 "qualifiedClassName": "PreviewController",
@@ -608,6 +646,16 @@
                     {
                         "access": "public",
                         "name": "outputFormatChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "name": "rotateEnabledChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "name": "compressionEnabledChanged",
                         "returnType": "void"
                     },
                     {
@@ -720,6 +768,28 @@
                             }
                         ],
                         "name": "setOutputFormat",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "enabled",
+                                "type": "bool"
+                            }
+                        ],
+                        "name": "setRotateEnabled",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "enabled",
+                                "type": "bool"
+                            }
+                        ],
+                        "name": "setCompressionEnabled",
                         "returnType": "void"
                     }
                 ],

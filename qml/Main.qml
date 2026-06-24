@@ -268,6 +268,7 @@ ApplicationWindow {
                                             imageModel.paths(),
                                             outputFolder,
                                             toolPanel.renamePattern,
+                                            previewController.rotateEnabled,
                                             previewController.blurFaces,
                                             previewController.blurMode,
                                             previewController.strength,
@@ -275,6 +276,7 @@ ApplicationWindow {
                                             previewController.sizeFilterEnabled,
                                             previewController.skinColorFilterEnabled,
                                             previewController.cascadeCrossCheckEnabled,
+                                            previewController.compressionEnabled,
                                             previewController.compressionLevel,
                                             previewController.outputFormat
                                         )
@@ -323,6 +325,8 @@ ApplicationWindow {
                 cascadeCrossCheckEnabled: previewController.cascadeCrossCheckEnabled
                 compressionLevel: previewController.compressionLevel
                 outputFormat: previewController.outputFormat
+                rotateEnabled: previewController.rotateEnabled
+                compressionEnabled: previewController.compressionEnabled
                 running: batchProcessor.running
                 paused: batchProcessor.paused
                 progress: batchProcessor.progress
@@ -342,6 +346,8 @@ ApplicationWindow {
                 onCascadeCrossCheckEnabledChanged: previewController.cascadeCrossCheckEnabled = cascadeCrossCheckEnabled
                 onCompressionLevelChanged: previewController.compressionLevel = compressionLevel
                 onOutputFormatChanged: previewController.outputFormat = outputFormat
+                onRotateEnabledChanged: previewController.rotateEnabled = rotateEnabled
+                onCompressionEnabledChanged: previewController.compressionEnabled = compressionEnabled
                 onPauseBatch: batchProcessor.pause()
                 onResumeBatch: batchProcessor.resume()
                 onStopBatch: batchProcessor.stop()

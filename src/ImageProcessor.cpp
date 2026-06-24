@@ -263,7 +263,7 @@ std::vector<cv::Rect> detectWithYuNet(const cv::Mat &image, const QString &model
     }
 
     cv::Mat detectImage = image;
-    const int maxDetectSide = 1200;
+    const int maxDetectSide = 640;
     double scale = 1.0;
     const int longestSide = std::max(image.cols, image.rows);
     if (longestSide > maxDetectSide) {
@@ -448,12 +448,19 @@ cv::Mat readImageRespectingExif(const QString &sourcePath)
 ImageProcessor::ImageProcessor(const ProcessingOptions &options)
     : m_options(options)
 {
+#ifdef AUTOPHOTO_HAS_OPENCV
+    cv::setNumThreads(4);
+    cv::setUseOptimized(true);
+#endif
 }
 
 ProcessingResult ImageProcessor::processFile(const QString &sourcePath, const QString &targetPath)
 {
 #ifdef AUTOPHOTO_HAS_OPENCV
-    cv::Mat image = readImageRespectingExif(sourcePath);
+    cv::Mat image;
+    if (m_options.rotateEnabled) {
+        image = readImageRespectingExif(sourcePath);
+    }
     if (image.empty()) {
         image = cv::imread(sourcePath.toStdString(), cv::IMREAD_COLOR);
     }
@@ -588,7 +595,7 @@ ProcessingResult ImageProcessor::processFile(const QString &sourcePath, const QS
 
     QDir().mkpath(QFileInfo(targetPath).absolutePath());
     bool saved = false;
-    if (m_options.compressionLevel > 0) {
+    if (m_options.compressionEnabled && m_options.compressionLevel > 0) {
         const QString tempDir = QDir::tempPath();
         const QString tempName = QStringLiteral("autophoto_compress_%1.jpg")
             .arg(QCryptographicHash::hash(targetPath.toUtf8(), QCryptographicHash::Md5).toHex().left(12));
@@ -608,12 +615,18 @@ ProcessingResult ImageProcessor::processFile(const QString &sourcePath, const QS
 #else
     QDir().mkpath(QFileInfo(targetPath).absolutePath());
     QFile::remove(targetPath);
-    QImage image = readImageWithResolvedOrientation(sourcePath);
+    QImage image;
+    if (m_options.rotateEnabled) {
+        image = readImageWithResolvedOrientation(sourcePath);
+    }
+    if (image.isNull()) {
+        image = QImage(sourcePath);
+    }
     if (image.isNull()) {
         return {false, 0, {}, QStringLiteral("Could not read image: %1").arg(sourcePath)};
     }
     bool saved = false;
-    if (m_options.compressionLevel > 0) {
+    if (m_options.compressionEnabled && m_options.compressionLevel > 0) {
         const QString tempDir = QDir::tempPath();
         const QString tempName = QStringLiteral("autophoto_compress_%1.jpg")
             .arg(QCryptographicHash::hash(targetPath.toUtf8(), QCryptographicHash::Md5).toHex().left(12));

@@ -36,6 +36,7 @@ qt_add_executable(autophoto
     src/main.cpp
     src/BatchProcessor.cpp
     src/BatchProcessor.h
+    src/BoundedBuffer.h
     src/ImageProcessor.cpp
     src/ImageProcessor.h
     src/ImageOrientation.cpp

@@ -7,6 +7,7 @@ autophoto_autogen/timestamp: \
 	/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/packaging/windows/AutoPhoto.iss.in \
 	/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/BatchProcessor.cpp \
 	/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/BatchProcessor.h \
+	/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/BoundedBuffer.h \
 	/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/ImageCompressor.cpp \
 	/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/ImageCompressor.h \
 	/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/ImageListModel.cpp \

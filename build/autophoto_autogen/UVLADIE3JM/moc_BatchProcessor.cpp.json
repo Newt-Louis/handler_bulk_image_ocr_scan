@@ -19,6 +19,10 @@
                             "type": "QString"
                         },
                         {
+                            "name": "rotateEnabled",
+                            "type": "bool"
+                        },
+                        {
                             "name": "blurFaces",
                             "type": "bool"
                         },
@@ -44,6 +48,10 @@
                         },
                         {
                             "name": "cascadeCrossCheckEnabled",
+                            "type": "bool"
+                        },
+                        {
+                            "name": "compressionEnabled",
                             "type": "bool"
                         },
                         {

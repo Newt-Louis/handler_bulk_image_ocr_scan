@@ -4,13 +4,15 @@
 
 struct ProcessingOptions
 {
+    bool rotateEnabled = true;
     bool blurFaces = true;
     QString blurMode = QStringLiteral("gaussian");
     int strength = 100;
     float detectionSensitivity = 0.35f;
     bool sizeFilterEnabled = true;
     bool skinColorFilterEnabled = true;
-    bool cascadeCrossCheckEnabled = false;
+    bool cascadeCrossCheckEnabled = true;
+    bool compressionEnabled = false;
     int compressionLevel = 0;
     QString outputFormat = QStringLiteral("jpg");
     QString detector = QStringLiteral("yunet");

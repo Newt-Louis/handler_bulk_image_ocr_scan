@@ -20,6 +20,8 @@ Rectangle {
     property bool cascadeCrossCheckEnabled: true
     property int compressionLevel: 0
     property string outputFormat: "jpg"
+    property bool rotateEnabled: true
+    property bool compressionEnabled: false
     property string renamePattern: "autophoto"
     property bool running: false
     property bool paused: false
@@ -128,6 +130,32 @@ Rectangle {
 
             GroupBox {
                 width: parent.width
+                title: "Rotate"
+
+                ColumnLayout {
+                    anchors.fill: parent
+                    spacing: 6
+
+                    Switch {
+                        text: "Auto-rotate (EXIF)"
+                        checked: root.rotateEnabled
+                        enabled: !root.running
+                        font.pixelSize: 12
+                        onToggled: root.rotateEnabled = checked
+                    }
+
+                    Label {
+                        Layout.fillWidth: true
+                        text: root.rotateEnabled ? "Based on EXIF orientation metadata" : "Disabled - images keep original orientation"
+                        color: root.rotateEnabled ? "#4b5563" : "#9ca3af"
+                        font.pixelSize: 11
+                        wrapMode: Text.WordWrap
+                    }
+                }
+            }
+
+            GroupBox {
+                width: parent.width
                 title: "Face Blur"
 
                 ColumnLayout {
@@ -135,7 +163,8 @@ Rectangle {
                     spacing: 6
 
                     Switch {
-                        text: "Blur faces"
+                        id: blurToggle
+                        text: "Enable face blur"
                         checked: root.blurFaces
                         enabled: !root.running
                         font.pixelSize: 12
@@ -176,13 +205,13 @@ Rectangle {
                         Label {
                             Layout.fillWidth: true
                             text: "Strength"
-                            color: "#374151"
+                            color: root.blurFaces ? "#374151" : "#9ca3af"
                             font.pixelSize: 12
                         }
 
                         Label {
                             text: root.strength
-                            color: "#0f766e"
+                            color: root.blurFaces ? "#0f766e" : "#9ca3af"
                             font.weight: Font.DemiBold
                             font.pixelSize: 12
                         }
@@ -205,13 +234,13 @@ Rectangle {
                         Label {
                             Layout.fillWidth: true
                             text: "Detection sensitivity"
-                            color: "#374151"
+                            color: root.blurFaces ? "#374151" : "#9ca3af"
                             font.pixelSize: 12
                         }
 
                         Label {
                             text: root.detectionSensitivity + "%"
-                            color: "#0f766e"
+                            color: root.blurFaces ? "#0f766e" : "#9ca3af"
                             font.weight: Font.DemiBold
                             font.pixelSize: 12
                         }
@@ -230,7 +259,7 @@ Rectangle {
                     Label {
                         Layout.fillWidth: true
                         text: "False positive filters"
-                        color: "#374151"
+                        color: root.blurFaces ? "#374151" : "#9ca3af"
                         font.weight: Font.DemiBold
                         font.pixelSize: 12
                         topPadding: 2
@@ -270,6 +299,14 @@ Rectangle {
                     anchors.fill: parent
                     spacing: 6
 
+                    Switch {
+                        text: "Enable compression"
+                        checked: root.compressionEnabled
+                        enabled: !root.running
+                        font.pixelSize: 12
+                        onToggled: root.compressionEnabled = checked
+                    }
+
                     RowLayout {
                         Layout.fillWidth: true
                         spacing: 6
@@ -277,13 +314,13 @@ Rectangle {
                         Label {
                             Layout.fillWidth: true
                             text: "Compression"
-                            color: "#374151"
+                            color: root.compressionEnabled ? "#374151" : "#9ca3af"
                             font.pixelSize: 12
                         }
 
                         Label {
                             text: root.compressionLevel + "%"
-                            color: "#0f766e"
+                            color: root.compressionEnabled ? "#0f766e" : "#9ca3af"
                             font.weight: Font.DemiBold
                             font.pixelSize: 12
                         }
@@ -295,13 +332,14 @@ Rectangle {
                         to: 100
                         stepSize: 1
                         value: root.compressionLevel
-                        enabled: !root.running
+                        enabled: !root.running && root.compressionEnabled
                         onMoved: root.compressionLevel = Math.round(value)
                     }
 
                     Label {
                         Layout.fillWidth: true
                         text: {
+                            if (!root.compressionEnabled) return "Compression disabled"
                             if (root.compressionLevel <= 0) return "No compression"
                             if (root.compressionLevel <= 25) return "~30% smaller"
                             if (root.compressionLevel <= 50) return "~55% smaller"
@@ -316,7 +354,7 @@ Rectangle {
                         Layout.fillWidth: true
                         id: formatCombo
                         model: ["JPG", "PNG", "WEBP"]
-                        enabled: !root.running
+                        enabled: !root.running && root.compressionEnabled
                         font.pixelSize: 12
                         onCurrentIndexChanged: root.outputFormat = model[currentIndex].toLowerCase()
                     }

@@ -298,6 +298,10 @@ CMakeFiles/autophoto.dir/src/BatchProcessor.cpp.o: \
  /usr/include/c++/13/condition_variable \
  /usr/include/c++/13/bits/atomic_futex.h \
  /usr/include/c++/13/bits/std_thread.h \
+ /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/BoundedBuffer.h \
+ /usr/include/c++/13/queue /usr/include/c++/13/deque \
+ /usr/include/c++/13/bits/stl_deque.h /usr/include/c++/13/bits/deque.tcc \
+ /usr/include/c++/13/bits/stl_queue.h \
  /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/ImageProcessor.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QString \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qstring.h \

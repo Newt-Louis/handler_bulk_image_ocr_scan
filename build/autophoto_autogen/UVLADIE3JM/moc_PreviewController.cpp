@@ -26,7 +26,7 @@ QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 namespace {
 struct qt_meta_stringdata_PreviewController_t {
-    uint offsetsAndSizes[86];
+    uint offsetsAndSizes[98];
     char stringdata0[18];
     char stringdata1[18];
     char stringdata2[1];
@@ -40,36 +40,42 @@ struct qt_meta_stringdata_PreviewController_t {
     char stringdata10[32];
     char stringdata11[24];
     char stringdata12[20];
-    char stringdata13[14];
-    char stringdata14[8];
-    char stringdata15[13];
+    char stringdata13[21];
+    char stringdata14[26];
+    char stringdata15[14];
     char stringdata16[8];
-    char stringdata17[12];
-    char stringdata18[5];
+    char stringdata17[13];
+    char stringdata18[8];
     char stringdata19[12];
-    char stringdata20[9];
-    char stringdata21[24];
-    char stringdata22[12];
-    char stringdata23[21];
-    char stringdata24[26];
-    char stringdata25[28];
-    char stringdata26[20];
-    char stringdata27[6];
-    char stringdata28[16];
-    char stringdata29[7];
-    char stringdata30[15];
-    char stringdata31[9];
-    char stringdata32[6];
-    char stringdata33[11];
-    char stringdata34[5];
-    char stringdata35[10];
-    char stringdata36[9];
-    char stringdata37[21];
-    char stringdata38[18];
-    char stringdata39[23];
-    char stringdata40[25];
-    char stringdata41[17];
-    char stringdata42[13];
+    char stringdata20[5];
+    char stringdata21[12];
+    char stringdata22[9];
+    char stringdata23[24];
+    char stringdata24[12];
+    char stringdata25[21];
+    char stringdata26[26];
+    char stringdata27[28];
+    char stringdata28[20];
+    char stringdata29[6];
+    char stringdata30[16];
+    char stringdata31[7];
+    char stringdata32[17];
+    char stringdata33[22];
+    char stringdata34[15];
+    char stringdata35[9];
+    char stringdata36[6];
+    char stringdata37[11];
+    char stringdata38[5];
+    char stringdata39[10];
+    char stringdata40[9];
+    char stringdata41[21];
+    char stringdata42[18];
+    char stringdata43[23];
+    char stringdata44[25];
+    char stringdata45[17];
+    char stringdata46[13];
+    char stringdata47[14];
+    char stringdata48[19];
 };
 #define QT_MOC_LITERAL(ofs, len) \
     uint(sizeof(qt_meta_stringdata_PreviewController_t::offsetsAndSizes) + ofs), len 
@@ -88,36 +94,42 @@ Q_CONSTINIT static const qt_meta_stringdata_PreviewController_t qt_meta_stringda
         QT_MOC_LITERAL(181, 31),  // "cascadeCrossCheckEnabledChanged"
         QT_MOC_LITERAL(213, 23),  // "compressionLevelChanged"
         QT_MOC_LITERAL(237, 19),  // "outputFormatChanged"
-        QT_MOC_LITERAL(257, 13),  // "previewFailed"
-        QT_MOC_LITERAL(271, 7),  // "message"
-        QT_MOC_LITERAL(279, 12),  // "setBlurFaces"
-        QT_MOC_LITERAL(292, 7),  // "enabled"
-        QT_MOC_LITERAL(300, 11),  // "setBlurMode"
-        QT_MOC_LITERAL(312, 4),  // "mode"
-        QT_MOC_LITERAL(317, 11),  // "setStrength"
-        QT_MOC_LITERAL(329, 8),  // "strength"
-        QT_MOC_LITERAL(338, 23),  // "setDetectionSensitivity"
-        QT_MOC_LITERAL(362, 11),  // "sensitivity"
-        QT_MOC_LITERAL(374, 20),  // "setSizeFilterEnabled"
-        QT_MOC_LITERAL(395, 25),  // "setSkinColorFilterEnabled"
-        QT_MOC_LITERAL(421, 27),  // "setCascadeCrossCheckEnabled"
-        QT_MOC_LITERAL(449, 19),  // "setCompressionLevel"
-        QT_MOC_LITERAL(469, 5),  // "level"
-        QT_MOC_LITERAL(475, 15),  // "setOutputFormat"
-        QT_MOC_LITERAL(491, 6),  // "format"
-        QT_MOC_LITERAL(498, 14),  // "requestPreview"
-        QT_MOC_LITERAL(513, 8),  // "filePath"
-        QT_MOC_LITERAL(522, 5),  // "clear"
-        QT_MOC_LITERAL(528, 10),  // "previewUrl"
-        QT_MOC_LITERAL(539, 4),  // "busy"
-        QT_MOC_LITERAL(544, 9),  // "blurFaces"
-        QT_MOC_LITERAL(554, 8),  // "blurMode"
-        QT_MOC_LITERAL(563, 20),  // "detectionSensitivity"
-        QT_MOC_LITERAL(584, 17),  // "sizeFilterEnabled"
-        QT_MOC_LITERAL(602, 22),  // "skinColorFilterEnabled"
-        QT_MOC_LITERAL(625, 24),  // "cascadeCrossCheckEnabled"
-        QT_MOC_LITERAL(650, 16),  // "compressionLevel"
-        QT_MOC_LITERAL(667, 12)   // "outputFormat"
+        QT_MOC_LITERAL(257, 20),  // "rotateEnabledChanged"
+        QT_MOC_LITERAL(278, 25),  // "compressionEnabledChanged"
+        QT_MOC_LITERAL(304, 13),  // "previewFailed"
+        QT_MOC_LITERAL(318, 7),  // "message"
+        QT_MOC_LITERAL(326, 12),  // "setBlurFaces"
+        QT_MOC_LITERAL(339, 7),  // "enabled"
+        QT_MOC_LITERAL(347, 11),  // "setBlurMode"
+        QT_MOC_LITERAL(359, 4),  // "mode"
+        QT_MOC_LITERAL(364, 11),  // "setStrength"
+        QT_MOC_LITERAL(376, 8),  // "strength"
+        QT_MOC_LITERAL(385, 23),  // "setDetectionSensitivity"
+        QT_MOC_LITERAL(409, 11),  // "sensitivity"
+        QT_MOC_LITERAL(421, 20),  // "setSizeFilterEnabled"
+        QT_MOC_LITERAL(442, 25),  // "setSkinColorFilterEnabled"
+        QT_MOC_LITERAL(468, 27),  // "setCascadeCrossCheckEnabled"
+        QT_MOC_LITERAL(496, 19),  // "setCompressionLevel"
+        QT_MOC_LITERAL(516, 5),  // "level"
+        QT_MOC_LITERAL(522, 15),  // "setOutputFormat"
+        QT_MOC_LITERAL(538, 6),  // "format"
+        QT_MOC_LITERAL(545, 16),  // "setRotateEnabled"
+        QT_MOC_LITERAL(562, 21),  // "setCompressionEnabled"
+        QT_MOC_LITERAL(584, 14),  // "requestPreview"
+        QT_MOC_LITERAL(599, 8),  // "filePath"
+        QT_MOC_LITERAL(608, 5),  // "clear"
+        QT_MOC_LITERAL(614, 10),  // "previewUrl"
+        QT_MOC_LITERAL(625, 4),  // "busy"
+        QT_MOC_LITERAL(630, 9),  // "blurFaces"
+        QT_MOC_LITERAL(640, 8),  // "blurMode"
+        QT_MOC_LITERAL(649, 20),  // "detectionSensitivity"
+        QT_MOC_LITERAL(670, 17),  // "sizeFilterEnabled"
+        QT_MOC_LITERAL(688, 22),  // "skinColorFilterEnabled"
+        QT_MOC_LITERAL(711, 24),  // "cascadeCrossCheckEnabled"
+        QT_MOC_LITERAL(736, 16),  // "compressionLevel"
+        QT_MOC_LITERAL(753, 12),  // "outputFormat"
+        QT_MOC_LITERAL(766, 13),  // "rotateEnabled"
+        QT_MOC_LITERAL(780, 18)   // "compressionEnabled"
     },
     "PreviewController",
     "previewUrlChanged",
@@ -132,6 +144,8 @@ Q_CONSTINIT static const qt_meta_stringdata_PreviewController_t qt_meta_stringda
     "cascadeCrossCheckEnabledChanged",
     "compressionLevelChanged",
     "outputFormatChanged",
+    "rotateEnabledChanged",
+    "compressionEnabledChanged",
     "previewFailed",
     "message",
     "setBlurFaces",
@@ -149,6 +163,8 @@ Q_CONSTINIT static const qt_meta_stringdata_PreviewController_t qt_meta_stringda
     "level",
     "setOutputFormat",
     "format",
+    "setRotateEnabled",
+    "setCompressionEnabled",
     "requestPreview",
     "filePath",
     "clear",
@@ -161,7 +177,9 @@ Q_CONSTINIT static const qt_meta_stringdata_PreviewController_t qt_meta_stringda
     "skinColorFilterEnabled",
     "cascadeCrossCheckEnabled",
     "compressionLevel",
-    "outputFormat"
+    "outputFormat",
+    "rotateEnabled",
+    "compressionEnabled"
 };
 #undef QT_MOC_LITERAL
 } // unnamed namespace
@@ -172,41 +190,45 @@ Q_CONSTINIT static const uint qt_meta_data_PreviewController[] = {
       10,       // revision
        0,       // classname
        0,    0, // classinfo
-      23,   14, // methods
-      11,  197, // properties
+      27,   14, // methods
+      13,  229, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-      12,       // signalCount
+      14,       // signalCount
 
  // signals: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    0,  152,    2, 0x06,   12 /* Public */,
-       3,    0,  153,    2, 0x06,   13 /* Public */,
-       4,    0,  154,    2, 0x06,   14 /* Public */,
-       5,    0,  155,    2, 0x06,   15 /* Public */,
-       6,    0,  156,    2, 0x06,   16 /* Public */,
-       7,    0,  157,    2, 0x06,   17 /* Public */,
-       8,    0,  158,    2, 0x06,   18 /* Public */,
-       9,    0,  159,    2, 0x06,   19 /* Public */,
-      10,    0,  160,    2, 0x06,   20 /* Public */,
-      11,    0,  161,    2, 0x06,   21 /* Public */,
-      12,    0,  162,    2, 0x06,   22 /* Public */,
-      13,    1,  163,    2, 0x06,   23 /* Public */,
+       1,    0,  176,    2, 0x06,   14 /* Public */,
+       3,    0,  177,    2, 0x06,   15 /* Public */,
+       4,    0,  178,    2, 0x06,   16 /* Public */,
+       5,    0,  179,    2, 0x06,   17 /* Public */,
+       6,    0,  180,    2, 0x06,   18 /* Public */,
+       7,    0,  181,    2, 0x06,   19 /* Public */,
+       8,    0,  182,    2, 0x06,   20 /* Public */,
+       9,    0,  183,    2, 0x06,   21 /* Public */,
+      10,    0,  184,    2, 0x06,   22 /* Public */,
+      11,    0,  185,    2, 0x06,   23 /* Public */,
+      12,    0,  186,    2, 0x06,   24 /* Public */,
+      13,    0,  187,    2, 0x06,   25 /* Public */,
+      14,    0,  188,    2, 0x06,   26 /* Public */,
+      15,    1,  189,    2, 0x06,   27 /* Public */,
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
-      15,    1,  166,    2, 0x0a,   25 /* Public */,
-      17,    1,  169,    2, 0x0a,   27 /* Public */,
-      19,    1,  172,    2, 0x0a,   29 /* Public */,
-      21,    1,  175,    2, 0x0a,   31 /* Public */,
-      23,    1,  178,    2, 0x0a,   33 /* Public */,
-      24,    1,  181,    2, 0x0a,   35 /* Public */,
-      25,    1,  184,    2, 0x0a,   37 /* Public */,
-      26,    1,  187,    2, 0x0a,   39 /* Public */,
-      28,    1,  190,    2, 0x0a,   41 /* Public */,
+      17,    1,  192,    2, 0x0a,   29 /* Public */,
+      19,    1,  195,    2, 0x0a,   31 /* Public */,
+      21,    1,  198,    2, 0x0a,   33 /* Public */,
+      23,    1,  201,    2, 0x0a,   35 /* Public */,
+      25,    1,  204,    2, 0x0a,   37 /* Public */,
+      26,    1,  207,    2, 0x0a,   39 /* Public */,
+      27,    1,  210,    2, 0x0a,   41 /* Public */,
+      28,    1,  213,    2, 0x0a,   43 /* Public */,
+      30,    1,  216,    2, 0x0a,   45 /* Public */,
+      32,    1,  219,    2, 0x0a,   47 /* Public */,
+      33,    1,  222,    2, 0x0a,   49 /* Public */,
 
  // methods: name, argc, parameters, tag, flags, initial metatype offsets
-      30,    1,  193,    2, 0x02,   43 /* Public */,
-      32,    0,  196,    2, 0x02,   45 /* Public */,
+      34,    1,  225,    2, 0x02,   51 /* Public */,
+      36,    0,  228,    2, 0x02,   53 /* Public */,
 
  // signals: parameters
     QMetaType::Void,
@@ -220,35 +242,41 @@ Q_CONSTINIT static const uint qt_meta_data_PreviewController[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::QString,   14,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::QString,   16,
 
  // slots: parameters
-    QMetaType::Void, QMetaType::Bool,   16,
-    QMetaType::Void, QMetaType::QString,   18,
-    QMetaType::Void, QMetaType::Int,   20,
-    QMetaType::Void, QMetaType::Float,   22,
-    QMetaType::Void, QMetaType::Bool,   16,
-    QMetaType::Void, QMetaType::Bool,   16,
-    QMetaType::Void, QMetaType::Bool,   16,
-    QMetaType::Void, QMetaType::Int,   27,
-    QMetaType::Void, QMetaType::QString,   29,
+    QMetaType::Void, QMetaType::Bool,   18,
+    QMetaType::Void, QMetaType::QString,   20,
+    QMetaType::Void, QMetaType::Int,   22,
+    QMetaType::Void, QMetaType::Float,   24,
+    QMetaType::Void, QMetaType::Bool,   18,
+    QMetaType::Void, QMetaType::Bool,   18,
+    QMetaType::Void, QMetaType::Bool,   18,
+    QMetaType::Void, QMetaType::Int,   29,
+    QMetaType::Void, QMetaType::QString,   31,
+    QMetaType::Void, QMetaType::Bool,   18,
+    QMetaType::Void, QMetaType::Bool,   18,
 
  // methods: parameters
-    QMetaType::Void, QMetaType::QString,   31,
+    QMetaType::Void, QMetaType::QString,   35,
     QMetaType::Void,
 
  // properties: name, type, flags
-      33, QMetaType::QUrl, 0x00015001, uint(0), 0,
-      34, QMetaType::Bool, 0x00015001, uint(1), 0,
-      35, QMetaType::Bool, 0x00015103, uint(2), 0,
-      36, QMetaType::QString, 0x00015103, uint(3), 0,
-      20, QMetaType::Int, 0x00015103, uint(4), 0,
-      37, QMetaType::Float, 0x00015103, uint(5), 0,
-      38, QMetaType::Bool, 0x00015103, uint(6), 0,
-      39, QMetaType::Bool, 0x00015103, uint(7), 0,
-      40, QMetaType::Bool, 0x00015103, uint(8), 0,
-      41, QMetaType::Int, 0x00015103, uint(9), 0,
-      42, QMetaType::QString, 0x00015103, uint(10), 0,
+      37, QMetaType::QUrl, 0x00015001, uint(0), 0,
+      38, QMetaType::Bool, 0x00015001, uint(1), 0,
+      39, QMetaType::Bool, 0x00015103, uint(2), 0,
+      40, QMetaType::QString, 0x00015103, uint(3), 0,
+      22, QMetaType::Int, 0x00015103, uint(4), 0,
+      41, QMetaType::Float, 0x00015103, uint(5), 0,
+      42, QMetaType::Bool, 0x00015103, uint(6), 0,
+      43, QMetaType::Bool, 0x00015103, uint(7), 0,
+      44, QMetaType::Bool, 0x00015103, uint(8), 0,
+      45, QMetaType::Int, 0x00015103, uint(9), 0,
+      46, QMetaType::QString, 0x00015103, uint(10), 0,
+      47, QMetaType::Bool, 0x00015103, uint(11), 0,
+      48, QMetaType::Bool, 0x00015103, uint(12), 0,
 
        0        // eod
 };
@@ -282,6 +310,10 @@ Q_CONSTINIT const QMetaObject PreviewController::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<int, std::true_type>,
         // property 'outputFormat'
         QtPrivate::TypeAndForceComplete<QString, std::true_type>,
+        // property 'rotateEnabled'
+        QtPrivate::TypeAndForceComplete<bool, std::true_type>,
+        // property 'compressionEnabled'
+        QtPrivate::TypeAndForceComplete<bool, std::true_type>,
         // Q_OBJECT / Q_GADGET
         QtPrivate::TypeAndForceComplete<PreviewController, std::true_type>,
         // method 'previewUrlChanged'
@@ -305,6 +337,10 @@ Q_CONSTINIT const QMetaObject PreviewController::staticMetaObject = { {
         // method 'compressionLevelChanged'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'outputFormatChanged'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'rotateEnabledChanged'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'compressionEnabledChanged'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'previewFailed'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
@@ -336,6 +372,12 @@ Q_CONSTINIT const QMetaObject PreviewController::staticMetaObject = { {
         // method 'setOutputFormat'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
+        // method 'setRotateEnabled'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
+        // method 'setCompressionEnabled'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
         // method 'requestPreview'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
@@ -362,18 +404,22 @@ void PreviewController::qt_static_metacall(QObject *_o, QMetaObject::Call _c, in
         case 8: _t->cascadeCrossCheckEnabledChanged(); break;
         case 9: _t->compressionLevelChanged(); break;
         case 10: _t->outputFormatChanged(); break;
-        case 11: _t->previewFailed((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
-        case 12: _t->setBlurFaces((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
-        case 13: _t->setBlurMode((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
-        case 14: _t->setStrength((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
-        case 15: _t->setDetectionSensitivity((*reinterpret_cast< std::add_pointer_t<float>>(_a[1]))); break;
-        case 16: _t->setSizeFilterEnabled((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
-        case 17: _t->setSkinColorFilterEnabled((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
-        case 18: _t->setCascadeCrossCheckEnabled((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
-        case 19: _t->setCompressionLevel((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
-        case 20: _t->setOutputFormat((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
-        case 21: _t->requestPreview((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
-        case 22: _t->clear(); break;
+        case 11: _t->rotateEnabledChanged(); break;
+        case 12: _t->compressionEnabledChanged(); break;
+        case 13: _t->previewFailed((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
+        case 14: _t->setBlurFaces((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
+        case 15: _t->setBlurMode((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
+        case 16: _t->setStrength((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 17: _t->setDetectionSensitivity((*reinterpret_cast< std::add_pointer_t<float>>(_a[1]))); break;
+        case 18: _t->setSizeFilterEnabled((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
+        case 19: _t->setSkinColorFilterEnabled((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
+        case 20: _t->setCascadeCrossCheckEnabled((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
+        case 21: _t->setCompressionLevel((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 22: _t->setOutputFormat((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
+        case 23: _t->setRotateEnabled((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
+        case 24: _t->setCompressionEnabled((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
+        case 25: _t->requestPreview((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
+        case 26: _t->clear(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -456,9 +502,23 @@ void PreviewController::qt_static_metacall(QObject *_o, QMetaObject::Call _c, in
             }
         }
         {
+            using _t = void (PreviewController::*)();
+            if (_t _q_method = &PreviewController::rotateEnabledChanged; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
+                *result = 11;
+                return;
+            }
+        }
+        {
+            using _t = void (PreviewController::*)();
+            if (_t _q_method = &PreviewController::compressionEnabledChanged; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
+                *result = 12;
+                return;
+            }
+        }
+        {
             using _t = void (PreviewController::*)(const QString & );
             if (_t _q_method = &PreviewController::previewFailed; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
-                *result = 11;
+                *result = 13;
                 return;
             }
         }
@@ -478,6 +538,8 @@ void PreviewController::qt_static_metacall(QObject *_o, QMetaObject::Call _c, in
         case 8: *reinterpret_cast< bool*>(_v) = _t->cascadeCrossCheckEnabled(); break;
         case 9: *reinterpret_cast< int*>(_v) = _t->compressionLevel(); break;
         case 10: *reinterpret_cast< QString*>(_v) = _t->outputFormat(); break;
+        case 11: *reinterpret_cast< bool*>(_v) = _t->rotateEnabled(); break;
+        case 12: *reinterpret_cast< bool*>(_v) = _t->compressionEnabled(); break;
         default: break;
         }
     } else if (_c == QMetaObject::WriteProperty) {
@@ -494,6 +556,8 @@ void PreviewController::qt_static_metacall(QObject *_o, QMetaObject::Call _c, in
         case 8: _t->setCascadeCrossCheckEnabled(*reinterpret_cast< bool*>(_v)); break;
         case 9: _t->setCompressionLevel(*reinterpret_cast< int*>(_v)); break;
         case 10: _t->setOutputFormat(*reinterpret_cast< QString*>(_v)); break;
+        case 11: _t->setRotateEnabled(*reinterpret_cast< bool*>(_v)); break;
+        case 12: _t->setCompressionEnabled(*reinterpret_cast< bool*>(_v)); break;
         default: break;
         }
     } else if (_c == QMetaObject::ResetProperty) {
@@ -520,18 +584,18 @@ int PreviewController::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 23)
+        if (_id < 27)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 23;
+        _id -= 27;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 23)
+        if (_id < 27)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 23;
+        _id -= 27;
     }else if (_c == QMetaObject::ReadProperty || _c == QMetaObject::WriteProperty
             || _c == QMetaObject::ResetProperty || _c == QMetaObject::BindableProperty
             || _c == QMetaObject::RegisterPropertyMetaType) {
         qt_static_metacall(this, _c, _id, _a);
-        _id -= 11;
+        _id -= 13;
     }
     return _id;
 }
@@ -603,10 +667,22 @@ void PreviewController::outputFormatChanged()
 }
 
 // SIGNAL 11
+void PreviewController::rotateEnabledChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 11, nullptr);
+}
+
+// SIGNAL 12
+void PreviewController::compressionEnabledChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 12, nullptr);
+}
+
+// SIGNAL 13
 void PreviewController::previewFailed(const QString & _t1)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
-    QMetaObject::activate(this, &staticMetaObject, 11, _a);
+    QMetaObject::activate(this, &staticMetaObject, 13, _a);
 }
 QT_WARNING_POP
 QT_END_MOC_NAMESPACE

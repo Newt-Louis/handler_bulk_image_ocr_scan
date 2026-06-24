@@ -2398,6 +2398,7 @@ CMakeFiles/autophoto.dir/build/.rcc/qrc_qmake_AutoPhoto.cpp.o: .rcc/qrc_qmake_Au
 
 CMakeFiles/autophoto.dir/src/BatchProcessor.cpp.o: /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/BatchProcessor.cpp \
   /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/BatchProcessor.h \
+  /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/BoundedBuffer.h \
   /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/ImageProcessor.h \
   /usr/include/alloca.h \
   /usr/include/asm-generic/errno-base.h \
@@ -2429,6 +2430,7 @@ CMakeFiles/autophoto.dir/src/BatchProcessor.cpp.o: /home/newt-louis/workspaces/s
   /usr/include/c++/13/bits/cpp_type_traits.h \
   /usr/include/c++/13/bits/cxxabi_forced.h \
   /usr/include/c++/13/bits/cxxabi_init_exception.h \
+  /usr/include/c++/13/bits/deque.tcc \
   /usr/include/c++/13/bits/enable_special_members.h \
   /usr/include/c++/13/bits/erase_if.h \
   /usr/include/c++/13/bits/exception.h \
@@ -2484,6 +2486,7 @@ CMakeFiles/autophoto.dir/src/BatchProcessor.cpp.o: /home/newt-louis/workspaces/s
   /usr/include/c++/13/bits/stl_algobase.h \
   /usr/include/c++/13/bits/stl_bvector.h \
   /usr/include/c++/13/bits/stl_construct.h \
+  /usr/include/c++/13/bits/stl_deque.h \
   /usr/include/c++/13/bits/stl_function.h \
   /usr/include/c++/13/bits/stl_heap.h \
   /usr/include/c++/13/bits/stl_iterator.h \
@@ -2494,6 +2497,7 @@ CMakeFiles/autophoto.dir/src/BatchProcessor.cpp.o: /home/newt-louis/workspaces/s
   /usr/include/c++/13/bits/stl_multimap.h \
   /usr/include/c++/13/bits/stl_numeric.h \
   /usr/include/c++/13/bits/stl_pair.h \
+  /usr/include/c++/13/bits/stl_queue.h \
   /usr/include/c++/13/bits/stl_raw_storage_iter.h \
   /usr/include/c++/13/bits/stl_relops.h \
   /usr/include/c++/13/bits/stl_tempbuf.h \
@@ -2532,6 +2536,7 @@ CMakeFiles/autophoto.dir/src/BatchProcessor.cpp.o: /home/newt-louis/workspaces/s
   /usr/include/c++/13/cwctype \
   /usr/include/c++/13/debug/assertions.h \
   /usr/include/c++/13/debug/debug.h \
+  /usr/include/c++/13/deque \
   /usr/include/c++/13/exception \
   /usr/include/c++/13/ext/aligned_buffer.h \
   /usr/include/c++/13/ext/alloc_traits.h \
@@ -2564,6 +2569,7 @@ CMakeFiles/autophoto.dir/src/BatchProcessor.cpp.o: /home/newt-louis/workspaces/s
   /usr/include/c++/13/pstl/glue_memory_defs.h \
   /usr/include/c++/13/pstl/glue_numeric_defs.h \
   /usr/include/c++/13/pstl/pstl_config.h \
+  /usr/include/c++/13/queue \
   /usr/include/c++/13/ratio \
   /usr/include/c++/13/sstream \
   /usr/include/c++/13/stdexcept \
@@ -4977,6 +4983,7 @@ CMakeFiles/autophoto.dir/src/PreviewController.cpp.o: /home/newt-louis/workspace
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QStandardPaths \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QString \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QThread \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QTimer \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QUrl \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QtGlobal \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/q20algorithm.h \
@@ -4989,6 +4996,7 @@ CMakeFiles/autophoto.dir/src/PreviewController.cpp.o: /home/newt-louis/workspace
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qatomic.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qatomic_cxx11.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbasicatomic.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qbasictimer.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbindingstorage.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearray.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearrayalgorithms.h \
@@ -5084,6 +5092,7 @@ CMakeFiles/autophoto.dir/src/PreviewController.cpp.o: /home/newt-louis/workspace
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtcoreexports.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtextstream.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qthread.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/qtimer.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtmetamacros.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qtypeinfo.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qurl.h \
@@ -6779,10 +6788,6 @@ CMakeFiles/autophoto.dir/src/platform/PlatformFactory.cpp.o: /home/newt-louis/wo
 
 /usr/include/x86_64-linux-gnu/qt6/QtQml/QQmlContext:
 
-/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/platform/DesktopPlatform.cpp:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qinputmethod.h:
-
 /usr/include/x86_64-linux-gnu/qt6/QtGui/qguiapplication_platform.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qcommandlineparser.h:
@@ -6848,6 +6853,12 @@ CMakeFiles/autophoto.dir/src/platform/PlatformFactory.cpp.o: /home/newt-louis/wo
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qcoreapplication_platform.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qcoreapplication.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qfactoryinterface.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qcborvalue.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/q20functional.h:
 
 /usr/include/x86_64-linux-gnu/bits/timex.h:
 
@@ -7065,6 +7076,10 @@ autophoto_autogen/mocs_compilation.cpp:
 
 /usr/include/errno.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtCore/QSet:
+
+/usr/include/c++/13/bits/hashtable.h:
+
 /usr/include/x86_64-linux-gnu/bits/types/error_t.h:
 
 .rcc/qmlcache/autophoto_qml/components/CoverFlowView_qml.cpp:
@@ -7137,8 +7152,6 @@ autophoto_autogen/UVLADIE3JM/moc_ImageListModel.cpp:
 
 /usr/include/c++/13/bits/std_function.h:
 
-/usr/include/x86_64-linux-gnu/c++/13/bits/ctype_inline.h:
-
 /usr/include/c++/13/bits/chrono.h:
 
 /usr/include/c++/13/bits/invoke.h:
@@ -7166,6 +7179,12 @@ autophoto_autogen/UVLADIE3JM/moc_ImageListModel.cpp:
 /usr/include/c++/13/backward/auto_ptr.h:
 
 /usr/include/opencv4/opencv2/core/optim.hpp:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/QDirIterator:
+
+/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/BatchProcessor.h:
+
+/usr/include/c++/13/bits/stl_deque.h:
 
 /usr/include/asm-generic/errno-base.h:
 
@@ -7357,10 +7376,6 @@ autophoto_qmltyperegistrations.cpp:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qgenericatomic.h:
 
-/usr/include/c++/13/bits/hashtable.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/QSet:
-
 /usr/include/c++/13/debug/debug.h:
 
 /usr/include/c++/13/bits/stl_list.h:
@@ -7458,8 +7473,6 @@ autophoto_autogen/UVLADIE3JM/moc_BatchProcessor.cpp:
 /usr/include/c++/13/tr1/gamma.tcc:
 
 /usr/include/c++/13/ext/atomicity.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/struct_tm.h:
 
 /usr/include/c++/13/cctype:
 
@@ -7651,6 +7664,8 @@ autophoto_autogen/UVLADIE3JM/moc_BatchProcessor.cpp:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearray.h:
 
+/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/BoundedBuffer.h:
+
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qiodevicebase.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qbytearrayalgorithms.h:
@@ -7771,10 +7786,6 @@ autophoto_autogen/UVLADIE3JM/moc_BatchProcessor.cpp:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qsysinfo.h:
 
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qfactoryinterface.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qcborvalue.h:
-
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qtaggedpointer.h:
 
 /usr/include/opencv4/opencv2/imgcodecs.hpp:
@@ -7869,8 +7880,6 @@ autophoto_autogen/UVLADIE3JM/moc_BatchProcessor.cpp:
 
 /usr/include/opencv4/opencv2/core/version.hpp:
 
-/usr/include/x86_64-linux-gnu/qt6/QtQml/qqmlerror.h:
-
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qset.h:
 
 .rcc/qmlcache/autophoto_qml/components/ToolPanel_qml.cpp:
@@ -7895,11 +7904,37 @@ autophoto_autogen/UVLADIE3JM/moc_BatchProcessor.cpp:
 
 /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/ImageProcessor.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtQml/qqmlerror.h:
+
+/usr/include/c++/13/bits/deque.tcc:
+
+/usr/include/opencv4/opencv2/core/vsx_utils.hpp:
+
+/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/platform/DesktopPlatform.cpp:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qinputmethod.h:
+
+/usr/include/c++/13/bits/stl_queue.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qregion.h:
+
+/usr/include/c++/13/bits/random.tcc:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/qline.h:
+
 /usr/include/x86_64-linux-gnu/bits/waitstatus.h:
 
 /usr/include/c++/13/bits/exception_ptr.h:
 
 /usr/include/c++/13/bits/this_thread_sleep.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/struct_tm.h:
+
+/usr/include/c++/13/deque:
+
+/usr/include/x86_64-linux-gnu/c++/13/bits/ctype_inline.h:
+
+/usr/include/c++/13/queue:
 
 /usr/include/c++/13/thread:
 
@@ -7935,8 +7970,6 @@ autophoto_autogen/UVLADIE3JM/moc_BatchProcessor.cpp:
 
 /usr/include/opencv4/opencv2/core/neon_utils.hpp:
 
-/usr/include/opencv4/opencv2/core/vsx_utils.hpp:
-
 /usr/include/opencv4/opencv2/imgproc.hpp:
 
 /usr/include/x86_64-linux-gnu/qt6/QtGui/qtextoption.h:
@@ -7945,15 +7978,13 @@ autophoto_autogen/UVLADIE3JM/moc_BatchProcessor.cpp:
 
 /usr/include/opencv4/opencv2/opencv_modules.hpp:
 
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qregion.h:
-
-/usr/include/c++/13/bits/random.tcc:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/qline.h:
-
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qcontainertools_impl.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qmargins.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtCore/q20algorithm.h:
+
+/usr/include/x86_64-linux-gnu/qt6/QtGui/qcolor.h:
 
 /usr/include/x86_64-linux-gnu/qt6/QtGui/qimage.h:
 
@@ -7976,13 +8007,3 @@ autophoto_autogen/UVLADIE3JM/moc_BatchProcessor.cpp:
 /usr/include/x86_64-linux-gnu/qt6/QtQml/qqmlpropertyvaluesource.h:
 
 /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/ImageListModel.cpp:
-
-/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/BatchProcessor.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/QDirIterator:
-
-/usr/include/x86_64-linux-gnu/qt6/QtGui/qcolor.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/q20algorithm.h:
-
-/usr/include/x86_64-linux-gnu/qt6/QtCore/q20functional.h:

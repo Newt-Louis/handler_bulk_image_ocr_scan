@@ -1,140 +1,147 @@
-# PLAN.md - Giai đoạn mới: UI polish & Hiệu năng
+# PLAN.md - Tối ưu hiệu năng & Feature toggles
 
 ## Bối cảnh
 
-Các tính năng chính đã hoàn thành (detection sensitivity, false positive filters, compression, platform scaffold). 3 bug đã fix (false positive, slow preview, toolPanel layout).
-
-Tuy nhiên còn 2 vấn đề nghiêm trọng cần giải quyết trước khi xuất bản:
-1. ScrollBar menu phải vẫn đè lên content → cần fix layout
-2. CPU/RAM usage cực cao khi chuyển ảnh → ứng dụng lag, giật, có thể gây crash
+- Ứng dụng xử lý ảnh hàng loạt, target 200-500+ ảnh/lần
+- Hiện tại: 4-5s/ảnh → 500 ảnh = 37 phút → không chấp nhận production
+- Yêu cầu: < 1.5s/ảnh batch, preview instant
 
 ---
 
-## Nhiệm vụ 6: Fix ScrollBar Menu Phải + UI Modernization
+## Nhiệm vụ 8: Detection 640px + Intel Optimization ✅
 
-### Vấn đề
+- [x] **8.1** Giảm `maxDetectSide` từ 1200 → 640 trong `detectWithYuNet()`
+- [x] **8.2** Bật `cv::useOptimized(true)` + `cv::setNumThreads(4)` trong ImageProcessor
+- **Kết quả mong đợi**: inference ~0.6-0.8s thay vì 2.5-3s
 
-ScrollBar của ToolPanel vẫn đè lên cạnh bên trái của menu, nhìn xấu và không chuyên nghiệp. Cần tách scrollbar ra ngoài, layout lại cho sạch sẽ.
+---
+
+## Nhiệm vụ 9: Feature Toggles (Enable/Disable cho từng tính năng)
+
+### Yêu cầu
+
+Mỗi tính năng batch có toggle riêng:
+- **Rotate**: tự động xoay ảnh theo EXIF orientation
+- **Face Blur**: detect mặt + blur/mask
+- **Compression**: giảm dung lượng ảnh
+
+Toggle là checkbox kiểu switch. Khi BẬT → hiển thị config (sliders, radio, etc.). Khi TẮT → config bị disabled/ẩn.
 
 ### Chi tiết thực hiện
 
-- [ ] **6.1** Phân tích layout hiện tại: Flickable + Column + ScrollBar overlay
-- [ ] **6.2** Tách ScrollBar ra khỏi Flickable, đặt bên phải panel (không overlap content)
-- [ ] **6.3** Đảm bảo content Column có width chính xác = panel width - scrollbar width - margins
-- [ ] **6.4** Kiểm tra GroupBox title và content không bị cut
-- [ ] **6.5** Test trên various panel widths (344px hiện tại)
-- [ ] **6.6** Review overall Material Design styling: bo tròn, spacing, shadow, color consistency
-- [ ] **6.7** Test QML lint không có warning mới
+#### 9A. ProcessingOptions mới
+
+- [ ] **9A.1** Thêm `bool rotateEnabled = true` vào `ProcessingOptions`
+- [ ] **9A.2** Thêm `bool blurFacesEnabled = true` (thay thế `blurFaces`)
+- [ ] **9A.3** Thêm `bool compressionEnabled = false` vào `ProcessingOptions`
+- [ ] **9A.4** Cập nhật `ImageProcessor::processFile()` check toggle trước khi chạy
+
+#### 9B. ToolPanel UI
+
+- [ ] **9B.1** Thêm GroupBox "Rotate" với Switch toggle
+  - Khi bật: hiển thị label "Auto-rotate based on EXIF"
+  - Khi tắt: label disabled, greyed out
+- [ ] **9B.2** GroupBox "Face Blur" hiện có → thêm Switch toggle ở đầu
+  - Khi tắt: toàn bộ Blur config (mode, strength, sensitivity, filters) disabled
+- [ ] **9B.3** GroupBox "Image Compression" hiện có → thêm Switch toggle ở đầu
+  - Khi tắt: slider + format ComboBox disabled
+
+#### 9C. Bindings
+
+- [ ] **9C.1** PreviewController: thêm Q_PROPERTY cho 3 toggles
+- [ ] **9C.2** Main.qml: bind toggles từ ToolPanel → PreviewController
+- [ ] **9C.3** BatchProcessor.start(): nhận 3 toggle params
+- [ ] **9C.4** CLI flags: `--no-rotate`, `--no-blur-faces`, `--compression 0`
+
+---
+
+## Nhiệm vụ 10: Producer-Consumer Batch Pipeline
+
+### Kiến trúc hiện tại (tuần tự)
+
+```
+for each image:
+  read → detect → blur → write   (4-5s)
+```
+
+### Kiến trúc mới (pipeline song song)
+
+```
+Stage 1 (Reader):    read image[i]     → buffer A
+Stage 2 (Detector):  detect face       → buffer B  (song song với Reader)
+Stage 3 (Writer):    blur + encode     → disk      (song song với Detector)
+```
+
+Mỗi stage chạy trên thread riêng, truyền data qua bounded buffer (queue maxSize=2).
+
+### Chi tiết
+
+#### 10A. Pipeline infrastructure
+
+- [ ] **10A.1** Tạo `PipelineStage` base class (abstract thread wrapper)
+- [ ] **10A.2** Tạo `BoundedBuffer<T>` template (thread-safe queue with max size)
+- [ ] **10A.3** Tạo `ReaderStage`: đọc ảnh từ disk → output buffer
+- [ ] **10A.4** Tạo `DetectorStage`: detect faces → output buffer
+- [ ] **10A.5** Tạo `WriterStage`: blur + encode → ghi disk
+
+#### 10B. Pipeline integration
+
+- [ ] **10B.1** Rewriter `BatchProcessor::start()` dùng pipeline thay vì worker thread pool
+- [ ] **10B.2** Tách logic detect ra hàm riêng `detectFaces(cv::Mat)` (không gọi processFile)
+- [ ] **10B.3** Tách logic blur ra hàm riêng `applyBlurToImage(cv::Mat, faces)`
+- [ ] **10B_4** Progress tracking: mỗi stage reported progress
+
+#### 10C. Memory management
+
+- [ ] **10C.1** Release cv::Mat sau khi mỗi stage xong
+- [ ] **10C.2** Giới hạn buffer size = 2 (không read ahead quá 2 ảnh)
+- [ ] **10C.3** Memory monitoring: log RAM usage mỗi 10 ảnh
+
+### Flow chi tiết
+
+```
+Thread Reader (reading):
+  while !done:
+    img = readImage(path[i])
+    buffer_A.push(img)
+    i++
+
+Thread Detector (detecting):
+  while !done:
+    img = buffer_A.pop()
+    faces = detectFaces(img)
+    buffer_B.push({img, faces})
+    progress++
+
+Thread Writer (writing):
+  while !done:
+    {img, faces} = buffer_B.pop()
+    if blurEnabled: applyBlur(img, faces)
+    if compressEnabled: compress(img)
+    writeImage(img, outputPath)
+    done++
+```
 
 ### Kết quả mong đợi
 
-- ScrollBar nằm bên phải panel, không đè lên content
-- Panel scroll mượt, content hiển thị đầy đủ
-- Giao diện sạch sẽ, hiện đại hơn
+- **Batch 100 ảnh**: ~1.5-2 phút (hiện tại 7-8 phút)
+- **Batch 500 ảnh**: ~8-10 phút (hiện tại 37-42 phút)
+- **RAM**: < 500MB (buffer 2 ảnh ~60MB)
+- **CPU**: 3 threads working concurrently, không spike 100%
 
 ---
 
-## Nhiệm vụ 7: Tối ưu Hiệu năng CPU/RAM
+## Thứ tự thực hiện
 
-### Vấn đề
-
-Mỗi lần chuyển ảnh trong Cover Flow:
-- YuNet model load lại (nếu chưa cached) → CPU spike
-- Face detection chạy full pipeline trên ảnh gốc (có thể 4000x3000px) → RAM consumption cao
-- Preview generation mất 1-3s →用户体验很差
-- CPU usage nhảy lên 80-100%, RAM có thể lên vài GB
-- Trên laptop core i5 Gen 12 + 24GB RAM vẫn khó khăn
-
-### Root cause analysis
-
-1. **YuNet model reload**: `detectWithYuNet()` dùng `thread_local cv::dnn::Net` nhưng mỗi thread có thể load lại model
-2. **Full-resolution detection**: Ảnh 4000x3000 chạy face detection trên pixel gốc → rất chậm
-3. **No image caching**: Mỗi preview request đọc lại ảnh từ disk
-4. **No face detection caching**: Cùng một ảnh, chuyển đi chuyển lại → detect lại mỗi lần
-5. **QML Image reload**: CoverFlow Image component reload khi source URL thay đổi
-6. **Memory leak potential**: Worker threads có thể không release OpenCV Mat đúng cách
-
-### Chi tiết thực hiện
-
-#### 7A. Ảnh thu nhỏ cho detection
-
-- [ ] **7A.1** Trước khi chạy YuNet, resize ảnh xuống max 1200px (longest side)
-- [ ] **7A.2** Face detection chạy trên ảnh resized → nhanh hơn 5-10x
-- [ ] **7A.3** Sau detection, map tọa độ boxes về ảnh gốc (scale factor)
-- [ ] **7A.4** Blur vẫn áp dụng trên ảnh gốc (không resize)
-- [ ] **7A.5** Verify: detection accuracy không giảm đáng kể
-
-#### 7B. Face detection caching
-
-- [ ] **7B.1** Cache kết quả face detection theo file path + detectionSensitivity
-- [ ] **7B.2** Nếu ảnh đã detect với cùng sensitivity → reuse cached boxes
-- [ ] **7B.3** Cache storage: QHash<QString, QVector<cv::Rect>> trong ImageProcessor hoặc singleton
-- [ ] **7B.4** Cache limit: giữ tối đa 50 kết quả gần nhất (LRU)
-
-#### 7C. Ảnh caching
-
-- [ ] **7C.1** Cache ảnh đã đọc (QImage/cv::Mat) theo file path
-- [ ] **7C.2** Nếu ảnh unchanged (file size + mtime) → reuse cached image
-- [ ] **7C.3** Cache limit: giữ tối đa 20 ảnh (LRU), mỗi ảnh tối đa 50MB
-
-#### 7D. YuNet model singleton
-
-- [ ] **7D.1** Đảm bảo YuNet model chỉ load 1 lần duy nhất (không thread_local)
-- [ ] **7D.2** Dùng static singleton pattern cho cv::dnn::Net
-- [ ] **7D.3** Giải phóng model khi application quit
-
-#### 7E. PreviewController tối ưu
-
-- [ ] **7F.1** `regenerateFast()`: skip face detection, chỉ downscale + save (đã có)
-- [ ] **7F.2** `regenerate()`: chỉ chạy full pipeline khi blurFaces == true
-- [ ] **7F.3** Nếu blurFaces == false → skip face detection entirely, chỉ downscale
-- [ ] **7F.4** Debounce: nếu request mới đến trong 200ms → cancel request cũ
-
-#### 7F. Memory management
-
-- [ ] **7G.1** Release cv::Mat sau khi process xong (scope-based)
-- [ ] **7G.2** Giới hạn worker threads: max 2 thay vì hardware_concurrency
-- [ ] **7G.3** QML Image cache limit:设置 imageCacheSize
-- [ ] **7G.4** Monitor memory usage trong batch processing
-
-#### 7G. Batch processing tối ưu
-
-- [ ] **7H.1** Giảm worker count xuống max 2 (thay vì 4-8)
-- [ ] **7H.2** Mỗi worker process 1 ảnh tại 1 thời điểm (không read ahead)
-- [ ] **7H.3** Giải phóng memory sau mỗi ảnh (không giữ reference)
-- [ ] **7H.4** Thêm delay 50ms giữa các ảnh để system喘息
-
-### Kết quả mong đợi
-
-- CPU usage khi chuyển ảnh: < 30% (thay vì 80-100%)
-- RAM usage: < 500MB (thay vì vài GB)
-- Preview load time: < 500ms (thay vì 1-3s)
-- Batch processing: ổn định, không crash
-
-### Test cases
-
-- [ ] Test chuyển ảnh liên tục 20 lần trong 10s → CPU < 50%, RAM < 800MB
-- [ ] Test batch 50 ảnh lớn (4000x3000) → hoàn thành trong 2 phút, RAM < 1GB
-- [ ] Test trên laptop yếu (4GB RAM) → không crash
+1. **Nhiệm vụ 8**: Detection 640px + Intel opt (15 phút)
+2. **Nhiệm vụ 9**: Feature toggles (30 phút)
+3. **Nhiệm vụ 10**: Producer-consumer pipeline (45 phút)
 
 ---
 
-## Thứ tự thực hiện ưu tiên
+## Lưu ý
 
-### Phase 1: Nhiệm vụ 6 (UI fix)
-6.1 → 6.2 → 6.3 → 6.4 → 6.5 → 6.6 → 6.7
-
-### Phase 2: Nhiệm vụ 7 (Performance)
-7A → 7B → 7C → 7D → 7E → 7F → 7G → 7H
-
-Ưu tiên: 7A (resize detection) > 7D (model singleton) > 7B (face cache) > 7C (image cache) > còn lại
-
----
-
-## Lưu ý khi implement
-
-- **Không thay đổi detection accuracy**: resize ảnh cho detection nhưng blur vẫn trên ảnh gốc
-- **Cache invalidation**: nếu file ảnh thay đổi → invalidate cache
-- **Backward compatible**: tất cả CLI options hiện có vẫn hoạt động
-- **Test trên ảnh thật**: dùng `data_test/example/` và `data_test/image_source/`
-- **Không optimize premature**: implement theo thứ tự ưu tiên, test mỗi bước
+- **Preview**: LUÔN hiển thị dựa trên features đang bật (không tắt preview)
+- **Pipeline**: phải giữ progress tracking + cancel support
+- **Backward compatible**: CLI options hiện có vẫn hoạt động
+- **Test**: dùng `data_test/image_source/` (2 ảnh lớn) + `data_test/example/` (2 ảnh test FP)
