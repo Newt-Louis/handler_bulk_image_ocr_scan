@@ -345,6 +345,12 @@
 			null
 		],
 		[
+			"/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/ImageCompressor.h",
+			"MU",
+			"UVLADIE3JM/moc_ImageCompressor.cpp",
+			null
+		],
+		[
 			"/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/ImageListModel.h",
 			"MU",
 			"UVLADIE3JM/moc_ImageListModel.cpp",
@@ -372,6 +378,24 @@
 			"/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/SshTunnelController.h",
 			"MU",
 			"UVLADIE3JM/moc_SshTunnelController.cpp",
+			null
+		],
+		[
+			"/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/platform/DesktopPlatform.h",
+			"MU",
+			"36A7VMLXJR/moc_DesktopPlatform.cpp",
+			null
+		],
+		[
+			"/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/platform/PlatformFactory.h",
+			"MU",
+			"36A7VMLXJR/moc_PlatformFactory.cpp",
+			null
+		],
+		[
+			"/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/platform/PlatformInterface.h",
+			"MU",
+			"36A7VMLXJR/moc_PlatformInterface.cpp",
 			null
 		]
 	],
@@ -479,6 +503,11 @@
 			null
 		],
 		[
+			"/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/ImageCompressor.cpp",
+			"MU",
+			null
+		],
+		[
 			"/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/ImageListModel.cpp",
 			"MU",
 			null
@@ -505,6 +534,16 @@
 		],
 		[
 			"/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/main.cpp",
+			"MU",
+			null
+		],
+		[
+			"/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/platform/DesktopPlatform.cpp",
+			"MU",
+			null
+		],
+		[
+			"/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/platform/PlatformFactory.cpp",
 			"MU",
 			null
 		]

@@ -50,13 +50,15 @@ QStringList collectImages(const QString &folderPath)
     return images;
 }
 
-QString outputPathFor(const QString &sourcePath, const QString &outputFolder, const QString &renamePattern, int index)
+QString outputPathFor(const QString &sourcePath, const QString &outputFolder, const QString &renamePattern, int index, const ProcessingOptions &options)
 {
     const QFileInfo source(sourcePath);
     const QString baseName = renamePattern.isEmpty() ? source.completeBaseName() : renamePattern;
     const QString number = QString::number(index + 1).rightJustified(4, QLatin1Char('0'));
-    const QString extension = source.suffix().isEmpty() ? QStringLiteral("jpg") : source.suffix();
-    return QDir(outputFolder).filePath(QStringLiteral("%1_%2.%3").arg(baseName, number, extension));
+    const QString ext = (options.compressionLevel > 0 && options.outputFormat != QLatin1String("jpg"))
+        ? options.outputFormat
+        : (source.suffix().isEmpty() ? QStringLiteral("jpg") : source.suffix());
+    return QDir(outputFolder).filePath(QStringLiteral("%1_%2.%3").arg(baseName, number, ext));
 }
 
 int runHeadless(QCoreApplication &app, QCommandLineParser &parser)
@@ -82,6 +84,12 @@ int runHeadless(QCoreApplication &app, QCommandLineParser &parser)
         !parser.isSet(QStringLiteral("no-blur-faces")),
         parser.value(QStringLiteral("blur-mode")) == QLatin1String("pixelate") ? QStringLiteral("pixelate") : QStringLiteral("gaussian"),
         qBound(1, parser.value(QStringLiteral("strength")).toInt(), 100),
+        qBound(0.0f, parser.value(QStringLiteral("detection-sensitivity")).toFloat() / 100.0f, 1.0f),
+        !parser.isSet(QStringLiteral("no-size-filter")),
+        !parser.isSet(QStringLiteral("no-skin-filter")),
+        parser.isSet(QStringLiteral("cascade-cross-check")),
+        qBound(0, parser.value(QStringLiteral("compression")).toInt(), 100),
+        parser.value(QStringLiteral("output-format")),
         QStringLiteral("yunet")
     };
 
@@ -89,7 +97,7 @@ int runHeadless(QCoreApplication &app, QCommandLineParser &parser)
     ImageProcessor processor(options);
     const QString renamePattern = parser.value(QStringLiteral("rename-pattern"));
     for (int i = 0; i < images.size(); ++i) {
-        const QString targetPath = outputPathFor(images.at(i), outputFolder, renamePattern, i);
+        const QString targetPath = outputPathFor(images.at(i), outputFolder, renamePattern, i, options);
         const ProcessingResult result = processor.processFile(images.at(i), targetPath);
         if (!result.success) {
             qCritical().noquote() << result.error;
@@ -127,6 +135,12 @@ int main(int argc, char *argv[])
     const QCommandLineOption noBlurFacesOption(QStringLiteral("no-blur-faces"), QStringLiteral("Disable face blur."));
     const QCommandLineOption blurModeOption(QStringLiteral("blur-mode"), QStringLiteral("Blur mode: gaussian or pixelate."), QStringLiteral("mode"), QStringLiteral("gaussian"));
     const QCommandLineOption strengthOption(QStringLiteral("strength"), QStringLiteral("Blur strength from 1 to 100."), QStringLiteral("value"), QStringLiteral("100"));
+    const QCommandLineOption detectionSensitivityOption(QStringLiteral("detection-sensitivity"), QStringLiteral("Detection sensitivity from 0 to 100."), QStringLiteral("value"), QStringLiteral("35"));
+    const QCommandLineOption noSizeFilterOption(QStringLiteral("no-size-filter"), QStringLiteral("Disable box size filter."));
+    const QCommandLineOption noSkinFilterOption(QStringLiteral("no-skin-filter"), QStringLiteral("Disable skin-color filter."));
+    const QCommandLineOption cascadeCrossCheckOption(QStringLiteral("cascade-cross-check"), QStringLiteral("Enable cascade cross-check filter."));
+    const QCommandLineOption compressionOption(QStringLiteral("compression"), QStringLiteral("Compression level from 0 to 100."), QStringLiteral("value"), QStringLiteral("0"));
+    const QCommandLineOption outputFormatOption(QStringLiteral("output-format"), QStringLiteral("Output format: jpg, png, webp."), QStringLiteral("format"), QStringLiteral("jpg"));
     parser.addOption(modeOption);
     parser.addOption(inputOption);
     parser.addOption(outputOption);
@@ -134,6 +148,12 @@ int main(int argc, char *argv[])
     parser.addOption(noBlurFacesOption);
     parser.addOption(blurModeOption);
     parser.addOption(strengthOption);
+    parser.addOption(detectionSensitivityOption);
+    parser.addOption(noSizeFilterOption);
+    parser.addOption(noSkinFilterOption);
+    parser.addOption(cascadeCrossCheckOption);
+    parser.addOption(compressionOption);
+    parser.addOption(outputFormatOption);
 
     bool requestedHeadless = false;
     bool requestedConsoleOnly = false;

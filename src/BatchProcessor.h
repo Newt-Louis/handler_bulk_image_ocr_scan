@@ -38,7 +38,13 @@ public:
                            const QString &renamePattern,
                            bool blurFaces,
                            const QString &blurMode,
-                           int strength);
+                           int strength,
+                           float detectionSensitivity,
+                           bool sizeFilterEnabled,
+                           bool skinColorFilterEnabled,
+                           bool cascadeCrossCheckEnabled,
+                           int compressionLevel,
+                           const QString &outputFormat);
     Q_INVOKABLE void pause();
     Q_INVOKABLE void resume();
     Q_INVOKABLE void stop();

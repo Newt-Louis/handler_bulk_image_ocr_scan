@@ -1,8 +1,10 @@
 #include "ImageProcessor.h"
 
+#include "ImageCompressor.h"
 #include "ImageOrientation.h"
 
 #include <QCoreApplication>
+#include <QCryptographicHash>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -163,7 +165,73 @@ void appendMergedFaces(std::vector<cv::Rect> &faces, const std::vector<cv::Rect>
     }
 }
 
-std::vector<cv::Rect> detectWithYuNet(const cv::Mat &image, const QString &modelPath)
+std::vector<cv::Rect> filterByBoxSize(const std::vector<cv::Rect> &faces, const cv::Size &imageSize)
+{
+    const double imageArea = static_cast<double>(imageSize.width) * imageSize.height;
+    std::vector<cv::Rect> result;
+    for (const cv::Rect &face : faces) {
+        const double faceArea = static_cast<double>(face.area());
+        const double areaRatio = faceArea / imageArea;
+        if (areaRatio < 0.001 || areaRatio > 0.60) {
+            continue;
+        }
+        const double aspectRatio = static_cast<double>(face.width) / std::max(1, face.height);
+        if (aspectRatio < 0.3 || aspectRatio > 3.0) {
+            continue;
+        }
+        result.push_back(face);
+    }
+    return result;
+}
+
+double estimateSkinColorRatio(const cv::Mat &image, const cv::Rect &roi)
+{
+    cv::Mat roiMat = image(roi);
+    cv::Mat hsv;
+    cv::cvtColor(roiMat, hsv, cv::COLOR_BGR2HSV);
+
+    cv::Mat mask1, mask2, skinMask;
+    cv::inRange(hsv, cv::Scalar(0, 40, 80), cv::Scalar(50, 170, 255), mask1);
+    cv::inRange(hsv, cv::Scalar(170, 40, 80), cv::Scalar(180, 170, 255), mask2);
+    cv::bitwise_or(mask1, mask2, skinMask);
+
+    const int totalPixels = skinMask.rows * skinMask.cols;
+    if (totalPixels <= 0) {
+        return 0.0;
+    }
+    const int skinPixels = cv::countNonZero(skinMask);
+    return static_cast<double>(skinPixels) / totalPixels;
+}
+
+std::vector<cv::Rect> filterBySkinColor(const cv::Mat &image, const std::vector<cv::Rect> &faces, float detectionSensitivity)
+{
+    const float highConfidenceThreshold = 0.60f;
+    std::vector<cv::Rect> result;
+    for (const cv::Rect &face : faces) {
+        if (detectionSensitivity >= highConfidenceThreshold) {
+            result.push_back(face);
+            continue;
+        }
+        cv::Rect expanded = face;
+        const int padX = static_cast<int>(expanded.width * 0.3);
+        const int padY = static_cast<int>(expanded.height * 0.3);
+        expanded.x = std::max(0, expanded.x - padX);
+        expanded.y = std::max(0, expanded.y - padY);
+        expanded.width = std::min(image.cols - expanded.x, expanded.width + padX * 2);
+        expanded.height = std::min(image.rows - expanded.y, expanded.height + padY * 2);
+        expanded &= cv::Rect(0, 0, image.cols, image.rows);
+        if (expanded.area() <= 0) {
+            continue;
+        }
+        const double skinRatio = estimateSkinColorRatio(image, expanded);
+        if (skinRatio >= 0.15) {
+            result.push_back(face);
+        }
+    }
+    return result;
+}
+
+std::vector<cv::Rect> detectWithYuNet(const cv::Mat &image, const QString &modelPath, float scoreThreshold)
 {
     cv::Mat detectImage = image;
     const int maxDetectSide = 2400;
@@ -204,7 +272,6 @@ std::vector<cv::Rect> detectWithYuNet(const cv::Mat &image, const QString &model
     std::vector<cv::Mat> outputBlobs;
     net.forward(outputBlobs, outputNames);
 
-    const float scoreThreshold = 0.35f;
     const float nmsThreshold = 0.35f;
     const int topK = 5000;
     std::vector<cv::Rect> candidateBoxes;
@@ -357,11 +424,13 @@ ProcessingResult ImageProcessor::processFile(const QString &sourcePath, const QS
     QString detectorUsed;
     if (m_options.blurFaces) {
         std::vector<cv::Rect> faces;
+        std::vector<cv::Rect> yuNetFaces;
 
         const QString yuNetModelPath = findYuNetModelPath();
         if (!yuNetModelPath.isEmpty()) {
             try {
-                faces = detectWithYuNet(image, yuNetModelPath);
+                faces = detectWithYuNet(image, yuNetModelPath, m_options.detectionSensitivity);
+                yuNetFaces = faces;
                 detectorUsed = QStringLiteral("YuNet");
             } catch (const cv::Exception &error) {
                 return {
@@ -413,6 +482,29 @@ ProcessingResult ImageProcessor::processFile(const QString &sourcePath, const QS
             }
         }
 
+        if (m_options.sizeFilterEnabled) {
+            faces = filterByBoxSize(faces, image.size());
+        }
+        if (m_options.cascadeCrossCheckEnabled && !yuNetFaces.empty()) {
+            std::vector<cv::Rect> validated;
+            for (const cv::Rect &face : faces) {
+                bool hasYuNetMatch = false;
+                for (const cv::Rect &yn : yuNetFaces) {
+                    if (intersectionOverUnion(face, yn) > 0.15) {
+                        hasYuNetMatch = true;
+                        break;
+                    }
+                }
+                if (hasYuNetMatch) {
+                    validated.push_back(face);
+                }
+            }
+            faces = validated;
+        }
+        if (m_options.skinColorFilterEnabled) {
+            faces = filterBySkinColor(image, faces, m_options.detectionSensitivity);
+        }
+
         for (const cv::Rect &face : faces) {
             applyBlur(image, face, m_options.blurMode, m_options.strength);
             ++facesBlurred;
@@ -420,7 +512,20 @@ ProcessingResult ImageProcessor::processFile(const QString &sourcePath, const QS
     }
 
     QDir().mkpath(QFileInfo(targetPath).absolutePath());
-    const bool saved = cv::imwrite(targetPath.toStdString(), image);
+    bool saved = false;
+    if (m_options.compressionLevel > 0) {
+        const QString tempDir = QDir::tempPath();
+        const QString tempName = QStringLiteral("autophoto_compress_%1.jpg")
+            .arg(QCryptographicHash::hash(targetPath.toUtf8(), QCryptographicHash::Md5).toHex().left(12));
+        const QString tempPath = QDir(tempDir).filePath(tempName);
+        saved = cv::imwrite(tempPath.toStdString(), image);
+        if (saved) {
+            saved = ImageCompressor::compress(tempPath, targetPath, m_options.compressionLevel, m_options.outputFormat);
+            QFile::remove(tempPath);
+        }
+    } else {
+        saved = cv::imwrite(targetPath.toStdString(), image);
+    }
     if (!saved) {
         return {false, facesBlurred, detectorUsed, QStringLiteral("Could not write image: %1").arg(targetPath)};
     }
@@ -428,11 +533,24 @@ ProcessingResult ImageProcessor::processFile(const QString &sourcePath, const QS
 #else
     QDir().mkpath(QFileInfo(targetPath).absolutePath());
     QFile::remove(targetPath);
-    const QImage image = readImageWithResolvedOrientation(sourcePath);
+    QImage image = readImageWithResolvedOrientation(sourcePath);
     if (image.isNull()) {
         return {false, 0, {}, QStringLiteral("Could not read image: %1").arg(sourcePath)};
     }
-    const bool saved = image.save(targetPath, nullptr, 92);
+    bool saved = false;
+    if (m_options.compressionLevel > 0) {
+        const QString tempDir = QDir::tempPath();
+        const QString tempName = QStringLiteral("autophoto_compress_%1.jpg")
+            .arg(QCryptographicHash::hash(targetPath.toUtf8(), QCryptographicHash::Md5).toHex().left(12));
+        const QString tempPath = QDir(tempDir).filePath(tempName);
+        saved = image.save(tempPath, "JPG", 95);
+        if (saved) {
+            saved = ImageCompressor::compress(tempPath, targetPath, m_options.compressionLevel, m_options.outputFormat);
+            QFile::remove(tempPath);
+        }
+    } else {
+        saved = image.save(targetPath, nullptr, 92);
+    }
     if (!saved) {
         return {false, 0, {}, QStringLiteral("Could not write image: %1").arg(targetPath)};
     }

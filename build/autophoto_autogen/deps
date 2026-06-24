@@ -7,6 +7,8 @@ autophoto_autogen/timestamp: \
 	/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/packaging/windows/AutoPhoto.iss.in \
 	/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/BatchProcessor.cpp \
 	/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/BatchProcessor.h \
+	/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/ImageCompressor.cpp \
+	/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/ImageCompressor.h \
 	/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/ImageListModel.cpp \
 	/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/ImageListModel.h \
 	/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/ImageOrientation.cpp \
@@ -18,6 +20,11 @@ autophoto_autogen/timestamp: \
 	/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/SshTunnelController.cpp \
 	/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/SshTunnelController.h \
 	/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/main.cpp \
+	/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/platform/DesktopPlatform.cpp \
+	/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/platform/DesktopPlatform.h \
+	/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/platform/PlatformFactory.cpp \
+	/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/platform/PlatformFactory.h \
+	/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/platform/PlatformInterface.h \
 	/usr/include/alloca.h \
 	/usr/include/asm-generic/errno-base.h \
 	/usr/include/asm-generic/errno.h \

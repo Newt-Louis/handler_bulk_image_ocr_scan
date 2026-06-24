@@ -270,7 +270,13 @@ ApplicationWindow {
                                             toolPanel.renamePattern,
                                             previewController.blurFaces,
                                             previewController.blurMode,
-                                            previewController.strength
+                                            previewController.strength,
+                                            previewController.detectionSensitivity,
+                                            previewController.sizeFilterEnabled,
+                                            previewController.skinColorFilterEnabled,
+                                            previewController.cascadeCrossCheckEnabled,
+                                            previewController.compressionLevel,
+                                            previewController.outputFormat
                                         )
                                     }
                                 }
@@ -311,6 +317,12 @@ ApplicationWindow {
                 blurFaces: previewController.blurFaces
                 blurMode: previewController.blurMode
                 strength: previewController.strength
+                detectionSensitivity: previewController.detectionSensitivity
+                sizeFilterEnabled: previewController.sizeFilterEnabled
+                skinColorFilterEnabled: previewController.skinColorFilterEnabled
+                cascadeCrossCheckEnabled: previewController.cascadeCrossCheckEnabled
+                compressionLevel: previewController.compressionLevel
+                outputFormat: previewController.outputFormat
                 running: batchProcessor.running
                 paused: batchProcessor.paused
                 progress: batchProcessor.progress
@@ -324,6 +336,12 @@ ApplicationWindow {
                 onBlurFacesChanged: previewController.blurFaces = blurFaces
                 onBlurModeChanged: previewController.blurMode = blurMode
                 onStrengthChanged: previewController.strength = strength
+                onDetectionSensitivityChanged: previewController.detectionSensitivity = detectionSensitivity / 100.0
+                onSizeFilterEnabledChanged: previewController.sizeFilterEnabled = sizeFilterEnabled
+                onSkinColorFilterEnabledChanged: previewController.skinColorFilterEnabled = skinColorFilterEnabled
+                onCascadeCrossCheckEnabledChanged: previewController.cascadeCrossCheckEnabled = cascadeCrossCheckEnabled
+                onCompressionLevelChanged: previewController.compressionLevel = compressionLevel
+                onOutputFormatChanged: previewController.outputFormat = outputFormat
                 onPauseBatch: batchProcessor.pause()
                 onResumeBatch: batchProcessor.resume()
                 onStopBatch: batchProcessor.stop()

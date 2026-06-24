@@ -14,6 +14,12 @@ Rectangle {
     property bool blurFaces: true
     property string blurMode: "gaussian"
     property int strength: 100
+    property int detectionSensitivity: 35
+    property bool sizeFilterEnabled: true
+    property bool skinColorFilterEnabled: true
+    property bool cascadeCrossCheckEnabled: false
+    property int compressionLevel: 0
+    property string outputFormat: "jpg"
     property string renamePattern: "autophoto"
     property bool running: false
     property bool paused: false
@@ -174,6 +180,121 @@ Rectangle {
                         value: root.strength
                         enabled: !root.running && root.blurFaces
                         onMoved: root.strength = Math.round(value)
+                    }
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 8
+
+                        Label {
+                            Layout.fillWidth: true
+                            text: "Detection sensitivity"
+                            color: "#374151"
+                        }
+
+                        Label {
+                            text: root.detectionSensitivity + "%"
+                            color: "#0f766e"
+                            font.weight: Font.DemiBold
+                        }
+                    }
+
+                    Slider {
+                        Layout.fillWidth: true
+                        from: 0
+                        to: 100
+                        stepSize: 1
+                        value: root.detectionSensitivity
+                        enabled: !root.running && root.blurFaces
+                        onMoved: root.detectionSensitivity = Math.round(value)
+                    }
+
+                    Label {
+                        Layout.fillWidth: true
+                        text: "False positive filters"
+                        color: "#374151"
+                        font.weight: Font.DemiBold
+                        font.pixelSize: 13
+                        topPadding: 4
+                    }
+
+                    Switch {
+                        text: "Size filter"
+                        checked: root.sizeFilterEnabled
+                        enabled: !root.running && root.blurFaces
+                        onToggled: root.sizeFilterEnabled = checked
+                    }
+
+                    Switch {
+                        text: "Skin-color filter"
+                        checked: root.skinColorFilterEnabled
+                        enabled: !root.running && root.blurFaces
+                        onToggled: root.skinColorFilterEnabled = checked
+                    }
+
+                    Switch {
+                        text: "Cascade cross-check"
+                        checked: root.cascadeCrossCheckEnabled
+                        enabled: !root.running && root.blurFaces
+                        onToggled: root.cascadeCrossCheckEnabled = checked
+                    }
+                }
+            }
+
+            GroupBox {
+                Layout.fillWidth: true
+                title: "Image Compression"
+
+                ColumnLayout {
+                    anchors.fill: parent
+                    spacing: 10
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 8
+
+                        Label {
+                            Layout.fillWidth: true
+                            text: "Compression"
+                            color: "#374151"
+                        }
+
+                        Label {
+                            text: root.compressionLevel + "%"
+                            color: "#0f766e"
+                            font.weight: Font.DemiBold
+                        }
+                    }
+
+                    Slider {
+                        Layout.fillWidth: true
+                        from: 0
+                        to: 100
+                        stepSize: 1
+                        value: root.compressionLevel
+                        enabled: !root.running
+                        onMoved: root.compressionLevel = Math.round(value)
+                    }
+
+                    Label {
+                        Layout.fillWidth: true
+                        text: {
+                            if (root.compressionLevel <= 0) return "No compression"
+                            if (root.compressionLevel <= 25) return "~30% smaller"
+                            if (root.compressionLevel <= 50) return "~55% smaller"
+                            if (root.compressionLevel <= 75) return "~75% smaller"
+                            return "~90% smaller"
+                        }
+                        color: "#6b7280"
+                        font.pixelSize: 12
+                    }
+
+                    ComboBox {
+                        Layout.fillWidth: true
+                        id: formatCombo
+                        model: ["JPG", "PNG", "WEBP"]
+                        enabled: !root.running
+                        onCurrentIndexChanged: root.outputFormat = model[currentIndex].toLowerCase()
                     }
                 }
             }

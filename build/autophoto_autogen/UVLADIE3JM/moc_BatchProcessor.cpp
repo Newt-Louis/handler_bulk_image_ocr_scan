@@ -26,7 +26,7 @@ QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 namespace {
 struct qt_meta_stringdata_BatchProcessor_t {
-    uint offsetsAndSizes[60];
+    uint offsetsAndSizes[72];
     char stringdata0[15];
     char stringdata1[15];
     char stringdata2[1];
@@ -46,17 +46,23 @@ struct qt_meta_stringdata_BatchProcessor_t {
     char stringdata16[10];
     char stringdata17[9];
     char stringdata18[9];
-    char stringdata19[6];
-    char stringdata20[7];
-    char stringdata21[5];
-    char stringdata22[8];
-    char stringdata23[7];
-    char stringdata24[9];
-    char stringdata25[12];
-    char stringdata26[16];
-    char stringdata27[13];
-    char stringdata28[12];
-    char stringdata29[11];
+    char stringdata19[21];
+    char stringdata20[18];
+    char stringdata21[23];
+    char stringdata22[25];
+    char stringdata23[17];
+    char stringdata24[13];
+    char stringdata25[6];
+    char stringdata26[7];
+    char stringdata27[5];
+    char stringdata28[8];
+    char stringdata29[7];
+    char stringdata30[9];
+    char stringdata31[12];
+    char stringdata32[16];
+    char stringdata33[13];
+    char stringdata34[12];
+    char stringdata35[11];
 };
 #define QT_MOC_LITERAL(ofs, len) \
     uint(sizeof(qt_meta_stringdata_BatchProcessor_t::offsetsAndSizes) + ofs), len 
@@ -81,17 +87,23 @@ Q_CONSTINIT static const qt_meta_stringdata_BatchProcessor_t qt_meta_stringdata_
         QT_MOC_LITERAL(190, 9),  // "blurFaces"
         QT_MOC_LITERAL(200, 8),  // "blurMode"
         QT_MOC_LITERAL(209, 8),  // "strength"
-        QT_MOC_LITERAL(218, 5),  // "pause"
-        QT_MOC_LITERAL(224, 6),  // "resume"
-        QT_MOC_LITERAL(231, 4),  // "stop"
-        QT_MOC_LITERAL(236, 7),  // "running"
-        QT_MOC_LITERAL(244, 6),  // "paused"
-        QT_MOC_LITERAL(251, 8),  // "progress"
-        QT_MOC_LITERAL(260, 11),  // "totalImages"
-        QT_MOC_LITERAL(272, 15),  // "processedImages"
-        QT_MOC_LITERAL(288, 12),  // "failedImages"
-        QT_MOC_LITERAL(301, 11),  // "workerCount"
-        QT_MOC_LITERAL(313, 10)   // "statusText"
+        QT_MOC_LITERAL(218, 20),  // "detectionSensitivity"
+        QT_MOC_LITERAL(239, 17),  // "sizeFilterEnabled"
+        QT_MOC_LITERAL(257, 22),  // "skinColorFilterEnabled"
+        QT_MOC_LITERAL(280, 24),  // "cascadeCrossCheckEnabled"
+        QT_MOC_LITERAL(305, 16),  // "compressionLevel"
+        QT_MOC_LITERAL(322, 12),  // "outputFormat"
+        QT_MOC_LITERAL(335, 5),  // "pause"
+        QT_MOC_LITERAL(341, 6),  // "resume"
+        QT_MOC_LITERAL(348, 4),  // "stop"
+        QT_MOC_LITERAL(353, 7),  // "running"
+        QT_MOC_LITERAL(361, 6),  // "paused"
+        QT_MOC_LITERAL(368, 8),  // "progress"
+        QT_MOC_LITERAL(377, 11),  // "totalImages"
+        QT_MOC_LITERAL(389, 15),  // "processedImages"
+        QT_MOC_LITERAL(405, 12),  // "failedImages"
+        QT_MOC_LITERAL(418, 11),  // "workerCount"
+        QT_MOC_LITERAL(430, 10)   // "statusText"
     },
     "BatchProcessor",
     "runningChanged",
@@ -112,6 +124,12 @@ Q_CONSTINIT static const qt_meta_stringdata_BatchProcessor_t qt_meta_stringdata_
     "blurFaces",
     "blurMode",
     "strength",
+    "detectionSensitivity",
+    "sizeFilterEnabled",
+    "skinColorFilterEnabled",
+    "cascadeCrossCheckEnabled",
+    "compressionLevel",
+    "outputFormat",
     "pause",
     "resume",
     "stop",
@@ -134,7 +152,7 @@ Q_CONSTINIT static const uint qt_meta_data_BatchProcessor[] = {
        0,       // classname
        0,    0, // classinfo
       12,   14, // methods
-       8,  114, // properties
+       8,  126, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
@@ -151,10 +169,10 @@ Q_CONSTINIT static const uint qt_meta_data_BatchProcessor[] = {
       10,    1,   95,    2, 0x06,   17 /* Public */,
 
  // methods: name, argc, parameters, tag, flags, initial metatype offsets
-      12,    6,   98,    2, 0x02,   19 /* Public */,
-      19,    0,  111,    2, 0x02,   26 /* Public */,
-      20,    0,  112,    2, 0x02,   27 /* Public */,
-      21,    0,  113,    2, 0x02,   28 /* Public */,
+      12,   12,   98,    2, 0x02,   19 /* Public */,
+      25,    0,  123,    2, 0x02,   32 /* Public */,
+      26,    0,  124,    2, 0x02,   33 /* Public */,
+      27,    0,  125,    2, 0x02,   34 /* Public */,
 
  // signals: parameters
     QMetaType::Void,
@@ -167,20 +185,20 @@ Q_CONSTINIT static const uint qt_meta_data_BatchProcessor[] = {
     QMetaType::Void, QMetaType::QString,   11,
 
  // methods: parameters
-    QMetaType::Void, QMetaType::QStringList, QMetaType::QString, QMetaType::QString, QMetaType::Bool, QMetaType::QString, QMetaType::Int,   13,   14,   15,   16,   17,   18,
+    QMetaType::Void, QMetaType::QStringList, QMetaType::QString, QMetaType::QString, QMetaType::Bool, QMetaType::QString, QMetaType::Int, QMetaType::Float, QMetaType::Bool, QMetaType::Bool, QMetaType::Bool, QMetaType::Int, QMetaType::QString,   13,   14,   15,   16,   17,   18,   19,   20,   21,   22,   23,   24,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
 
  // properties: name, type, flags
-      22, QMetaType::Bool, 0x00015001, uint(0), 0,
-      23, QMetaType::Bool, 0x00015001, uint(1), 0,
-      24, QMetaType::Int, 0x00015001, uint(2), 0,
-      25, QMetaType::Int, 0x00015001, uint(3), 0,
-      26, QMetaType::Int, 0x00015001, uint(3), 0,
-      27, QMetaType::Int, 0x00015001, uint(3), 0,
-      28, QMetaType::Int, 0x00015001, uint(4), 0,
-      29, QMetaType::QString, 0x00015001, uint(5), 0,
+      28, QMetaType::Bool, 0x00015001, uint(0), 0,
+      29, QMetaType::Bool, 0x00015001, uint(1), 0,
+      30, QMetaType::Int, 0x00015001, uint(2), 0,
+      31, QMetaType::Int, 0x00015001, uint(3), 0,
+      32, QMetaType::Int, 0x00015001, uint(3), 0,
+      33, QMetaType::Int, 0x00015001, uint(3), 0,
+      34, QMetaType::Int, 0x00015001, uint(4), 0,
+      35, QMetaType::QString, 0x00015001, uint(5), 0,
 
        0        // eod
 };
@@ -236,6 +254,12 @@ Q_CONSTINIT const QMetaObject BatchProcessor::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<bool, std::false_type>,
         QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
         QtPrivate::TypeAndForceComplete<int, std::false_type>,
+        QtPrivate::TypeAndForceComplete<float, std::false_type>,
+        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
+        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
+        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
+        QtPrivate::TypeAndForceComplete<int, std::false_type>,
+        QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
         // method 'pause'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'resume'
@@ -260,7 +284,7 @@ void BatchProcessor::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _
         case 5: _t->statusTextChanged(); break;
         case 6: _t->finished((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
         case 7: _t->failed((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
-        case 8: _t->start((*reinterpret_cast< std::add_pointer_t<QStringList>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[3])),(*reinterpret_cast< std::add_pointer_t<bool>>(_a[4])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[5])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[6]))); break;
+        case 8: _t->start((*reinterpret_cast< std::add_pointer_t<QStringList>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[3])),(*reinterpret_cast< std::add_pointer_t<bool>>(_a[4])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[5])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[6])),(*reinterpret_cast< std::add_pointer_t<float>>(_a[7])),(*reinterpret_cast< std::add_pointer_t<bool>>(_a[8])),(*reinterpret_cast< std::add_pointer_t<bool>>(_a[9])),(*reinterpret_cast< std::add_pointer_t<bool>>(_a[10])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[11])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[12]))); break;
         case 9: _t->pause(); break;
         case 10: _t->resume(); break;
         case 11: _t->stop(); break;

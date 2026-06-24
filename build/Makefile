@@ -566,6 +566,30 @@ src/BatchProcessor.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autophoto.dir/build.make CMakeFiles/autophoto.dir/src/BatchProcessor.cpp.s
 .PHONY : src/BatchProcessor.cpp.s
 
+src/ImageCompressor.o: src/ImageCompressor.cpp.o
+.PHONY : src/ImageCompressor.o
+
+# target to build an object file
+src/ImageCompressor.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autophoto.dir/build.make CMakeFiles/autophoto.dir/src/ImageCompressor.cpp.o
+.PHONY : src/ImageCompressor.cpp.o
+
+src/ImageCompressor.i: src/ImageCompressor.cpp.i
+.PHONY : src/ImageCompressor.i
+
+# target to preprocess a source file
+src/ImageCompressor.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autophoto.dir/build.make CMakeFiles/autophoto.dir/src/ImageCompressor.cpp.i
+.PHONY : src/ImageCompressor.cpp.i
+
+src/ImageCompressor.s: src/ImageCompressor.cpp.s
+.PHONY : src/ImageCompressor.s
+
+# target to generate assembly for a file
+src/ImageCompressor.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autophoto.dir/build.make CMakeFiles/autophoto.dir/src/ImageCompressor.cpp.s
+.PHONY : src/ImageCompressor.cpp.s
+
 src/ImageListModel.o: src/ImageListModel.cpp.o
 .PHONY : src/ImageListModel.o
 
@@ -710,6 +734,54 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/autophoto.dir/build.make CMakeFiles/autophoto.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/platform/DesktopPlatform.o: src/platform/DesktopPlatform.cpp.o
+.PHONY : src/platform/DesktopPlatform.o
+
+# target to build an object file
+src/platform/DesktopPlatform.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autophoto.dir/build.make CMakeFiles/autophoto.dir/src/platform/DesktopPlatform.cpp.o
+.PHONY : src/platform/DesktopPlatform.cpp.o
+
+src/platform/DesktopPlatform.i: src/platform/DesktopPlatform.cpp.i
+.PHONY : src/platform/DesktopPlatform.i
+
+# target to preprocess a source file
+src/platform/DesktopPlatform.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autophoto.dir/build.make CMakeFiles/autophoto.dir/src/platform/DesktopPlatform.cpp.i
+.PHONY : src/platform/DesktopPlatform.cpp.i
+
+src/platform/DesktopPlatform.s: src/platform/DesktopPlatform.cpp.s
+.PHONY : src/platform/DesktopPlatform.s
+
+# target to generate assembly for a file
+src/platform/DesktopPlatform.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autophoto.dir/build.make CMakeFiles/autophoto.dir/src/platform/DesktopPlatform.cpp.s
+.PHONY : src/platform/DesktopPlatform.cpp.s
+
+src/platform/PlatformFactory.o: src/platform/PlatformFactory.cpp.o
+.PHONY : src/platform/PlatformFactory.o
+
+# target to build an object file
+src/platform/PlatformFactory.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autophoto.dir/build.make CMakeFiles/autophoto.dir/src/platform/PlatformFactory.cpp.o
+.PHONY : src/platform/PlatformFactory.cpp.o
+
+src/platform/PlatformFactory.i: src/platform/PlatformFactory.cpp.i
+.PHONY : src/platform/PlatformFactory.i
+
+# target to preprocess a source file
+src/platform/PlatformFactory.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autophoto.dir/build.make CMakeFiles/autophoto.dir/src/platform/PlatformFactory.cpp.i
+.PHONY : src/platform/PlatformFactory.cpp.i
+
+src/platform/PlatformFactory.s: src/platform/PlatformFactory.cpp.s
+.PHONY : src/platform/PlatformFactory.s
+
+# target to generate assembly for a file
+src/platform/PlatformFactory.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/autophoto.dir/build.make CMakeFiles/autophoto.dir/src/platform/PlatformFactory.cpp.s
+.PHONY : src/platform/PlatformFactory.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -764,6 +836,9 @@ help:
 	@echo "... src/BatchProcessor.o"
 	@echo "... src/BatchProcessor.i"
 	@echo "... src/BatchProcessor.s"
+	@echo "... src/ImageCompressor.o"
+	@echo "... src/ImageCompressor.i"
+	@echo "... src/ImageCompressor.s"
 	@echo "... src/ImageListModel.o"
 	@echo "... src/ImageListModel.i"
 	@echo "... src/ImageListModel.s"
@@ -782,6 +857,12 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/platform/DesktopPlatform.o"
+	@echo "... src/platform/DesktopPlatform.i"
+	@echo "... src/platform/DesktopPlatform.s"
+	@echo "... src/platform/PlatformFactory.o"
+	@echo "... src/platform/PlatformFactory.i"
+	@echo "... src/platform/PlatformFactory.s"
 .PHONY : help
 
 

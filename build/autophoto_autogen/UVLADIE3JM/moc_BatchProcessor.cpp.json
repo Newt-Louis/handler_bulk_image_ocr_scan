@@ -29,6 +29,30 @@
                         {
                             "name": "strength",
                             "type": "int"
+                        },
+                        {
+                            "name": "detectionSensitivity",
+                            "type": "float"
+                        },
+                        {
+                            "name": "sizeFilterEnabled",
+                            "type": "bool"
+                        },
+                        {
+                            "name": "skinColorFilterEnabled",
+                            "type": "bool"
+                        },
+                        {
+                            "name": "cascadeCrossCheckEnabled",
+                            "type": "bool"
+                        },
+                        {
+                            "name": "compressionLevel",
+                            "type": "int"
+                        },
+                        {
+                            "name": "outputFormat",
+                            "type": "QString"
                         }
                     ],
                     "name": "start",

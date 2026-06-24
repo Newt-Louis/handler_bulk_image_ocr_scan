@@ -254,10 +254,52 @@ CMakeFiles/autophoto.dir/src/SshTunnelController.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/autophoto.dir/src/SshTunnelController.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/SshTunnelController.cpp -o CMakeFiles/autophoto.dir/src/SshTunnelController.cpp.s
 
+CMakeFiles/autophoto.dir/src/ImageCompressor.cpp.o: CMakeFiles/autophoto.dir/flags.make
+CMakeFiles/autophoto.dir/src/ImageCompressor.cpp.o: /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/ImageCompressor.cpp
+CMakeFiles/autophoto.dir/src/ImageCompressor.cpp.o: CMakeFiles/autophoto.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/autophoto.dir/src/ImageCompressor.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/autophoto.dir/src/ImageCompressor.cpp.o -MF CMakeFiles/autophoto.dir/src/ImageCompressor.cpp.o.d -o CMakeFiles/autophoto.dir/src/ImageCompressor.cpp.o -c /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/ImageCompressor.cpp
+
+CMakeFiles/autophoto.dir/src/ImageCompressor.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/autophoto.dir/src/ImageCompressor.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/ImageCompressor.cpp > CMakeFiles/autophoto.dir/src/ImageCompressor.cpp.i
+
+CMakeFiles/autophoto.dir/src/ImageCompressor.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/autophoto.dir/src/ImageCompressor.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/ImageCompressor.cpp -o CMakeFiles/autophoto.dir/src/ImageCompressor.cpp.s
+
+CMakeFiles/autophoto.dir/src/platform/DesktopPlatform.cpp.o: CMakeFiles/autophoto.dir/flags.make
+CMakeFiles/autophoto.dir/src/platform/DesktopPlatform.cpp.o: /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/platform/DesktopPlatform.cpp
+CMakeFiles/autophoto.dir/src/platform/DesktopPlatform.cpp.o: CMakeFiles/autophoto.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/autophoto.dir/src/platform/DesktopPlatform.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/autophoto.dir/src/platform/DesktopPlatform.cpp.o -MF CMakeFiles/autophoto.dir/src/platform/DesktopPlatform.cpp.o.d -o CMakeFiles/autophoto.dir/src/platform/DesktopPlatform.cpp.o -c /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/platform/DesktopPlatform.cpp
+
+CMakeFiles/autophoto.dir/src/platform/DesktopPlatform.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/autophoto.dir/src/platform/DesktopPlatform.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/platform/DesktopPlatform.cpp > CMakeFiles/autophoto.dir/src/platform/DesktopPlatform.cpp.i
+
+CMakeFiles/autophoto.dir/src/platform/DesktopPlatform.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/autophoto.dir/src/platform/DesktopPlatform.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/platform/DesktopPlatform.cpp -o CMakeFiles/autophoto.dir/src/platform/DesktopPlatform.cpp.s
+
+CMakeFiles/autophoto.dir/src/platform/PlatformFactory.cpp.o: CMakeFiles/autophoto.dir/flags.make
+CMakeFiles/autophoto.dir/src/platform/PlatformFactory.cpp.o: /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/platform/PlatformFactory.cpp
+CMakeFiles/autophoto.dir/src/platform/PlatformFactory.cpp.o: CMakeFiles/autophoto.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/autophoto.dir/src/platform/PlatformFactory.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/autophoto.dir/src/platform/PlatformFactory.cpp.o -MF CMakeFiles/autophoto.dir/src/platform/PlatformFactory.cpp.o.d -o CMakeFiles/autophoto.dir/src/platform/PlatformFactory.cpp.o -c /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/platform/PlatformFactory.cpp
+
+CMakeFiles/autophoto.dir/src/platform/PlatformFactory.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/autophoto.dir/src/platform/PlatformFactory.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/platform/PlatformFactory.cpp > CMakeFiles/autophoto.dir/src/platform/PlatformFactory.cpp.i
+
+CMakeFiles/autophoto.dir/src/platform/PlatformFactory.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/autophoto.dir/src/platform/PlatformFactory.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/src/platform/PlatformFactory.cpp -o CMakeFiles/autophoto.dir/src/platform/PlatformFactory.cpp.s
+
 CMakeFiles/autophoto.dir/autophoto_qmltyperegistrations.cpp.o: CMakeFiles/autophoto.dir/flags.make
 CMakeFiles/autophoto.dir/autophoto_qmltyperegistrations.cpp.o: autophoto_qmltyperegistrations.cpp
 CMakeFiles/autophoto.dir/autophoto_qmltyperegistrations.cpp.o: CMakeFiles/autophoto.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/autophoto.dir/autophoto_qmltyperegistrations.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/autophoto.dir/autophoto_qmltyperegistrations.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/autophoto.dir/autophoto_qmltyperegistrations.cpp.o -MF CMakeFiles/autophoto.dir/autophoto_qmltyperegistrations.cpp.o.d -o CMakeFiles/autophoto.dir/autophoto_qmltyperegistrations.cpp.o -c /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/autophoto_qmltyperegistrations.cpp
 
 CMakeFiles/autophoto.dir/autophoto_qmltyperegistrations.cpp.i: cmake_force
@@ -271,7 +313,7 @@ CMakeFiles/autophoto.dir/autophoto_qmltyperegistrations.cpp.s: cmake_force
 CMakeFiles/autophoto.dir/build/.rcc/qrc_qmake_AutoPhoto.cpp.o: CMakeFiles/autophoto.dir/flags.make
 CMakeFiles/autophoto.dir/build/.rcc/qrc_qmake_AutoPhoto.cpp.o: .rcc/qrc_qmake_AutoPhoto.cpp
 CMakeFiles/autophoto.dir/build/.rcc/qrc_qmake_AutoPhoto.cpp.o: CMakeFiles/autophoto.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/autophoto.dir/build/.rcc/qrc_qmake_AutoPhoto.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/autophoto.dir/build/.rcc/qrc_qmake_AutoPhoto.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/autophoto.dir/build/.rcc/qrc_qmake_AutoPhoto.cpp.o -MF CMakeFiles/autophoto.dir/build/.rcc/qrc_qmake_AutoPhoto.cpp.o.d -o CMakeFiles/autophoto.dir/build/.rcc/qrc_qmake_AutoPhoto.cpp.o -c /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/.rcc/qrc_qmake_AutoPhoto.cpp
 
 CMakeFiles/autophoto.dir/build/.rcc/qrc_qmake_AutoPhoto.cpp.i: cmake_force
@@ -285,7 +327,7 @@ CMakeFiles/autophoto.dir/build/.rcc/qrc_qmake_AutoPhoto.cpp.s: cmake_force
 CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qmlcache_loader.cpp.o: CMakeFiles/autophoto.dir/flags.make
 CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qmlcache_loader.cpp.o: .rcc/qmlcache/autophoto_qmlcache_loader.cpp
 CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qmlcache_loader.cpp.o: CMakeFiles/autophoto.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qmlcache_loader.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qmlcache_loader.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qmlcache_loader.cpp.o -MF CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qmlcache_loader.cpp.o.d -o CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qmlcache_loader.cpp.o -c /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/.rcc/qmlcache/autophoto_qmlcache_loader.cpp
 
 CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qmlcache_loader.cpp.i: cmake_force
@@ -299,7 +341,7 @@ CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qmlcache_loader.cpp.s: cm
 CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/Main_qml.cpp.o: CMakeFiles/autophoto.dir/flags.make
 CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/Main_qml.cpp.o: .rcc/qmlcache/autophoto_qml/Main_qml.cpp
 CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/Main_qml.cpp.o: CMakeFiles/autophoto.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/Main_qml.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building CXX object CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/Main_qml.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/Main_qml.cpp.o -MF CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/Main_qml.cpp.o.d -o CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/Main_qml.cpp.o -c /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/.rcc/qmlcache/autophoto_qml/Main_qml.cpp
 
 CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/Main_qml.cpp.i: cmake_force
@@ -313,7 +355,7 @@ CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/Main_qml.cpp.s: cmake
 CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/components/CoverFlowView_qml.cpp.o: CMakeFiles/autophoto.dir/flags.make
 CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/components/CoverFlowView_qml.cpp.o: .rcc/qmlcache/autophoto_qml/components/CoverFlowView_qml.cpp
 CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/components/CoverFlowView_qml.cpp.o: CMakeFiles/autophoto.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/components/CoverFlowView_qml.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building CXX object CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/components/CoverFlowView_qml.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/components/CoverFlowView_qml.cpp.o -MF CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/components/CoverFlowView_qml.cpp.o.d -o CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/components/CoverFlowView_qml.cpp.o -c /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/.rcc/qmlcache/autophoto_qml/components/CoverFlowView_qml.cpp
 
 CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/components/CoverFlowView_qml.cpp.i: cmake_force
@@ -327,7 +369,7 @@ CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/components/CoverFlowV
 CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/components/ToolPanel_qml.cpp.o: CMakeFiles/autophoto.dir/flags.make
 CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/components/ToolPanel_qml.cpp.o: .rcc/qmlcache/autophoto_qml/components/ToolPanel_qml.cpp
 CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/components/ToolPanel_qml.cpp.o: CMakeFiles/autophoto.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/components/ToolPanel_qml.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/components/ToolPanel_qml.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/components/ToolPanel_qml.cpp.o -MF CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/components/ToolPanel_qml.cpp.o.d -o CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/components/ToolPanel_qml.cpp.o -c /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/.rcc/qmlcache/autophoto_qml/components/ToolPanel_qml.cpp
 
 CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/components/ToolPanel_qml.cpp.i: cmake_force
@@ -341,7 +383,7 @@ CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qml/components/ToolPanel_
 CMakeFiles/autophoto.dir/build/.rcc/qrc_autophoto_raw_qml_0.cpp.o: CMakeFiles/autophoto.dir/flags.make
 CMakeFiles/autophoto.dir/build/.rcc/qrc_autophoto_raw_qml_0.cpp.o: .rcc/qrc_autophoto_raw_qml_0.cpp
 CMakeFiles/autophoto.dir/build/.rcc/qrc_autophoto_raw_qml_0.cpp.o: CMakeFiles/autophoto.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building CXX object CMakeFiles/autophoto.dir/build/.rcc/qrc_autophoto_raw_qml_0.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building CXX object CMakeFiles/autophoto.dir/build/.rcc/qrc_autophoto_raw_qml_0.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/autophoto.dir/build/.rcc/qrc_autophoto_raw_qml_0.cpp.o -MF CMakeFiles/autophoto.dir/build/.rcc/qrc_autophoto_raw_qml_0.cpp.o.d -o CMakeFiles/autophoto.dir/build/.rcc/qrc_autophoto_raw_qml_0.cpp.o -c /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/.rcc/qrc_autophoto_raw_qml_0.cpp
 
 CMakeFiles/autophoto.dir/build/.rcc/qrc_autophoto_raw_qml_0.cpp.i: cmake_force
@@ -362,6 +404,9 @@ autophoto_OBJECTS = \
 "CMakeFiles/autophoto.dir/src/ImageListModel.cpp.o" \
 "CMakeFiles/autophoto.dir/src/PreviewController.cpp.o" \
 "CMakeFiles/autophoto.dir/src/SshTunnelController.cpp.o" \
+"CMakeFiles/autophoto.dir/src/ImageCompressor.cpp.o" \
+"CMakeFiles/autophoto.dir/src/platform/DesktopPlatform.cpp.o" \
+"CMakeFiles/autophoto.dir/src/platform/PlatformFactory.cpp.o" \
 "CMakeFiles/autophoto.dir/autophoto_qmltyperegistrations.cpp.o" \
 "CMakeFiles/autophoto.dir/build/.rcc/qrc_qmake_AutoPhoto.cpp.o" \
 "CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qmlcache_loader.cpp.o" \
@@ -381,6 +426,9 @@ autophoto: CMakeFiles/autophoto.dir/src/ImageOrientation.cpp.o
 autophoto: CMakeFiles/autophoto.dir/src/ImageListModel.cpp.o
 autophoto: CMakeFiles/autophoto.dir/src/PreviewController.cpp.o
 autophoto: CMakeFiles/autophoto.dir/src/SshTunnelController.cpp.o
+autophoto: CMakeFiles/autophoto.dir/src/ImageCompressor.cpp.o
+autophoto: CMakeFiles/autophoto.dir/src/platform/DesktopPlatform.cpp.o
+autophoto: CMakeFiles/autophoto.dir/src/platform/PlatformFactory.cpp.o
 autophoto: CMakeFiles/autophoto.dir/autophoto_qmltyperegistrations.cpp.o
 autophoto: CMakeFiles/autophoto.dir/build/.rcc/qrc_qmake_AutoPhoto.cpp.o
 autophoto: CMakeFiles/autophoto.dir/build/.rcc/qmlcache/autophoto_qmlcache_loader.cpp.o
@@ -456,7 +504,7 @@ autophoto: /usr/lib/x86_64-linux-gnu/libopencv_photo.so.4.6.0
 autophoto: /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.4.6.0
 autophoto: /usr/lib/x86_64-linux-gnu/libopencv_core.so.4.6.0
 autophoto: CMakeFiles/autophoto.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Linking CXX executable autophoto"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Linking CXX executable autophoto"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/autophoto.dir/link.txt --verbose=$(VERBOSE)
 	/usr/bin/cmake -E make_directory /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/models
 	/usr/bin/cmake -E copy_if_different /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/models/face_detection_yunet_2023mar.onnx /home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/models/face_detection_yunet_2023mar.onnx

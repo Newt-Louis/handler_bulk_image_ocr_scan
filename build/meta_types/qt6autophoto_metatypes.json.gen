@@ -30,6 +30,30 @@
                             {
                                 "name": "strength",
                                 "type": "int"
+                            },
+                            {
+                                "name": "detectionSensitivity",
+                                "type": "float"
+                            },
+                            {
+                                "name": "sizeFilterEnabled",
+                                "type": "bool"
+                            },
+                            {
+                                "name": "skinColorFilterEnabled",
+                                "type": "bool"
+                            },
+                            {
+                                "name": "cascadeCrossCheckEnabled",
+                                "type": "bool"
+                            },
+                            {
+                                "name": "compressionLevel",
+                                "type": "int"
+                            },
+                            {
+                                "name": "outputFormat",
+                                "type": "QString"
                             }
                         ],
                         "name": "start",
@@ -437,6 +461,96 @@
                         "type": "int",
                         "user": false,
                         "write": "setStrength"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 5,
+                        "name": "detectionSensitivity",
+                        "notify": "detectionSensitivityChanged",
+                        "read": "detectionSensitivity",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "float",
+                        "user": false,
+                        "write": "setDetectionSensitivity"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 6,
+                        "name": "sizeFilterEnabled",
+                        "notify": "sizeFilterEnabledChanged",
+                        "read": "sizeFilterEnabled",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "write": "setSizeFilterEnabled"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 7,
+                        "name": "skinColorFilterEnabled",
+                        "notify": "skinColorFilterEnabledChanged",
+                        "read": "skinColorFilterEnabled",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "write": "setSkinColorFilterEnabled"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 8,
+                        "name": "cascadeCrossCheckEnabled",
+                        "notify": "cascadeCrossCheckEnabledChanged",
+                        "read": "cascadeCrossCheckEnabled",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "write": "setCascadeCrossCheckEnabled"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 9,
+                        "name": "compressionLevel",
+                        "notify": "compressionLevelChanged",
+                        "read": "compressionLevel",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "int",
+                        "user": false,
+                        "write": "setCompressionLevel"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 10,
+                        "name": "outputFormat",
+                        "notify": "outputFormatChanged",
+                        "read": "outputFormat",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setOutputFormat"
                     }
                 ],
                 "qualifiedClassName": "PreviewController",
@@ -464,6 +578,36 @@
                     {
                         "access": "public",
                         "name": "strengthChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "name": "detectionSensitivityChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "name": "sizeFilterEnabledChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "name": "skinColorFilterEnabledChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "name": "cascadeCrossCheckEnabledChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "name": "compressionLevelChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "name": "outputFormatChanged",
                         "returnType": "void"
                     },
                     {
@@ -510,6 +654,72 @@
                             }
                         ],
                         "name": "setStrength",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "sensitivity",
+                                "type": "float"
+                            }
+                        ],
+                        "name": "setDetectionSensitivity",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "enabled",
+                                "type": "bool"
+                            }
+                        ],
+                        "name": "setSizeFilterEnabled",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "enabled",
+                                "type": "bool"
+                            }
+                        ],
+                        "name": "setSkinColorFilterEnabled",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "enabled",
+                                "type": "bool"
+                            }
+                        ],
+                        "name": "setCascadeCrossCheckEnabled",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "level",
+                                "type": "int"
+                            }
+                        ],
+                        "name": "setCompressionLevel",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "format",
+                                "type": "QString"
+                            }
+                        ],
+                        "name": "setOutputFormat",
                         "returnType": "void"
                     }
                 ],

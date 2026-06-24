@@ -90,6 +90,36 @@ int PreviewController::strength() const
     return m_strength;
 }
 
+float PreviewController::detectionSensitivity() const
+{
+    return m_detectionSensitivity;
+}
+
+bool PreviewController::sizeFilterEnabled() const
+{
+    return m_sizeFilterEnabled;
+}
+
+bool PreviewController::skinColorFilterEnabled() const
+{
+    return m_skinColorFilterEnabled;
+}
+
+bool PreviewController::cascadeCrossCheckEnabled() const
+{
+    return m_cascadeCrossCheckEnabled;
+}
+
+int PreviewController::compressionLevel() const
+{
+    return m_compressionLevel;
+}
+
+QString PreviewController::outputFormat() const
+{
+    return m_outputFormat;
+}
+
 void PreviewController::requestPreview(const QString &filePath)
 {
     if (m_sourcePath == filePath && !m_previewUrl.isEmpty()) {
@@ -143,6 +173,76 @@ void PreviewController::setStrength(int strength)
     regenerate();
 }
 
+void PreviewController::setDetectionSensitivity(float sensitivity)
+{
+    const float clamped = qBound(0.0f, sensitivity, 1.0f);
+    if (qFuzzyCompare(m_detectionSensitivity, clamped)) {
+        return;
+    }
+
+    m_detectionSensitivity = clamped;
+    emit detectionSensitivityChanged();
+    regenerate();
+}
+
+void PreviewController::setSizeFilterEnabled(bool enabled)
+{
+    if (m_sizeFilterEnabled == enabled) {
+        return;
+    }
+
+    m_sizeFilterEnabled = enabled;
+    emit sizeFilterEnabledChanged();
+    regenerate();
+}
+
+void PreviewController::setSkinColorFilterEnabled(bool enabled)
+{
+    if (m_skinColorFilterEnabled == enabled) {
+        return;
+    }
+
+    m_skinColorFilterEnabled = enabled;
+    emit skinColorFilterEnabledChanged();
+    regenerate();
+}
+
+void PreviewController::setCascadeCrossCheckEnabled(bool enabled)
+{
+    if (m_cascadeCrossCheckEnabled == enabled) {
+        return;
+    }
+
+    m_cascadeCrossCheckEnabled = enabled;
+    emit cascadeCrossCheckEnabledChanged();
+    regenerate();
+}
+
+void PreviewController::setCompressionLevel(int level)
+{
+    const int clamped = qBound(0, level, 100);
+    if (m_compressionLevel == clamped) {
+        return;
+    }
+
+    m_compressionLevel = clamped;
+    emit compressionLevelChanged();
+    regenerate();
+}
+
+void PreviewController::setOutputFormat(const QString &format)
+{
+    const QString normalized = (format == QLatin1String("webp") || format == QLatin1String("png"))
+        ? format : QStringLiteral("jpg");
+    if (m_outputFormat == normalized) {
+        return;
+    }
+
+    m_outputFormat = normalized;
+    emit outputFormatChanged();
+    regenerate();
+}
+
 void PreviewController::regenerate()
 {
     if (m_sourcePath.isEmpty()) {
@@ -153,15 +253,21 @@ void PreviewController::regenerate()
     const QString mode = m_blurMode;
     const bool blurFaces = m_blurFaces;
     const int strength = m_strength;
+    const float detectionSensitivity = m_detectionSensitivity;
+    const bool sizeFilterEnabled = m_sizeFilterEnabled;
+    const bool skinColorFilterEnabled = m_skinColorFilterEnabled;
+    const bool cascadeCrossCheckEnabled = m_cascadeCrossCheckEnabled;
+    const int compressionLevel = m_compressionLevel;
+    const QString outputFormat = m_outputFormat;
     const quint64 requestId = ++m_requestId;
     const QString targetPath = cacheFilePath(sourcePath, requestId);
     const QPointer<PreviewController> guard(this);
 
     setBusy(true);
 
-    QThread *worker = QThread::create([sourcePath, mode, blurFaces, strength, targetPath, guard, requestId] {
+    QThread *worker = QThread::create([sourcePath, mode, blurFaces, strength, detectionSensitivity, sizeFilterEnabled, skinColorFilterEnabled, cascadeCrossCheckEnabled, compressionLevel, outputFormat, targetPath, guard, requestId] {
 #ifdef AUTOPHOTO_HAS_OPENCV
-        ImageProcessor processor({blurFaces, mode, strength, QStringLiteral("yunet")});
+        ImageProcessor processor({blurFaces, mode, strength, detectionSensitivity, sizeFilterEnabled, skinColorFilterEnabled, cascadeCrossCheckEnabled, compressionLevel, outputFormat, QStringLiteral("yunet")});
         const ProcessingResult result = processor.processFile(sourcePath, targetPath);
         if (!guard) {
             return;
@@ -265,11 +371,17 @@ QString PreviewController::cacheFilePath(const QString &sourcePath, quint64 requ
     }
 
     const QByteArray hash = QCryptographicHash::hash(
-        QStringLiteral("%1:%2:%3:%4:%5")
+        QStringLiteral("%1:%2:%3:%4:%5:%6:%7:%8:%9:%10:%11")
             .arg(sourcePath, m_blurMode)
             .arg(m_strength)
             .arg(m_blurFaces ? 1 : 0)
-            .arg(QStringLiteral("resolved-orient-v3-privacy-mask"))
+            .arg(m_detectionSensitivity, 0, 'f', 2)
+            .arg(m_sizeFilterEnabled ? 1 : 0)
+            .arg(m_skinColorFilterEnabled ? 1 : 0)
+            .arg(m_cascadeCrossCheckEnabled ? 1 : 0)
+            .arg(m_compressionLevel)
+            .arg(m_outputFormat)
+            .arg(QStringLiteral("resolved-orient-v6-privacy-mask"))
             .toUtf8(),
         QCryptographicHash::Sha1
     ).toHex();

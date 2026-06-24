@@ -70,7 +70,13 @@ void BatchProcessor::start(const QStringList &inputFiles,
                            const QString &renamePattern,
                            bool blurFaces,
                            const QString &blurMode,
-                           int strength)
+                           int strength,
+                           float detectionSensitivity,
+                           bool sizeFilterEnabled,
+                           bool skinColorFilterEnabled,
+                           bool cascadeCrossCheckEnabled,
+                           int compressionLevel,
+                           const QString &outputFormat)
 {
     if (m_running) {
         return;
@@ -99,7 +105,13 @@ void BatchProcessor::start(const QStringList &inputFiles,
     const ProcessingOptions options {
         blurFaces,
         blurMode == QLatin1String("pixelate") ? QStringLiteral("pixelate") : QStringLiteral("gaussian"),
-        qBound(1, strength, 100)
+        qBound(1, strength, 100),
+        qBound(0.0f, detectionSensitivity, 1.0f),
+        sizeFilterEnabled,
+        skinColorFilterEnabled,
+        cascadeCrossCheckEnabled,
+        qBound(0, compressionLevel, 100),
+        outputFormat
     };
 
     BatchProcessor *processor = this;
@@ -148,8 +160,11 @@ void BatchProcessor::start(const QStringList &inputFiles,
                         ? source.completeBaseName()
                         : renamePattern;
                     const QString number = QString::number(i + 1).rightJustified(4, QLatin1Char('0'));
+                    const QString ext = (options.compressionLevel > 0 && options.outputFormat != QLatin1String("jpg"))
+                        ? options.outputFormat
+                        : (source.suffix().isEmpty() ? QStringLiteral("jpg") : source.suffix());
                     const QString fileName = QStringLiteral("%1_%2.%3")
-                        .arg(baseName, number, source.suffix().isEmpty() ? QStringLiteral("jpg") : source.suffix());
+                        .arg(baseName, number, ext);
                     const QString targetPath = QDir(outputFolder).filePath(fileName);
 
                     const ProcessingResult result = imageProcessor.processFile(source.absoluteFilePath(), targetPath);

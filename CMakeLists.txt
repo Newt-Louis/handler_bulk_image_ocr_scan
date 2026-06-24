@@ -46,6 +46,13 @@ qt_add_executable(autophoto
     src/PreviewController.h
     src/SshTunnelController.cpp
     src/SshTunnelController.h
+    src/ImageCompressor.cpp
+    src/ImageCompressor.h
+    src/platform/PlatformInterface.h
+    src/platform/DesktopPlatform.h
+    src/platform/DesktopPlatform.cpp
+    src/platform/PlatformFactory.h
+    src/platform/PlatformFactory.cpp
 )
 
 qt_add_qml_module(autophoto
