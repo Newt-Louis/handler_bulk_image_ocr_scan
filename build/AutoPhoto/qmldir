@@ -1,7 +1,0 @@
-module AutoPhoto
-typeinfo autophoto.qmltypes
-prefer :/AutoPhoto/
-Main 1.0 Main.qml
-CoverFlowView 1.0 CoverFlowView.qml
-ToolPanel 1.0 ToolPanel.qml
-

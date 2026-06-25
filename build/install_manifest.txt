@@ -1,2 +1,0 @@
-/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/_CPack_Packages/Linux/ZIP/AutoPhoto-0.1.0-Linux/bin/models/face_detection_yunet_2023mar.onnx
-/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/_CPack_Packages/Linux/ZIP/AutoPhoto-0.1.0-Linux/bin/autophoto

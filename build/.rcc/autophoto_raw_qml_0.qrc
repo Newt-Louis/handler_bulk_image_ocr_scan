@@ -1,8 +1,0 @@
-<RCC>
-  <qresource prefix="/AutoPhoto/">
-    <file alias="Main.qml">/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/qml/Main.qml</file>
-    <file alias="CoverFlowView.qml">/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/qml/components/CoverFlowView.qml</file>
-    <file alias="ToolPanel.qml">/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/qml/components/ToolPanel.qml</file>
-  </qresource>
-</RCC>
-
