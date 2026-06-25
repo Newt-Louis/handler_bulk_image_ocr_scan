@@ -1,2 +1,35 @@
 /data_test
 data_test/*
+
+# -----------------------------
+# Thư mục Build của CMake
+# -----------------------------
+build/
+out/
+bin/
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+cmake_install.cmake
+Makefile
+
+# -----------------------------
+# File tạm của Visual Studio / MSVC
+# -----------------------------
+.vs/
+*.sln
+*.vcxproj
+*.vcxproj.user
+*.vcxproj.filters
+
+# -----------------------------
+# Các file nhị phân & file thực thi
+# -----------------------------
+*.o
+*.obj
+*.exe
+*.dll
+*.lib
+*.so
+*.a
+*.pdb
