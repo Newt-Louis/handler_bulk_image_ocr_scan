@@ -1,4 +1,0 @@
-/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/autophoto_autogen/include/../UVLADIE3JM/moc_BatchProcessor.cpp.json
-/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/autophoto_autogen/include/../UVLADIE3JM/moc_ImageListModel.cpp.json
-/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/autophoto_autogen/include/../UVLADIE3JM/moc_PreviewController.cpp.json
-/home/newt-louis/workspaces/software_projects/hanled_image_ocr_scan/build/autophoto_autogen/include/../UVLADIE3JM/moc_SshTunnelController.cpp.json
