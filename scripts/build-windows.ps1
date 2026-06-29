@@ -1,3 +1,6 @@
+# On Laptop Lennovo, command for "Developer Command Prompt for VS 2026" is:
+# cmake -B build -DCMAKE_PREFIX_PATH="D:\Qt\6.9.3\msvc2022_64" -DOpenCV_DIR="D:\opencv\build\x64\vc16\lib"
+
 param(
     [string]$QtPrefix = $env:Qt6_DIR,
     [string]$OpenCvDir = $env:OpenCV_DIR,
