@@ -127,11 +127,11 @@ if(WIN32 OR APPLE)
     install(SCRIPT ${AUTOPHOTO_DEPLOY_SCRIPT})
 endif()
 
-configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/packaging/windows/AutoPhoto.iss.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/packaging/windows/AutoPhoto.iss"
-    @ONLY
-)
+# configure_file(
+#    "${CMAKE_CURRENT_SOURCE_DIR}/packaging/windows/AutoPhoto.iss.in"
+#    "${CMAKE_CURRENT_BINARY_DIR}/packaging/windows/AutoPhoto.iss"
+#    @ONLY
+# )
 
 set(CPACK_PACKAGE_NAME "AutoPhoto")
 set(CPACK_PACKAGE_VENDOR "AutoPhoto")
