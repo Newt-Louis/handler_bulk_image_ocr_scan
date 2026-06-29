@@ -1,0 +1,131 @@
+name: Build AutoPhoto
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build-ubuntu:
+    runs-on: ubuntu-22.04
+    name: Build (Ubuntu)
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt 6.4
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.4.2'
+          arch: gcc_64
+          modules: 'qtshadertools'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libopencv-dev ninja-build
+
+      - name: Configure
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+
+      - name: Build
+        run: cmake --build build --config ${{ env.BUILD_TYPE }}
+
+      - name: Package
+        run: |
+          cd build && cpack -G ZIP
+          mv *.zip ..
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: AutoPhoto-Linux
+          path: '*.zip'
+          retention-days: 30
+
+  build-windows:
+    runs-on: windows-2022
+    name: Build (Windows)
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt 6.4
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.4.2'
+          arch: win64_msvc2022_64
+          modules: 'qtshadertools'
+
+      - name: Install Ninja
+        run: choco install ninja -y
+
+      - name: Setup vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgGitCommitId: '01f602195983452bc577713474601458a9647177'
+
+      - name: Install OpenCV via vcpkg
+        run: vcpkg install opencv4[core,dnn,imgproc,photo]:x64-windows
+
+      - name: Configure
+        run: |
+          cmake -S . -B build -G Ninja `
+            -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} `
+            -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake" `
+            -DVCPKG_TARGET_TRIPLET=x64-windows
+
+      - name: Build
+        run: cmake --build build --config ${{ env.BUILD_TYPE }}
+
+      - name: Package
+        run: |
+          cd build; cpack -G ZIP
+          mv *.zip ..
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: AutoPhoto-Windows
+          path: '*.zip'
+          retention-days: 30
+
+  build-macos:
+    runs-on: macos-13
+    name: Build (macOS)
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt 6.4
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.4.2'
+          arch: clang_64
+          modules: 'qtshadertools'
+
+      - name: Install dependencies
+        run: brew install ninja opencv
+
+      - name: Configure
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+
+      - name: Build
+        run: cmake --build build --config ${{ env.BUILD_TYPE }}
+
+      - name: Package
+        run: |
+          cd build && cpack -G DragNDrop
+          mv *.dmg ..
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: AutoPhoto-macOS
+          path: '*.dmg'
+          retention-days: 30
