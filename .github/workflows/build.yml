@@ -52,7 +52,7 @@ jobs:
       # Cài OpenCV qua vcpkg (chỉ lấy các module cần thiết, tránh mất thời gian)
       - name: Install OpenCV via vcpkg
         # run: vcpkg install opencv4[core,dnn,imgproc,photo]:x64-windows
-        run: ${{ github.workspace }}\vcpkg_custom\vcpkg.exe install opencv4[core,dnn,imgproc,photo]:x64-windows
+        run: ${{ github.workspace }}\vcpkg_custom\vcpkg.exe install opencv4[dnn]:x64-windows
 
       # Cấu hình CMake, trỏ tới vcpkg để tìm OpenCV
       - name: Configure
