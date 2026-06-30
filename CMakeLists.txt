@@ -83,9 +83,7 @@ set_target_properties(autophoto PROPERTIES
     MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
 )
 
-if(WIN32 OR APPLE)
-    set_target_properties(autophoto PROPERTIES OUTPUT_NAME "AutoPhoto")
-endif()
+set_target_properties(autophoto PROPERTIES OUTPUT_NAME "AutoPhoto")
 
 if(OpenCV_FOUND)
     target_compile_definitions(autophoto PRIVATE AUTOPHOTO_HAS_OPENCV=1)

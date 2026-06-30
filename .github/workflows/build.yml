@@ -59,7 +59,7 @@ jobs:
         uses: jurplel/install-qt-action@v4
         with:
           version: '6.4.2'
-          arch: win64_msvc2022_64
+          arch: win64_msvc2019_64
           modules: 'qtshadertools'
 
       - name: Install Ninja
