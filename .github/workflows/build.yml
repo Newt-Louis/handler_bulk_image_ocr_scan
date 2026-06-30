@@ -54,7 +54,12 @@ jobs:
         # run: vcpkg install opencv4[core,dnn,imgproc,photo]:x64-windows
         run: ${{ github.workspace }}\vcpkg_custom\vcpkg.exe install opencv4[dnn]:x64-windows
 
+      # Kích hoạt môi trường Microsoft Visual C++
+      - name: Setup MSVC environment
+        uses: ilammy/msvc-dev-cmd@v1
+
       # Cấu hình CMake, trỏ tới vcpkg để tìm OpenCV
+      # Ninja sẽ tự động dùng 'cl.exe' của Microsoft nhờ vào lệnh kích hoạt môi trường Microsoft Visual C++ ở trên
       - name: Configure
         run: |
           cmake -S . -B build -G Ninja `
