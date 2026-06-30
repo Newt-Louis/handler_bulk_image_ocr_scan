@@ -42,7 +42,6 @@ jobs:
       - name: Setup vcpkg
         uses: lukka/run-vcpkg@v11
         with:
-          vcpkgGitCommitId: '01f602195983452bc577713474601458a9647177'
           vcpkgDirectory: '${{ github.workspace }}/vcpkg_custom'
 
       # Cài OpenCV qua vcpkg (chỉ lấy các module cần thiết, tránh mất thời gian)
