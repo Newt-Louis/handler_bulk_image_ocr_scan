@@ -85,7 +85,7 @@ jobs:
         run: |
           cd build
           cpack -G NSIS
-          Move-Item *.exe ../${{ env.APP_NAME }}-Windows-Setup.exe
+          Move-Item AutoPhoto-*.exe ../${{ env.APP_NAME }}-Windows-Setup.exe -Force
 
       # Upload file lên GitHub Actions để tải về
       - name: Upload Windows Installer
