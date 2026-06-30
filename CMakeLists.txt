@@ -91,9 +91,7 @@ if(OpenCV_FOUND)
     target_link_libraries(autophoto PRIVATE ${OpenCV_LIBS})
 endif()
 
-if(WIN32)
-    set_target_properties(autophoto PROPERTIES WIN32_EXECUTABLE TRUE)
-endif()
+set_target_properties(autophoto PROPERTIES WIN32_EXECUTABLE TRUE)
 
 set(AUTOPHOTO_YUNET_MODEL "${CMAKE_CURRENT_SOURCE_DIR}/models/face_detection_yunet_2023mar.onnx")
 if(EXISTS "${AUTOPHOTO_YUNET_MODEL}")
