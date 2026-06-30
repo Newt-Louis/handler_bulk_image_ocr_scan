@@ -83,7 +83,9 @@ set_target_properties(autophoto PROPERTIES
     MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
 )
 
-set_target_properties(autophoto PROPERTIES OUTPUT_NAME "AutoPhoto")
+if(WIN32 OR APPLE)
+    set_target_properties(autophoto PROPERTIES OUTPUT_NAME "AutoPhoto")
+endif()
 
 if(OpenCV_FOUND)
     target_compile_definitions(autophoto PRIVATE AUTOPHOTO_HAS_OPENCV=1)
@@ -91,7 +93,9 @@ if(OpenCV_FOUND)
     target_link_libraries(autophoto PRIVATE ${OpenCV_LIBS})
 endif()
 
-set_target_properties(autophoto PROPERTIES WIN32_EXECUTABLE TRUE)
+if(WIN32)
+    set_target_properties(autophoto PROPERTIES WIN32_EXECUTABLE TRUE)
+endif()
 
 set(AUTOPHOTO_YUNET_MODEL "${CMAKE_CURRENT_SOURCE_DIR}/models/face_detection_yunet_2023mar.onnx")
 if(EXISTS "${AUTOPHOTO_YUNET_MODEL}")
@@ -123,11 +127,11 @@ if(WIN32 OR APPLE)
     install(SCRIPT ${AUTOPHOTO_DEPLOY_SCRIPT})
 endif()
 
-# configure_file(
-#    "${CMAKE_CURRENT_SOURCE_DIR}/packaging/windows/AutoPhoto.iss.in"
-#    "${CMAKE_CURRENT_BINARY_DIR}/packaging/windows/AutoPhoto.iss"
-#    @ONLY
-# )
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/packaging/windows/AutoPhoto.iss.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/packaging/windows/AutoPhoto.iss"
+    @ONLY
+)
 
 set(CPACK_PACKAGE_NAME "AutoPhoto")
 set(CPACK_PACKAGE_VENDOR "AutoPhoto")

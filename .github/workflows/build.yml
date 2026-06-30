@@ -43,6 +43,7 @@ jobs:
         uses: lukka/run-vcpkg@v11
         with:
           vcpkgGitCommitId: '01f602195983452bc577713474601458a9647177'
+          vcpkgDirectory: '${{ runner.workspace }}/vcpkg'
 
       # Cài OpenCV qua vcpkg (chỉ lấy các module cần thiết, tránh mất thời gian)
       - name: Install OpenCV via vcpkg
@@ -53,7 +54,8 @@ jobs:
         run: |
           cmake -S . -B build -G Ninja `
             -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} `
-            -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake" `
+            # -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake" `
+            -DCMAKE_TOOLCHAIN_FILE="${{ runner.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake" `
             -DVCPKG_TARGET_TRIPLET=x64-windows
 
       # Build project
@@ -191,7 +193,8 @@ jobs:
           mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
 
           # Copy executable vào AppDir
-          cp build/${{ env.APP_NAME }} AppDir/usr/bin/
+          # cp build/${{ env.APP_NAME }} AppDir/usr/bin/
+          cp build/autophoto AppDir/usr/bin/${{ env.APP_NAME }}
 
           # Tạo file .desktop (shortcut icon trên Linux)
           cat > AppDir/usr/share/applications/${{ env.APP_NAME }}.desktop << EOF
