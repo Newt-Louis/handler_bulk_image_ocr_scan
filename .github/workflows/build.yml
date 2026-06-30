@@ -39,14 +39,20 @@ jobs:
         run: choco install nsis -y
 
       # Cài vcpkg (package manager để lấy OpenCV trên Windows)
-      - name: Setup vcpkg
-        uses: lukka/run-vcpkg@v11
-        with:
-          vcpkgDirectory: '${{ github.workspace }}/vcpkg_custom'
+      # - name: Setup vcpkg
+      #   uses: lukka/run-vcpkg@v11
+      #   with:
+      #     vcpkgDirectory: '${{ github.workspace }}/vcpkg_custom'
+      - name: Setup vcpkg manually
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git ${{ github.workspace }}/vcpkg_custom
+          cd ${{ github.workspace }}/vcpkg_custom
+          .\bootstrap-vcpkg.bat
 
       # Cài OpenCV qua vcpkg (chỉ lấy các module cần thiết, tránh mất thời gian)
       - name: Install OpenCV via vcpkg
-        run: vcpkg install opencv4[core,dnn,imgproc,photo]:x64-windows
+        # run: vcpkg install opencv4[core,dnn,imgproc,photo]:x64-windows
+        run: ${{ github.workspace }}\vcpkg_custom\vcpkg.exe install opencv4[core,dnn,imgproc,photo]:x64-windows
 
       # Cấu hình CMake, trỏ tới vcpkg để tìm OpenCV
       - name: Configure
@@ -182,9 +188,10 @@ jobs:
       # Tạo cấu trúc AppDir và build AppImage
       - name: Create AppImage
         env:
-          QMAKE: ${{ env.Qt6_DIR }}/bin/qmake
+          # QMAKE: ${{ env.Qt6_DIR }}/bin/qmake
           QML_SOURCES_PATHS: ${{ github.workspace }}
         run: |
+          export QMAKE=$(which qmake)
           # Tạo thư mục AppDir theo chuẩn
           mkdir -p AppDir/usr/bin
           mkdir -p AppDir/usr/share/applications
