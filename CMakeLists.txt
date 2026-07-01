@@ -119,6 +119,13 @@ install(TARGETS autophoto
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
 )
 
+if(WIN32 AND OpenCV_FOUND)
+    install(DIRECTORY "$<TARGET_FILE_DIR:autophoto>/"
+        DESTINATION "${CMAKE_INSTALL_BINDIR}"
+        FILES_MATCHING PATTERN "opencv_*.dll"
+    )
+endif()
+
 if(WIN32 OR APPLE)
     qt_generate_deploy_app_script(
         TARGET autophoto
