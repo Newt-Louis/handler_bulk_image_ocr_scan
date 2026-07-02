@@ -117,34 +117,6 @@ jobs:
       - name: Install dependencies
         run: brew install ninja opencv dylibbundler
 
-      # Đóng gói Qt và OpenCV (phiên bản soi lỗi)
-      - name: Deploy frameworks (debug and deploy)
-        run: |
-          echo "--- Danh sách file trong thư mục build ---"
-          ls -R build
-          echo "------------------------------------------"
-          
-          # Tìm file .app thực sự nằm ở đâu
-          APP_DIR=$(find . -name "*.app" | head -n 1)
-          
-          if [ -z "$APP_DIR" ]; then
-            echo "LỖI: Không tìm thấy thư mục nào có đuôi .app cả!"
-            exit 1
-          fi
-          
-          echo "Đã tìm thấy ứng dụng tại: $APP_DIR"
-          
-          # Đóng gói
-          macdeployqt "$APP_DIR" -verbose=1
-          
-          # Tìm file lõi (tự động xử lý hoa thường)
-          EXEC_FILE=$(find "$APP_DIR/Contents/MacOS" -type f | head -n 1)
-          echo "File thực thi lõi là: $EXEC_FILE"
-          
-          # Đóng gói OpenCV
-          mkdir -p "$APP_DIR/Contents/Frameworks/"
-          dylibbundler -od -b -x "$EXEC_FILE" -d "$APP_DIR/Contents/Frameworks/" -p @executable_path/../Frameworks/
-
       # Cấu hình CMake
       - name: Configure
         run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
@@ -154,11 +126,30 @@ jobs:
         run: cmake --build build --config ${{ env.BUILD_TYPE }}
 
       # *** BƯỚC QUAN TRỌNG ***
-      # macdeployqt bundle toàn bộ Qt frameworks vào trong .app
-      # → File .app trở thành self-contained, chạy được trên máy không có Qt
-      - name: Deploy Qt frameworks (macdeployqt)
+      # 1) macdeployqt bundle toàn bộ Qt frameworks vào trong .app
+      # 2) dylibbundler bundle OpenCV dylibs vào .app/Contents/Frameworks
+      # → File .app trở thành self-contained, chạy được trên máy không có Qt/OpenCV
+      - name: Deploy Qt + OpenCV frameworks
         run: |
-          macdeployqt build/${{ env.APP_NAME }}.app -verbose=1
+          APP_DIR="build/${{ env.APP_NAME }}.app"
+
+          if [ ! -d "$APP_DIR" ]; then
+            echo "ERROR: $APP_DIR not found after build!"
+            ls -la build/
+            exit 1
+          fi
+
+          # Deploy Qt frameworks
+          macdeployqt "$APP_DIR" -verbose=1
+
+          # Deploy OpenCV dylibs
+          EXEC_FILE=$(find "$APP_DIR/Contents/MacOS" -type f -perm +111 | head -n 1)
+          echo "Executable: $EXEC_FILE"
+
+          mkdir -p "$APP_DIR/Contents/Frameworks/"
+          dylibbundler -od -b -x "$EXEC_FILE" \
+            -d "$APP_DIR/Contents/Frameworks/" \
+            -p @executable_path/../Frameworks/
 
       # Tạo file .dmg (disk image) kiểu "kéo thả"
       # Người dùng mở .dmg → kéo AutoPhoto vào thư mục Applications
