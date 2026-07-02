@@ -117,32 +117,31 @@ jobs:
       - name: Install dependencies
         run: brew install ninja opencv dylibbundler
 
-      - name: Deploy frameworks (macdeployqt & dylibbundler)
+      # Đóng gói Qt và OpenCV (phiên bản soi lỗi)
+      - name: Deploy frameworks (debug and deploy)
         run: |
-          # Quét toàn bộ thư mục gốc (.) để tìm thư mục có đuôi .app
-          APP_DIR=$(find . -type d -name "*.app" | head -n 1)
+          echo "--- Danh sách file trong thư mục build ---"
+          ls -R build
+          echo "------------------------------------------"
           
-          # Chốt chặn an toàn: Nếu không tìm thấy, dừng lại ngay và báo lỗi rõ ràng
+          # Tìm file .app thực sự nằm ở đâu
+          APP_DIR=$(find . -name "*.app" | head -n 1)
+          
           if [ -z "$APP_DIR" ]; then
-            echo "LỖI CHÍ MẠNG: Không tìm thấy file .app nào sau khi build!"
+            echo "LỖI: Không tìm thấy thư mục nào có đuôi .app cả!"
             exit 1
           fi
           
-          echo "Đã tóm được ứng dụng tại: $APP_DIR"
+          echo "Đã tìm thấy ứng dụng tại: $APP_DIR"
           
-          # Đóng gói thư viện Qt
+          # Đóng gói
           macdeployqt "$APP_DIR" -verbose=1
           
-          # Quét tìm file thực thi lõi (xử lý triệt để vụ hoa/thường)
-          if [ -f "$APP_DIR/Contents/MacOS/AutoPhoto" ]; then
-              EXEC_FILE="$APP_DIR/Contents/MacOS/AutoPhoto"
-          else
-              EXEC_FILE="$APP_DIR/Contents/MacOS/autophoto"
-          fi
-          
+          # Tìm file lõi (tự động xử lý hoa thường)
+          EXEC_FILE=$(find "$APP_DIR/Contents/MacOS" -type f | head -n 1)
           echo "File thực thi lõi là: $EXEC_FILE"
           
-          # Đóng gói thư viện OpenCV
+          # Đóng gói OpenCV
           mkdir -p "$APP_DIR/Contents/Frameworks/"
           dylibbundler -od -b -x "$EXEC_FILE" -d "$APP_DIR/Contents/Frameworks/" -p @executable_path/../Frameworks/
 
