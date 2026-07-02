@@ -120,10 +120,12 @@ install(TARGETS autophoto
 )
 
 if(WIN32 AND OpenCV_FOUND)
-    install(DIRECTORY "$<TARGET_FILE_DIR:autophoto>/"
-        DESTINATION "${CMAKE_INSTALL_BINDIR}"
-        FILES_MATCHING PATTERN "opencv_*.dll"
-    )
+    install(CODE "
+        file(GLOB OPENCV_DLLS \"$<TARGET_FILE_DIR:autophoto>/opencv_*.dll\")
+        if(OPENCV_DLLS)
+            file(COPY \${OPENCV_DLLS} DESTINATION \"\${CMAKE_INSTALL_PREFIX}/bin\")
+        endif()
+    ")
 endif()
 
 if(WIN32 OR APPLE)
