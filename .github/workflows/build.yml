@@ -119,18 +119,30 @@ jobs:
 
       - name: Deploy frameworks (macdeployqt & dylibbundler)
         run: |
-          APP_DIR=$(find build -maxdepth 1 -name "*.app" | head -n 1)
-          echo "Tìm thấy ứng dụng tại: $APP_DIR"
-
+          # Quét toàn bộ thư mục gốc (.) để tìm thư mục có đuôi .app
+          APP_DIR=$(find . -type d -name "*.app" | head -n 1)
+          
+          # Chốt chặn an toàn: Nếu không tìm thấy, dừng lại ngay và báo lỗi rõ ràng
+          if [ -z "$APP_DIR" ]; then
+            echo "LỖI CHÍ MẠNG: Không tìm thấy file .app nào sau khi build!"
+            exit 1
+          fi
+          
+          echo "Đã tóm được ứng dụng tại: $APP_DIR"
+          
+          # Đóng gói thư viện Qt
           macdeployqt "$APP_DIR" -verbose=1
           
+          # Quét tìm file thực thi lõi (xử lý triệt để vụ hoa/thường)
           if [ -f "$APP_DIR/Contents/MacOS/AutoPhoto" ]; then
               EXEC_FILE="$APP_DIR/Contents/MacOS/AutoPhoto"
           else
               EXEC_FILE="$APP_DIR/Contents/MacOS/autophoto"
           fi
-          echo "File thực thi lõi: $EXEC_FILE"
           
+          echo "File thực thi lõi là: $EXEC_FILE"
+          
+          # Đóng gói thư viện OpenCV
           mkdir -p "$APP_DIR/Contents/Frameworks/"
           dylibbundler -od -b -x "$EXEC_FILE" -d "$APP_DIR/Contents/Frameworks/" -p @executable_path/../Frameworks/
 
