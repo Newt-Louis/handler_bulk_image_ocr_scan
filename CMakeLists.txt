@@ -31,7 +31,7 @@ set_source_files_properties(qml/Main.qml PROPERTIES QT_RESOURCE_ALIAS Main.qml)
 set_source_files_properties(qml/components/CoverFlowView.qml PROPERTIES QT_RESOURCE_ALIAS CoverFlowView.qml)
 set_source_files_properties(qml/components/ToolPanel.qml PROPERTIES QT_RESOURCE_ALIAS ToolPanel.qml)
 
-qt_add_executable(autophoto
+qt_add_executable(AutoPhoto
     MANUAL_FINALIZATION
     src/main.cpp
     src/BatchProcessor.cpp

@@ -119,9 +119,20 @@ jobs:
 
       - name: Deploy frameworks (macdeployqt & dylibbundler)
         run: |
-          macdeployqt build/${{ env.APP_NAME }}.app -verbose=1
+          APP_DIR=$(find build -maxdepth 1 -name "*.app" | head -n 1)
+          echo "Tìm thấy ứng dụng tại: $APP_DIR"
+
+          macdeployqt "$APP_DIR" -verbose=1
           
-          dylibbundler -od -b -x build/${{ env.APP_NAME }}.app/Contents/MacOS/${{ env.APP_NAME }} -d build/${{ env.APP_NAME }}.app/Contents/Frameworks/ -p @executable_path/../Frameworks/
+          if [ -f "$APP_DIR/Contents/MacOS/AutoPhoto" ]; then
+              EXEC_FILE="$APP_DIR/Contents/MacOS/AutoPhoto"
+          else
+              EXEC_FILE="$APP_DIR/Contents/MacOS/autophoto"
+          fi
+          echo "File thực thi lõi: $EXEC_FILE"
+          
+          mkdir -p "$APP_DIR/Contents/Frameworks/"
+          dylibbundler -od -b -x "$EXEC_FILE" -d "$APP_DIR/Contents/Frameworks/" -p @executable_path/../Frameworks/
 
       # Cấu hình CMake
       - name: Configure
