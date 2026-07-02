@@ -115,7 +115,7 @@ jobs:
 
       # Cài Ninja và OpenCV qua Homebrew
       - name: Install dependencies
-        run: brew install ninja opencv macdylibbundler
+        run: brew install ninja opencv dylibbundler
 
       - name: Deploy frameworks (macdeployqt & dylibbundler)
         run: |
