@@ -67,7 +67,7 @@ BUILD_DIR=my-build INSTALL_DIR=my-dist bash scripts/build-macos.sh
 
 ```powershell
 .\scripts\build-windows.ps1 `
-  -QtPrefix "C:\Qt\6.4.2\msvc2019_64" `
+  -QtPrefix "C:\Qt\6.11.1\msvc2022_64" `
   -OpenCvDir "C:\opencv\build\x64\vc16"
 ```
 
