@@ -14,7 +14,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(AUTOPHOTO_ENABLE_OPENCV "Enable OpenCV-backed image processing" ON)
 
-find_package(Qt6 6.4 REQUIRED COMPONENTS Core Gui Qml Quick QuickControls2 QuickDialogs2)
+find_package(Qt6 6.11.1 REQUIRED COMPONENTS Core Gui Qml Quick QuickControls2 QuickDialogs2)
 
 if(AUTOPHOTO_ENABLE_OPENCV)
     find_package(OpenCV QUIET)
@@ -25,7 +25,7 @@ if(AUTOPHOTO_ENABLE_OPENCV)
     endif()
 endif()
 
-qt_standard_project_setup(REQUIRES 6.4)
+qt_standard_project_setup(REQUIRES 6.11.1)
 
 set_source_files_properties(qml/Main.qml PROPERTIES QT_RESOURCE_ALIAS Main.qml)
 set_source_files_properties(qml/components/CoverFlowView.qml PROPERTIES QT_RESOURCE_ALIAS CoverFlowView.qml)
