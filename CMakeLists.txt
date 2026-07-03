@@ -106,7 +106,7 @@ if(EXISTS "${AUTOPHOTO_YUNET_MODEL}")
             "$<TARGET_FILE_DIR:autophoto>/models/face_detection_yunet_2023mar.onnx"
     )
     if(APPLE)
-        install(FILES "${AUTOPHOTO_YUNET_MODEL}" DESTINATION "AutoPhoto.app/Contents/MacOS/models")
+        install(FILES "${AUTOPHOTO_YUNET_MODEL}" DESTINATION "AutoPhoto.app/Contents/Resources/models")
     else()
         install(FILES "${AUTOPHOTO_YUNET_MODEL}" DESTINATION "${CMAKE_INSTALL_BINDIR}/models")
     endif()

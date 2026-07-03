@@ -36,6 +36,7 @@ QString DesktopPlatform::modelDir() const
 {
     const QStringList candidates = {
         QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("models")),
+        QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("../Resources/models")),
         QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("../models")),
         QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("../../models")),
         QStringLiteral("models"),

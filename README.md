@@ -14,70 +14,129 @@ CLI mode for automation.
 
 ## Build From Source
 
-Install Qt 6 and CMake first. OpenCV is optional for the current scaffold.
-On Ubuntu/Debian, the GUI runtime also needs the QML import packages:
+Desktop packages must be built on the target OS.
+Pull this source code onto each OS and run the corresponding build script.
+
+---
+
+### 🍎 macOS
+
+**1. Install prerequisites (one-time):**
 
 ```bash
-sudo apt install \
-  qml6-module-qtqml \
-  qml6-module-qtqml-workerscript \
-  qml6-module-qtquick \
-  qml6-module-qtquick-controls \
-  qml6-module-qtquick-templates \
-  qml6-module-qtquick-dialogs \
-  qml6-module-qtquick-layouts \
-  qml6-module-qtquick-window
+brew install cmake ninja qt@6 opencv dylibbundler
 ```
+
+If `qt@6` is keg-only, add it to your PATH:
 
 ```bash
-cmake -S . -B build -DAUTOPHOTO_ENABLE_OPENCV=OFF
-cmake --build build
-./build/autophoto
+echo 'export PATH="/opt/homebrew/opt/qt@6/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
 ```
 
-When OpenCV is installed and discoverable by CMake:
-
-```bash
-cmake -S . -B build -DAUTOPHOTO_ENABLE_OPENCV=ON
-cmake --build build
-```
-
-On Linux the executable is `build/autophoto`. On Windows/macOS release builds
-use the product name: `AutoPhoto.exe` and `AutoPhoto.app`.
-
-## Desktop Packages
-
-Desktop packages must be built on the target OS, or with a matching cross
-toolchain. A Linux machine cannot directly produce a normal signed Windows
-`.exe` installer or macOS `.app` bundle without those platform tools.
-
-### Windows `.exe` and Installer
-
-Install Qt 6, CMake, Ninja, OpenCV, and Inno Setup 6. Then run in PowerShell:
-
-```powershell
-.\scripts\build-windows.ps1 `
-  -QtPrefix C:\Qt\6.7.0\msvc2019_64 `
-  -OpenCvDir C:\opencv\build
-```
-
-The script configures a Release build, installs a deployable app into
-`dist\AutoPhoto`, runs Qt deployment, and builds an Inno Setup installer from
-`packaging/windows/AutoPhoto.iss`. The installer registers `AutoPhoto.exe` in
-Windows App Paths so automation can call it from the shell.
-
-Use `-SkipInstaller` to stop after producing the deployable app folder.
-
-### macOS `.app` and `.dmg`
-
-Install Qt 6, CMake, Ninja, and OpenCV. Then run on macOS:
+**2. Build:**
 
 ```bash
 bash scripts/build-macos.sh
 ```
 
-The script builds Release, installs `AutoPhoto.app` into `dist/AutoPhoto`, runs
-Qt deployment, and asks CPack to create a `.dmg`.
+**3. Output:**
+
+- `.app` bundle in `dist/AutoPhoto/AutoPhoto.app` — self-contained, copy to any Mac
+- `.dmg` in `build-macos/` — disk image for distribution
+
+**Override defaults:**
+
+```bash
+BUILD_DIR=my-build INSTALL_DIR=my-dist bash scripts/build-macos.sh
+```
+
+---
+
+### 🪟 Windows
+
+**1. Install prerequisites (one-time):**
+
+- [Visual Studio 2022](https://visualstudio.microsoft.com/) — select "Desktop development with C++"
+- [CMake](https://cmake.org/download/) (3.24+)
+- [Ninja](https://ninja-build.org/) (`choco install ninja`)
+- [Qt 6.4+](https://www.qt.io/download-qt-installer) — install MSVC 2019 64-bit component
+- [OpenCV 4.x](https://opencv.org/releases/) — extract to e.g. `C:\opencv`
+
+**2. Build (run in "Developer PowerShell for VS 2022"):**
+
+```powershell
+.\scripts\build-windows.ps1 `
+  -QtPrefix "C:\Qt\6.4.2\msvc2019_64" `
+  -OpenCvDir "C:\opencv\build\x64\vc16"
+```
+
+**3. Output:**
+
+- Portable folder in `dist\AutoPhoto\` — contains `AutoPhoto.exe` + all DLLs + models
+- `AutoPhoto-Windows-Portable.zip` — zip archive for distribution
+
+**Override defaults:**
+
+```powershell
+.\scripts\build-windows.ps1 -BuildDir my-build -InstallDir "C:\my-dist" -SkipZip
+```
+
+---
+
+### 🐧 Linux (Ubuntu/Debian)
+
+**1. Install prerequisites (one-time):**
+
+```bash
+sudo apt update
+sudo apt install cmake ninja-build qt6-base-dev qt6-declarative-dev \
+  qt6-shadertools-dev libopencv-dev \
+  qml6-module-qtqml qml6-module-qtquick qml6-module-qtquick-controls \
+  qml6-module-qtquick-dialogs qml6-module-qtquick-layouts \
+  qml6-module-qtquick-window
+```
+
+**2. Build:**
+
+```bash
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+```
+
+**3. Run:**
+
+```bash
+./build/autophoto
+```
+
+---
+
+## Portable Usage
+
+Each build script produces a **self-contained portable output**:
+
+| OS | Output | How to use on another machine |
+|----|--------|-------------------------------|
+| macOS | `AutoPhoto.app` | Copy the `.app` to any Mac, double-click to run |
+| Windows | `dist\AutoPhoto\` folder | Copy the folder, run `AutoPhoto.exe` |
+| Linux | `build/autophoto` | Requires Qt/OpenCV installed on target machine |
+
+## Headless Mode
+
+The executable can process a folder without opening the GUI:
+
+```bash
+./build/autophoto \
+  --mode auto \
+  --input /path/to/images \
+  --output /path/to/output \
+  --rename-pattern autophoto \
+  --blur-mode gaussian \
+  --strength 100
+```
+
+Use `--no-blur-faces` to export without face censoring.
 
 ## Current Behavior
 
@@ -96,19 +155,3 @@ Qt deployment, and asks CPack to create a `.dmg`.
   built executable after each build.
 - The GUI includes progress, pause, resume, stop, worker count, exported count,
   and failed count.
-
-## Headless Mode
-
-The executable can process a folder without opening the GUI:
-
-```bash
-./build/autophoto \
-  --mode auto \
-  --input /path/to/images \
-  --output /path/to/output \
-  --rename-pattern autophoto \
-  --blur-mode gaussian \
-  --strength 100
-```
-
-Use `--no-blur-faces` to export without face censoring.

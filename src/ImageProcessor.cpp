@@ -51,6 +51,7 @@ QString findYuNetModelPath()
 {
     const QStringList candidates = {
         QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("models/face_detection_yunet_2023mar.onnx")),
+        QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("../Resources/models/face_detection_yunet_2023mar.onnx")),
         QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("../models/face_detection_yunet_2023mar.onnx")),
         QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("../../models/face_detection_yunet_2023mar.onnx")),
         QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("face_detection_yunet_2023mar.onnx")),
@@ -70,6 +71,8 @@ QString findCascadePath(const QString &fileName)
 {
     const QStringList candidates = {
         QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("models/%1").arg(fileName)),
+        QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("../Resources/models/%1").arg(fileName)),
+        QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("../models/%1").arg(fileName)),
         QStringLiteral("/usr/share/opencv4/haarcascades/%1").arg(fileName),
         QStringLiteral("/usr/local/share/opencv4/haarcascades/%1").arg(fileName),
         QStringLiteral("/opt/homebrew/share/opencv4/haarcascades/%1").arg(fileName),
