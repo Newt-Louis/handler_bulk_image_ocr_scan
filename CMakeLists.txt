@@ -120,21 +120,54 @@ install(TARGETS autophoto
 )
 
 if(WIN32 AND OpenCV_FOUND)
-    install(CODE "
-        file(GLOB OPENCV_DLLS \"$<TARGET_FILE_DIR:autophoto>/opencv_*.dll\")
-        if(OPENCV_DLLS)
-            file(COPY \${OPENCV_DLLS} DESTINATION \"\${CMAKE_INSTALL_PREFIX}/bin\")
-        endif()
-    ")
+    # BUG FIX: the previous version globbed for DLLs inside $<TARGET_FILE_DIR:autophoto>,
+    # which is the BUILD OUTPUT directory (where the .exe lives) — not where the real
+    # OpenCV runtime DLLs are. That glob always matched nothing, so the DLLs were never
+    # copied into the packaged dist/ folder, causing "opencv_worldXXXX.dll was not found"
+    # at runtime on machines/folders without OpenCV installed system-wide.
+    #
+    # OpenCV_DIR points to the folder containing OpenCVConfig.cmake, which for the
+    # prebuilt Windows OpenCV packages is "<opencv_root>/lib". The actual DLLs live in
+    # the sibling "bin" folder, i.e. "<opencv_root>/bin".
+    get_filename_component(AUTOPHOTO_OPENCV_BIN_DIR "${OpenCV_DIR}/../bin" ABSOLUTE)
+
+    file(GLOB AUTOPHOTO_OPENCV_DLLS "${AUTOPHOTO_OPENCV_BIN_DIR}/opencv_*.dll")
+    if(NOT AUTOPHOTO_OPENCV_DLLS)
+        message(WARNING "No opencv_*.dll found in ${AUTOPHOTO_OPENCV_BIN_DIR}. The packaged app will likely fail to run.")
+    endif()
+
+    # Also copy next to the build output, so running/debugging straight from the
+    # build directory (without doing a full install) works too.
+    add_custom_command(TARGET autophoto POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${AUTOPHOTO_OPENCV_DLLS} "$<TARGET_FILE_DIR:autophoto>"
+    )
+
+    install(FILES ${AUTOPHOTO_OPENCV_DLLS} DESTINATION "${CMAKE_INSTALL_BINDIR}")
 endif()
 
-if(WIN32 OR APPLE)
-    qt_generate_deploy_app_script(
-        TARGET autophoto
-        FILENAME_VARIABLE AUTOPHOTO_DEPLOY_SCRIPT
-    )
-    install(SCRIPT ${AUTOPHOTO_DEPLOY_SCRIPT})
+# --- Qt deployment script (cross-platform: Windows / macOS / Linux) ---
+# NOTE: qt_generate_deploy_app_script() historically used the FILENAME_VARIABLE
+# keyword. Since Qt 6.5+ this was renamed to OUTPUT_SCRIPT, and newer Qt
+# releases (6.10/6.11+) no longer accept the old name, so we must use
+# OUTPUT_SCRIPT here. Also, since this target is a QML application
+# (qt_add_qml_module was used above), Qt's docs recommend
+# qt_generate_deploy_qml_app_script() instead of the plain
+# qt_generate_deploy_app_script(), so QML imports get deployed correctly too.
+set(AUTOPHOTO_DEPLOY_TOOL_OPTIONS "")
+if(APPLE)
+    list(APPEND AUTOPHOTO_DEPLOY_TOOL_OPTIONS --hardened-runtime)
+elseif(WIN32)
+    list(APPEND AUTOPHOTO_DEPLOY_TOOL_OPTIONS --no-compiler-runtime)
 endif()
+
+qt_generate_deploy_qml_app_script(
+    TARGET autophoto
+    OUTPUT_SCRIPT AUTOPHOTO_DEPLOY_SCRIPT
+    NO_UNSUPPORTED_PLATFORM_ERROR
+    DEPLOY_USER_QML_MODULES_ON_UNSUPPORTED_PLATFORM
+    DEPLOY_TOOL_OPTIONS ${AUTOPHOTO_DEPLOY_TOOL_OPTIONS}
+)
+install(SCRIPT ${AUTOPHOTO_DEPLOY_SCRIPT})
 
 configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/packaging/windows/AutoPhoto.iss.in"
@@ -153,6 +186,9 @@ if(APPLE)
     set(CPACK_DMG_VOLUME_NAME "AutoPhoto")
 elseif(WIN32)
     list(APPEND CPACK_GENERATOR "NSIS")
+else()
+    # Linux
+    list(APPEND CPACK_GENERATOR "TGZ")
 endif()
 include(CPack)
 

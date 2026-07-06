@@ -1,12 +1,12 @@
 #pragma once
 
 #include <QObject>
-#include <QPointer>
 #include <QStringList>
-#include <QThread>
 #include <atomic>
 #include <condition_variable>
+#include <memory>
 #include <mutex>
+#include <thread>
 
 class BatchProcessor final : public QObject
 {
@@ -71,7 +71,6 @@ private:
 
     std::atomic_bool m_cancelled = false;
     std::atomic_bool m_pausedAtomic = false;
-    QPointer<QThread> m_worker;
     bool m_running = false;
     bool m_paused = false;
     int m_progress = 0;
@@ -82,4 +81,8 @@ private:
     QString m_statusText = QStringLiteral("Idle");
     std::mutex m_pauseMutex;
     std::condition_variable m_pauseCondition;
+
+    std::unique_ptr<std::thread> m_readerThread;
+    std::unique_ptr<std::thread> m_detectorThread;
+    std::unique_ptr<std::thread> m_writerThread;
 };

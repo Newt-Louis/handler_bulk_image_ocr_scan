@@ -5,6 +5,8 @@ data_test/*
 # Thư mục Build của CMake
 # -----------------------------
 build/
+build-windows/
+dist/
 out/
 bin/
 CMakeCache.txt
@@ -12,6 +14,7 @@ CMakeFiles/
 CMakeScripts/
 cmake_install.cmake
 Makefile
+CMakeUserPresets.json
 
 # -----------------------------
 # File tạm của Visual Studio / MSVC

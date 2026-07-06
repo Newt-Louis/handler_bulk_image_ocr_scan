@@ -46,6 +46,8 @@ struct FaceDetectionCacheEntry {
 
 QCache<FaceDetectionCacheKey, FaceDetectionCacheEntry> s_faceCache(100);
 
+} // namespace
+
 #ifdef AUTOPHOTO_HAS_OPENCV
 QString findYuNetModelPath()
 {
@@ -445,8 +447,6 @@ cv::Mat readImageRespectingExif(const QString &sourcePath)
 }
 
 #endif
-
-} // namespace
 
 ImageProcessor::ImageProcessor(const ProcessingOptions &options)
     : m_options(options)
