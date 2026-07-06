@@ -3,16 +3,18 @@
 #include "BoundedBuffer.h"
 #include "ImageCompressor.h"
 #include "ImageOrientation.h"
-#include "ImageProcessor.h"
 #include "ImageProcessorInternal.h"
+#include "ImageProcessor.h"
 
 #include <QCryptographicHash>
+#include <QDebug>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QMetaObject>
 #include <QtGlobal>
 
+#include <stdexcept>
 #include <thread>
 
 #ifdef AUTOPHOTO_HAS_OPENCV
@@ -42,8 +44,6 @@ struct DetectedData {
 };
 
 // ── Reader Stage ──────────────────────────────────────────────
-// Reads images from disk, pushes to detector buffer.
-// Runs on a dedicated thread. Yields CPU between reads for HDD friendliness.
 
 void readerStage(const QStringList &inputFiles,
                  const QString &outputFolder,
@@ -53,12 +53,16 @@ void readerStage(const QStringList &inputFiles,
                  std::atomic_bool &cancelled,
                  std::atomic_bool &paused)
 {
+    qDebug() << "[Reader] Starting. Files:" << inputFiles.size() << "Output:" << outputFolder;
+
     const int total = inputFiles.size();
 
     for (int i = 0; i < total; ++i) {
-        if (cancelled.load()) break;
+        if (cancelled.load()) {
+            qDebug() << "[Reader] Cancelled at" << i;
+            break;
+        }
 
-        // Pause spin-wait
         while (paused.load() && !cancelled.load()) {
             std::this_thread::sleep_for(std::chrono::milliseconds(50));
         }
@@ -78,27 +82,28 @@ void readerStage(const QStringList &inputFiles,
         item.targetPath = QDir(outputFolder).filePath(fileName);
 
 #ifdef AUTOPHOTO_HAS_OPENCV
-        // Read image with EXIF orientation if rotate enabled
         if (options.rotateEnabled) {
             item.image = readImageRespectingExif(item.sourcePath);
         }
         if (item.image.empty()) {
             item.image = cv::imread(item.sourcePath.toStdString(), cv::IMREAD_COLOR);
         }
+        if (item.image.empty()) {
+            qDebug() << "[Reader] WARNING: Could not read image:" << item.sourcePath;
+        } else {
+            qDebug() << "[Reader] Read" << source.fileName() << "(" << item.image.cols << "x" << item.image.rows << ")";
+        }
 #endif
 
         output->push(std::move(item));
-
-        // Yield CPU after each read — important for HDD + low-resource machines
         std::this_thread::sleep_for(std::chrono::milliseconds(5));
     }
 
     output->close();
+    qDebug() << "[Reader] Done. Pushed" << total << "items.";
 }
 
 // ── Detector Stage ────────────────────────────────────────────
-// Pops from reader buffer, detects faces, pushes to writer buffer.
-// Heavy CPU work — yields between items.
 
 void detectorStage(std::shared_ptr<BoundedBuffer<ReadData>> input,
                    std::shared_ptr<BoundedBuffer<DetectedData>> output,
@@ -107,16 +112,25 @@ void detectorStage(std::shared_ptr<BoundedBuffer<ReadData>> input,
                    std::atomic_bool &paused,
                    std::atomic_int &detectedCount)
 {
+    qDebug() << "[Detector] Starting. blurFaces:" << options.blurFaces;
+
 #ifdef AUTOPHOTO_HAS_OPENCV
     const QString yuNetModelPath = findYuNetModelPath();
+    qDebug() << "[Detector] YuNet model:" << (yuNetModelPath.isEmpty() ? "NOT FOUND" : yuNetModelPath);
 
+    int itemCount = 0;
     while (true) {
         auto data = input->pop();
-        if (!data.has_value()) break;
+        if (!data.has_value()) {
+            qDebug() << "[Detector] Buffer closed, exiting.";
+            break;
+        }
 
-        if (cancelled.load()) break;
+        if (cancelled.load()) {
+            qDebug() << "[Detector] Cancelled at item" << itemCount;
+            break;
+        }
 
-        // Pause spin-wait
         while (paused.load() && !cancelled.load()) {
             std::this_thread::sleep_for(std::chrono::milliseconds(50));
         }
@@ -128,7 +142,6 @@ void detectorStage(std::shared_ptr<BoundedBuffer<ReadData>> input,
         out.targetPath = std::move(data->targetPath);
         out.image = std::move(data->image);
 
-        // Detect faces if blur is enabled
         if (options.blurFaces && !out.image.empty()) {
             std::vector<cv::Rect> faces;
             std::vector<cv::Rect> yuNetFaces;
@@ -137,8 +150,11 @@ void detectorStage(std::shared_ptr<BoundedBuffer<ReadData>> input,
                 try {
                     faces = detectWithYuNet(out.image, yuNetModelPath, options.detectionSensitivity, out.sourcePath);
                     yuNetFaces = faces;
-                } catch (const cv::Exception &) {
-                    // YuNet failed — continue with empty faces
+                    qDebug() << "[Detector] YuNet found" << faces.size() << "faces in item" << itemCount;
+                } catch (const cv::Exception &e) {
+                    qDebug() << "[Detector] YuNet exception:" << QString::fromStdString(e.what());
+                } catch (const std::exception &e) {
+                    qDebug() << "[Detector] std::exception:" << e.what();
                 }
             }
 
@@ -152,12 +168,16 @@ void detectorStage(std::shared_ptr<BoundedBuffer<ReadData>> input,
                     const QString cascadePath = findCascadePath(cascadeFile);
                     if (cascadePath.isEmpty()) continue;
 
-                    std::vector<cv::Rect> cascadeDetections = detectWithCascade(out.image, cascadePath, false);
-                    appendMergedFaces(faces, cascadeDetections);
-
-                    if (cascadeFile == QLatin1String("haarcascade_profileface.xml")) {
-                        cascadeDetections = detectWithCascade(out.image, cascadePath, true);
+                    try {
+                        std::vector<cv::Rect> cascadeDetections = detectWithCascade(out.image, cascadePath, false);
                         appendMergedFaces(faces, cascadeDetections);
+
+                        if (cascadeFile == QLatin1String("haarcascade_profileface.xml")) {
+                            cascadeDetections = detectWithCascade(out.image, cascadePath, true);
+                            appendMergedFaces(faces, cascadeDetections);
+                        }
+                    } catch (const std::exception &e) {
+                        qDebug() << "[Detector] Cascade exception:" << e.what();
                     }
                 }
             }
@@ -169,7 +189,7 @@ void detectorStage(std::shared_ptr<BoundedBuffer<ReadData>> input,
             if (options.cascadeCrossCheckEnabled && yuNetFaces.empty()) {
                 faces.clear();
             }
-            if (options.skinColorFilterEnabled) {
+            if (options.skinColorFilterEnabled && !faces.empty()) {
                 faces = filterBySkinColor(out.image, faces, options.detectionSensitivity);
                 // Aggregate validation
                 if (!faces.empty()) {
@@ -200,6 +220,7 @@ void detectorStage(std::shared_ptr<BoundedBuffer<ReadData>> input,
                         }
                     }
                     if (validRoiCount > 0 && (totalSkinRatio / validRoiCount) < 0.20) {
+                        qDebug() << "[Detector] Aggregate skin validation: rejecting ALL faces (avg skin ratio:" << (totalSkinRatio / validRoiCount) << ")";
                         faces.clear();
                     }
                 }
@@ -209,18 +230,16 @@ void detectorStage(std::shared_ptr<BoundedBuffer<ReadData>> input,
             detectedCount.fetch_add(static_cast<int>(out.faces.size()));
         }
 
+        qDebug() << "[Detector] Item" << itemCount << ": " << out.faces.size() << "faces";
         output->push(std::move(out));
-
-        // Yield CPU after detection (heavy work)
+        ++itemCount;
         std::this_thread::sleep_for(std::chrono::milliseconds(2));
     }
 #else
-    // No OpenCV — pass through without detection
     while (true) {
         auto data = input->pop();
         if (!data.has_value()) break;
         if (cancelled.load()) break;
-
         DetectedData out;
         out.index = data->index;
         out.sourcePath = std::move(data->sourcePath);
@@ -230,10 +249,10 @@ void detectorStage(std::shared_ptr<BoundedBuffer<ReadData>> input,
 #endif
 
     output->close();
+    qDebug() << "[Detector] Done. Processed" << itemCount << "items.";
 }
 
 // ── Writer Stage ──────────────────────────────────────────────
-// Pops from detector buffer, applies blur + compression, writes to disk.
 
 void writerStage(std::shared_ptr<BoundedBuffer<DetectedData>> input,
                  const ProcessingOptions &options,
@@ -242,13 +261,21 @@ void writerStage(std::shared_ptr<BoundedBuffer<DetectedData>> input,
                  std::atomic_int &processed,
                  std::atomic_int &failed)
 {
+    qDebug() << "[Writer] Starting.";
+
+    int itemCount = 0;
     while (true) {
         auto data = input->pop();
-        if (!data.has_value()) break;
+        if (!data.has_value()) {
+            qDebug() << "[Writer] Buffer closed, exiting.";
+            break;
+        }
 
-        if (cancelled.load()) break;
+        if (cancelled.load()) {
+            qDebug() << "[Writer] Cancelled at item" << itemCount;
+            break;
+        }
 
-        // Pause spin-wait
         while (paused.load() && !cancelled.load()) {
             std::this_thread::sleep_for(std::chrono::milliseconds(50));
         }
@@ -258,17 +285,20 @@ void writerStage(std::shared_ptr<BoundedBuffer<DetectedData>> input,
 
 #ifdef AUTOPHOTO_HAS_OPENCV
         if (!data->image.empty()) {
-            // Apply blur to detected faces
-            if (options.blurFaces) {
+            // Apply blur
+            if (options.blurFaces && !data->faces.empty()) {
                 for (const cv::Rect &face : data->faces) {
-                    applyBlur(data->image, face, options.blurMode, options.strength);
+                    try {
+                        applyBlur(data->image, face, options.blurMode, options.strength);
+                    } catch (const std::exception &e) {
+                        qDebug() << "[Writer] Blur exception:" << e.what();
+                    }
                 }
+                qDebug() << "[Writer] Applied blur to" << data->faces.size() << "faces in item" << itemCount;
             }
 
-            // Ensure output directory exists
             QDir().mkpath(QFileInfo(data->targetPath).absolutePath());
 
-            // Write image
             if (options.compressionEnabled && options.compressionLevel > 0) {
                 const QString tempDir = QDir::tempPath();
                 const QString tempName = QStringLiteral("autophoto_compress_%1.jpg")
@@ -283,11 +313,11 @@ void writerStage(std::shared_ptr<BoundedBuffer<DetectedData>> input,
                 success = cv::imwrite(data->targetPath.toStdString(), data->image);
             }
 
-            // Release memory immediately after writing
             data->image.release();
+        } else {
+            qDebug() << "[Writer] WARNING: Empty image for item" << itemCount << "- skipping.";
         }
 #else
-        // No OpenCV — Qt fallback
         QDir().mkpath(QFileInfo(data->targetPath).absolutePath());
         QImage image;
         if (options.rotateEnabled) {
@@ -315,10 +345,15 @@ void writerStage(std::shared_ptr<BoundedBuffer<DetectedData>> input,
 
         if (success) {
             processed.fetch_add(1);
+            qDebug() << "[Writer] Wrote" << QFileInfo(data->targetPath).fileName();
         } else {
             failed.fetch_add(1);
+            qDebug() << "[Writer] FAILED to write" << data->targetPath;
         }
+        ++itemCount;
     }
+
+    qDebug() << "[Writer] Done. Processed:" << processed.load() << "Failed:" << failed.load();
 }
 
 } // namespace
@@ -363,7 +398,26 @@ void BatchProcessor::start(const QStringList &inputFiles,
     if (inputFiles.isEmpty()) { emit failed(tr("No input images selected.")); return; }
     if (outputFolder.isEmpty()) { emit failed(tr("Output folder is empty.")); return; }
 
-    QDir().mkpath(outputFolder);
+    // Make a local copy so we can normalize the path
+    QString outDir = outputFolder;
+
+    qDebug() << "=== BatchProcessor::start ===";
+    qDebug() << "Input files:" << inputFiles.size();
+    qDebug() << "Output folder (raw):" << outDir;
+
+    // Normalize output folder path — strip leading slash before drive letter on Windows
+    // (e.g. "/F:/path" → "F:/path") to prevent cv::imwrite failures
+#ifdef Q_OS_WIN
+    if (outDir.length() >= 3 && outDir.at(0) == QLatin1Char('/')
+        && outDir.at(2) == QLatin1Char(':')) {
+        outDir = outDir.mid(1);
+        qDebug() << "[BatchProcessor] Normalized output path to:" << outDir;
+    }
+#endif
+
+    QDir().mkpath(outDir);
+
+    qDebug() << "Options: blur=" << blurFaces << "rotate=" << rotateEnabled << "compress=" << compressionEnabled;
     m_cancelled = false;
     m_pausedAtomic = false;
     setProgress(0);
@@ -387,79 +441,89 @@ void BatchProcessor::start(const QStringList &inputFiles,
         outputFormat
     };
 
-    // Create bounded buffers (capacity 1 each for minimal RAM usage)
     auto readBuffer = std::make_shared<BoundedBuffer<ReadData>>(1);
     auto detectBuffer = std::make_shared<BoundedBuffer<DetectedData>>(1);
 
     const int total = inputFiles.size();
     BatchProcessor *self = this;
 
-    // Shared atomic counters
     auto processedCount = std::make_shared<std::atomic_int>(0);
     auto failedCount = std::make_shared<std::atomic_int>(0);
     auto detectedFaces = std::make_shared<std::atomic_int>(0);
 
-    // Status update helper
-    auto updateStatus = [self, total, processedCount, failedCount](const QString &msg) {
-        const int p = processedCount->load();
-        const int f = failedCount->load();
-        const int done = p + f;
-        const int pct = total > 0 ? (done * 100 / total) : 0;
-        QMetaObject::invokeMethod(self, [self, pct, p, f, total, msg] {
-            self->setProgress(pct);
-            self->setTotals(p, f, total);
-            self->setStatusText(msg);
-        }, Qt::QueuedConnection);
-    };
-
-    // ── Launch 3-stage pipeline ──────────────────────────────
-
-    // Stage 1: Reader (HDD I/O — yields CPU between reads)
-    m_readerThread = std::make_unique<std::thread>([
-        inputFiles, outputFolder, renamePattern, options,
-        readBuffer, &cancelled = m_cancelled, &paused = m_pausedAtomic
-    ] {
-        readerStage(inputFiles, outputFolder, renamePattern, options, readBuffer, cancelled, paused);
-    });
-
-    // Stage 2: Detector (CPU heavy — YuNet + cascade + filters)
-    m_detectorThread = std::make_unique<std::thread>([
-        readBuffer, detectBuffer, options,
-        &cancelled = m_cancelled, &paused = m_pausedAtomic, detectedFaces
-    ] {
-        detectorStage(readBuffer, detectBuffer, options, cancelled, paused, *detectedFaces);
-    });
-
-    // Stage 3: Writer (blur + compress + disk write)
-    m_writerThread = std::make_unique<std::thread>([
-        self, detectBuffer, options, total,
-        &cancelled = m_cancelled, &paused = m_pausedAtomic,
-        processedCount, failedCount, detectedFaces, updateStatus
-    ] {
-        writerStage(detectBuffer, options, cancelled, paused, *processedCount, *failedCount);
-
-        // Pipeline complete — update GUI
-        const bool wasCancelled = cancelled.load();
-        const int p = processedCount->load();
-        const int f = failedCount->load();
-        QMetaObject::invokeMethod(self, [self, wasCancelled, p, f, total, detectedFaces] {
-            self->setRunning(false);
-            self->setPaused(false);
-            self->setProgress(total > 0 ? ((p + f) * 100 / total) : 0);
-            self->setTotals(p, f, total);
-            self->setWorkerCount(0);
-            self->setStatusText(wasCancelled
-                ? self->tr("Stopped")
-                : self->tr("Completed: %1 exported, %2 failed (%3 faces detected)")
-                    .arg(p).arg(f).arg(detectedFaces->load()));
-            if (f > 0) {
-                emit self->failed(self->tr("%1 image(s) failed.").arg(f));
+    // Launch 3-stage pipeline with error handling
+    try {
+        m_readerThread = std::make_unique<std::thread>([
+            inputFiles, outDir, renamePattern, options,
+            readBuffer, &cancelled = m_cancelled, &paused = m_pausedAtomic
+        ] {
+            try {
+                readerStage(inputFiles, outDir, renamePattern, options, readBuffer, cancelled, paused);
+            } catch (const std::exception &e) {
+                qDebug() << "[Reader] FATAL:" << e.what();
+            } catch (...) {
+                qDebug() << "[Reader] FATAL: unknown exception";
             }
-            emit self->finished(wasCancelled);
-        }, Qt::QueuedConnection);
-    });
+        });
+
+        m_detectorThread = std::make_unique<std::thread>([
+            readBuffer, detectBuffer, options,
+            &cancelled = m_cancelled, &paused = m_pausedAtomic, detectedFaces
+        ] {
+            try {
+                detectorStage(readBuffer, detectBuffer, options, cancelled, paused, *detectedFaces);
+            } catch (const std::exception &e) {
+                qDebug() << "[Detector] FATAL:" << e.what();
+            } catch (...) {
+                qDebug() << "[Detector] FATAL: unknown exception";
+            }
+        });
+
+        m_writerThread = std::make_unique<std::thread>([
+            self, detectBuffer, options, total,
+            &cancelled = m_cancelled, &paused = m_pausedAtomic,
+            processedCount, failedCount, detectedFaces
+        ] {
+            try {
+                writerStage(detectBuffer, options, cancelled, paused, *processedCount, *failedCount);
+            } catch (const std::exception &e) {
+                qDebug() << "[Writer] FATAL:" << e.what();
+            } catch (...) {
+                qDebug() << "[Writer] FATAL: unknown exception";
+            }
+
+            // Pipeline complete — update GUI
+            const bool wasCancelled = cancelled.load();
+            const int p = processedCount->load();
+            const int f = failedCount->load();
+            qDebug() << "=== Pipeline complete ===" << "processed:" << p << "failed:" << f << "cancelled:" << wasCancelled;
+            QMetaObject::invokeMethod(self, [self, wasCancelled, p, f, total, detectedFaces] {
+                self->setRunning(false);
+                self->setPaused(false);
+                self->setProgress(total > 0 ? ((p + f) * 100 / total) : 0);
+                self->setTotals(p, f, total);
+                self->setWorkerCount(0);
+                self->setStatusText(wasCancelled
+                    ? self->tr("Stopped")
+                    : self->tr("Completed: %1 exported, %2 failed (%3 faces)")
+                        .arg(p).arg(f).arg(detectedFaces->load()));
+                if (f > 0) {
+                    emit self->failed(self->tr("%1 image(s) failed.").arg(f));
+                }
+                emit self->finished(wasCancelled);
+            }, Qt::QueuedConnection);
+        });
+    } catch (const std::exception &e) {
+        qDebug() << "=== Pipeline launch FAILED ===" << e.what();
+        setRunning(false);
+        setWorkerCount(0);
+        setStatusText(tr("Failed to start pipeline"));
+        emit failed(tr("Failed to start pipeline: %1").arg(QString::fromUtf8(e.what())));
+        return;
+    }
 
     setStatusText(tr("Pipeline running: 3 stages active..."));
+    qDebug() << "=== Pipeline threads launched ===";
 }
 
 void BatchProcessor::pause()
@@ -484,7 +548,6 @@ void BatchProcessor::stop()
     m_cancelled = true;
     m_pausedAtomic = false;
 
-    // Join all pipeline threads
     if (m_readerThread && m_readerThread->joinable()) m_readerThread->join();
     if (m_detectorThread && m_detectorThread->joinable()) m_detectorThread->join();
     if (m_writerThread && m_writerThread->joinable()) m_writerThread->join();

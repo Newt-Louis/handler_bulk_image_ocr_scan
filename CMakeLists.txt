@@ -59,6 +59,7 @@ qt_add_executable(autophoto
 qt_add_qml_module(autophoto
     URI AutoPhoto
     VERSION 1.0
+    RESOURCE_PREFIX "/"
     QML_FILES
         qml/Main.qml
         qml/components/CoverFlowView.qml
@@ -156,9 +157,14 @@ endif()
 set(AUTOPHOTO_DEPLOY_TOOL_OPTIONS "")
 if(APPLE)
     list(APPEND AUTOPHOTO_DEPLOY_TOOL_OPTIONS --hardened-runtime)
-elseif(WIN32)
-    list(APPEND AUTOPHOTO_DEPLOY_TOOL_OPTIONS --no-compiler-runtime)
 endif()
+# NOTE: previously this included --no-compiler-runtime for WIN32, which tells
+# windeployqt to skip the MSVC compiler runtime (vcruntime140.dll, msvcp140.dll,
+# etc). That required every target machine to have the Visual C++ Redistributable
+# installed. We now want a fully self-contained build (unzip-and-run, no
+# prerequisites), so we deliberately do NOT skip it, and additionally bundle
+# the actual CRT DLLs ourselves below via InstallRequiredSystemLibraries, which
+# is the standard, license-compliant CMake mechanism for this.
 
 qt_generate_deploy_qml_app_script(
     TARGET autophoto
@@ -168,6 +174,47 @@ qt_generate_deploy_qml_app_script(
     DEPLOY_TOOL_OPTIONS ${AUTOPHOTO_DEPLOY_TOOL_OPTIONS}
 )
 install(SCRIPT ${AUTOPHOTO_DEPLOY_SCRIPT})
+
+# --- Bundle the MSVC C++ runtime DLLs for a fully self-contained Windows build ---
+# This is the standard CMake-provided mechanism (works regardless of Qt) for
+# collecting the correct vcruntime140.dll / msvcp140.dll / vcruntime140_1.dll
+# etc. matching the compiler actually used, from the Visual Studio installation.
+# On non-Windows platforms this block is a no-op (the variable stays empty).
+if(WIN32)
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP TRUE)
+    include(InstallRequiredSystemLibraries)
+    if(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS)
+        # Copy next to the build output too, so F7 builds in build/Debug or
+        # build/Release are runnable directly without needing the packaging script.
+        add_custom_command(TARGET autophoto POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} "$<TARGET_FILE_DIR:autophoto>"
+        )
+        install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION "${CMAKE_INSTALL_BINDIR}")
+    else()
+        message(WARNING "InstallRequiredSystemLibraries found no MSVC runtime DLLs to bundle. The packaged app may require the Visual C++ Redistributable on target machines.")
+    endif()
+endif()
+
+# --- Auto-deploy Qt (windeployqt) after every build, not just on `cmake --install` ---
+# qt_generate_deploy_qml_app_script() above only runs at INSTALL time (i.e. when
+# build-windows.ps1 runs `cmake --install`). Pressing F7 in VS Code only builds,
+# it never installs, so build/Debug (or build/Release) would be missing all the
+# Qt DLLs/plugins/qml modules. Running windeployqt as a POST_BUILD step fixes
+# that, so the debug build is directly runnable too.
+if(WIN32)
+    find_program(AUTOPHOTO_WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${CMAKE_PREFIX_PATH}/bin")
+    if(AUTOPHOTO_WINDEPLOYQT_EXECUTABLE)
+        add_custom_command(TARGET autophoto POST_BUILD
+            COMMAND "${AUTOPHOTO_WINDEPLOYQT_EXECUTABLE}"
+                --qmldir "${CMAKE_CURRENT_SOURCE_DIR}/qml"
+                "$<TARGET_FILE:autophoto>"
+            COMMENT "Running windeployqt for build/Debug convenience (F7)"
+        )
+    else()
+        message(WARNING "windeployqt not found next to Qt; build/Debug won't have Qt DLLs auto-copied. Use the packaging script (build-windows.ps1) instead.")
+    endif()
+endif()
 
 configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/packaging/windows/AutoPhoto.iss.in"

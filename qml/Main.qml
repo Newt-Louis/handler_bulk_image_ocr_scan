@@ -35,7 +35,12 @@ ApplicationWindow {
     function localFilePath(url) {
         var text = String(url)
         if (text.indexOf("file://") === 0) {
-            return decodeURIComponent(text.slice(7))
+            var path = decodeURIComponent(text.slice(7))
+            // On Windows: file:///F:/path → slice(7) = /F:/path → strip leading /
+            if (path.indexOf("/:") === 0 && path.length > 2 && path.charAt(2) === ":") {
+                path = path.slice(1)
+            }
+            return path
         }
         return text
     }
