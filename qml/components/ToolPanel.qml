@@ -21,7 +21,7 @@ Rectangle {
     property int compressionLevel: 0
     property string outputFormat: "jpg"
     property bool rotateEnabled: true
-    property bool compressionEnabled: false
+    property bool compressionEnabled: true
     property string renamePattern: "autophoto"
     property bool timestampEnabled: false
     property string timestampFormat: "yyyy-MM-dd HH:mm:ss"
@@ -374,58 +374,6 @@ Rectangle {
                         font.pixelSize: 12
                         onActivated: function(index) {
                             root.outputFormat = model[index].toLowerCase();
-                        }
-                    }
-                }
-            }
-
-            GroupBox {
-                width: parent.width
-                title: "Timestamp Watermark"
-                
-                ColumnLayout {
-                    anchors.fill: parent
-                    spacing: 6
-                    
-                    RowLayout {
-                        Layout.fillWidth: true
-                        Switch {
-                            checked: root.timestampEnabled
-                            text: "Enable watermark"
-                            enabled: !root.running
-                            onCheckedChanged: root.timestampEnabled = checked
-                        }
-                    }
-                    
-                    ComboBox {
-                        Layout.fillWidth: true
-                        model: ["BottomRight", "BottomLeft", "TopRight", "TopLeft", "Custom"]
-                        currentIndex: Math.max(0, model.indexOf(root.timestampPosition))
-                        enabled: !root.running && root.timestampEnabled
-                        font.pixelSize: 12
-                        onActivated: function(index) {
-                            root.timestampPosition = model[index];
-                        }
-                    }
-                    
-                    RowLayout {
-                        Layout.fillWidth: true
-                        visible: root.timestampPosition === "Custom"
-                        TextField {
-                            Layout.fillWidth: true
-                            placeholderText: "X"
-                            text: root.timestampX.toString()
-                            enabled: !root.running && root.timestampEnabled
-                            font.pixelSize: 12
-                            onTextChanged: root.timestampX = parseInt(text) || 0
-                        }
-                        TextField {
-                            Layout.fillWidth: true
-                            placeholderText: "Y"
-                            text: root.timestampY.toString()
-                            enabled: !root.running && root.timestampEnabled
-                            font.pixelSize: 12
-                            onTextChanged: root.timestampY = parseInt(text) || 0
                         }
                     }
                 }

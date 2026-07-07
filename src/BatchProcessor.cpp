@@ -17,6 +17,7 @@
 #include <stdexcept>
 #include <thread>
 #include <functional>
+#include <algorithm>
 
 #ifdef AUTOPHOTO_HAS_OPENCV
 #include <opencv2/imgcodecs.hpp>
@@ -24,6 +25,9 @@
 #endif
 
 #ifdef Q_OS_WIN
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 #include <windows.h>
 #elif defined(Q_OS_MAC)
 #include <sys/types.h>
@@ -232,10 +236,10 @@ void detectorStage(std::shared_ptr<BoundedBuffer<ReadData>> input,
                         cv::Rect expanded = face;
                         const int padX = static_cast<int>(expanded.width * 0.3);
                         const int padY = static_cast<int>(expanded.height * 0.3);
-                        expanded.x = std::max(0, expanded.x - padX);
-                        expanded.y = std::max(0, expanded.y - padY);
-                        expanded.width = std::min(out.image.cols - expanded.x, expanded.width + padX * 2);
-                        expanded.height = std::min(out.image.rows - expanded.y, expanded.height + padY * 2);
+                        expanded.x = (std::max)(0, expanded.x - padX);
+                        expanded.y = (std::max)(0, expanded.y - padY);
+                        expanded.width = (std::min)(out.image.cols - expanded.x, expanded.width + padX * 2);
+                        expanded.height = (std::min)(out.image.rows - expanded.y, expanded.height + padY * 2);
                         expanded &= cv::Rect(0, 0, out.image.cols, out.image.rows);
                         if (expanded.area() > 0) {
                             cv::Mat roi = out.image(expanded);
@@ -559,8 +563,7 @@ void BatchProcessor::start(const QStringList &inputFiles,
             try {
                 writerStage(detectBuffer, options, cancelled, paused, *processedCount, *failedCount, [self, total](int p, int f) {
                     QMetaObject::invokeMethod(self, [self, p, f, total]() {
-                        self->setProcessedImages(p);
-                        self->setFailedImages(f);
+                        self->setTotals(p, f, total);
                         self->setProgress(total > 0 ? ((p + f) * 100 / total) : 0);
                         self->setStatusText(self->tr("Processing: %1/%2").arg(p + f).arg(total));
                     }, Qt::QueuedConnection);

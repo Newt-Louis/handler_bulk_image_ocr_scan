@@ -1,5 +1,11 @@
 #include "PreviewController.h"
 
+#ifdef Q_OS_WIN
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#endif
+
 #include "ImageProcessor.h"
 #include "ImageOrientation.h"
 
@@ -15,6 +21,13 @@
 #include <QThreadPool>
 #include <QRunnable>
 #include <QtGlobal>
+#include <algorithm>
+
+#ifdef AUTOPHOTO_HAS_OPENCV
+#include <opencv2/core.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/imgcodecs.hpp>
+#endif
 
 namespace {
 
@@ -355,7 +368,7 @@ void PreviewController::regenerateFast()
 
         const int maxDim = 800;
         if (image.cols > maxDim || image.rows > maxDim) {
-            double scale = static_cast<double>(maxDim) / std::max(image.cols, image.rows);
+            double scale = static_cast<double>(maxDim) / (std::max)(image.cols, image.rows);
             cv::Mat resized;
             cv::resize(image, resized, cv::Size(), scale, scale, cv::INTER_AREA);
             image = resized;
@@ -471,33 +484,22 @@ void PreviewController::regenerate()
         }, Qt::QueuedConnection);
 #else
         QImage image = readImageWithResolvedOrientation(sourcePath);
-        if (!image.isNull()) {
-            image = image.scaled(QSize(1800, 1800), Qt::KeepAspectRatio, Qt::SmoothTransformation);
-        }
-        image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
         if (image.isNull()) {
-            if (!guard) {
-                return;
-            }
+            if (!guard) return;
             QObject *target = guard.data();
-            if (!target) {
-                return;
-            }
+            if (!target) return;
             QMetaObject::invokeMethod(target, [guard, requestId, sourcePath] {
                 PreviewController *self = guard.data();
-                if (!self || requestId != self->m_requestId) {
-                    return;
-                }
+                if (!self || requestId != self->m_requestId) return;
                 self->setBusy(false);
                 emit self->previewFailed(self->tr("Could not load image: %1").arg(sourcePath));
             }, Qt::QueuedConnection);
             return;
         }
-
-        image = applyPreviewEffect(image, blurFaces, mode, strength);
-
+        
+        image = image.scaled(QSize(1200, 1200), Qt::KeepAspectRatio, Qt::SmoothTransformation);
         QDir().mkpath(QFileInfo(targetPath).absolutePath());
-        const bool saved = image.save(targetPath, "JPG", 92);
+        bool saved = image.save(targetPath, "JPG", 85);
         if (!guard) {
             return;
         }
@@ -505,7 +507,7 @@ void PreviewController::regenerate()
         if (!target) {
             return;
         }
-        QMetaObject::invokeMethod(target, [guard, requestId, targetPath, saved] {
+        QMetaObject::invokeMethod(target, [guard, saved, targetPath, requestId] {
             PreviewController *self = guard.data();
             if (!self || requestId != self->m_requestId) {
                 return;
@@ -518,10 +520,7 @@ void PreviewController::regenerate()
             self->setPreviewUrl(QUrl::fromLocalFile(targetPath));
         }, Qt::QueuedConnection);
 #endif
-    });
-
-    connect(worker, &QThread::finished, worker, &QObject::deleteLater);
-    worker->start();
+    }));
 }
 
 void PreviewController::setBusy(bool busy)
