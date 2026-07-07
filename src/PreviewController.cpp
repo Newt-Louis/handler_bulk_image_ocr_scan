@@ -12,7 +12,8 @@
 #include <QPainter>
 #include <QPointer>
 #include <QStandardPaths>
-#include <QThread>
+#include <QThreadPool>
+#include <QRunnable>
 #include <QtGlobal>
 
 namespace {
@@ -345,15 +346,24 @@ void PreviewController::regenerateFast()
         return;
     }
 
-    QThread *worker = QThread::create([sourcePath, fastPath, guard] {
+    QThreadPool::globalInstance()->start(QRunnable::create([sourcePath, fastPath, guard] {
 #ifdef AUTOPHOTO_HAS_OPENCV
-        QImage image = readImageWithResolvedOrientation(sourcePath);
-        if (image.isNull()) {
+        cv::Mat image = readImageWithResolvedOrientation(sourcePath);
+        if (image.empty()) {
             return;
         }
-        image = image.scaled(QSize(1200, 1200), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+        const int maxDim = 800;
+        if (image.cols > maxDim || image.rows > maxDim) {
+            double scale = static_cast<double>(maxDim) / std::max(image.cols, image.rows);
+            cv::Mat resized;
+            cv::resize(image, resized, cv::Size(), scale, scale, cv::INTER_AREA);
+            image = resized;
+        }
+
         QDir().mkpath(QFileInfo(fastPath).absolutePath());
-        image.save(fastPath, "JPG", 85);
+        cv::imwrite(fastPath.toStdString(), image);
+
         if (!guard) {
             return;
         }
@@ -391,10 +401,7 @@ void PreviewController::regenerateFast()
             self->setPreviewUrl(QUrl::fromLocalFile(fastPath));
         }, Qt::QueuedConnection);
 #endif
-    });
-
-    connect(worker, &QThread::finished, worker, &QObject::deleteLater);
-    worker->start();
+    }));
 }
 
 void PreviewController::regenerate()
@@ -437,7 +444,7 @@ void PreviewController::regenerate()
 
     setBusy(true);
 
-    QThread *worker = QThread::create([sourcePath, targetPath, options, guard, requestId] {
+    QThreadPool::globalInstance()->start(QRunnable::create([sourcePath, targetPath, options, guard, requestId] {
 #ifdef AUTOPHOTO_HAS_OPENCV
         ImageProcessor processor(options);
         const ProcessingResult result = processor.processFile(sourcePath, targetPath);
@@ -448,17 +455,19 @@ void PreviewController::regenerate()
         if (!target) {
             return;
         }
-        QMetaObject::invokeMethod(target, [guard, requestId, targetPath, result] {
+        QMetaObject::invokeMethod(target, [guard, result, targetPath, requestId] {
             PreviewController *self = guard.data();
-            if (!self || requestId != self->m_requestId) {
+            if (!self || self->m_requestId != requestId) {
                 return;
             }
+
             self->setBusy(false);
-            if (!result.success) {
+            if (result.success) {
+                self->setPreviewUrl(QUrl::fromLocalFile(targetPath));
+            } else {
+                self->setPreviewUrl({});
                 emit self->previewFailed(result.error);
-                return;
             }
-            self->setPreviewUrl(QUrl::fromLocalFile(targetPath));
         }, Qt::QueuedConnection);
 #else
         QImage image = readImageWithResolvedOrientation(sourcePath);

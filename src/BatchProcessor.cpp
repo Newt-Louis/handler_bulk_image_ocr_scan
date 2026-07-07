@@ -23,6 +23,38 @@
 #include <opencv2/imgproc.hpp>
 #endif
 
+#ifdef Q_OS_WIN
+#include <windows.h>
+#elif defined(Q_OS_MAC)
+#include <sys/types.h>
+#include <sys/sysctl.h>
+#else
+#include <unistd.h>
+#endif
+
+namespace {
+quint64 getAvailableRAM() {
+#ifdef Q_OS_WIN
+    MEMORYSTATUSEX status;
+    status.dwLength = sizeof(status);
+    GlobalMemoryStatusEx(&status);
+    return status.ullAvailPhys;
+#elif defined(Q_OS_MAC)
+    int mib[2];
+    int64_t physical_memory;
+    size_t length = sizeof(int64_t);
+    mib[0] = CTL_HW;
+    mib[1] = HW_MEMSIZE;
+    sysctl(mib, 2, &physical_memory, &length, NULL, 0);
+    return physical_memory;
+#else
+    long pages = sysconf(_SC_AVPHYS_PAGES);
+    long page_size = sysconf(_SC_PAGE_SIZE);
+    return static_cast<quint64>(pages) * static_cast<quint64>(page_size);
+#endif
+}
+} // namespace
+
 namespace {
 
 struct ReadData {
@@ -358,6 +390,10 @@ void writerStage(std::shared_ptr<BoundedBuffer<DetectedData>> input,
             failed.fetch_add(1);
             qDebug() << "[Writer] FAILED to write" << data->targetPath;
         }
+        
+        if (itemCount % 10 == 0) {
+            qDebug() << "[Writer] Available RAM:" << getAvailableRAM() / (1024 * 1024) << "MB";
+        }
         ++itemCount;
         
         if (progressCallback) {
@@ -468,8 +504,17 @@ void BatchProcessor::start(const QStringList &inputFiles,
         timestampY
     };
 
-    auto readBuffer = std::make_shared<BoundedBuffer<ReadData>>(1);
-    auto detectBuffer = std::make_shared<BoundedBuffer<DetectedData>>(1);
+    quint64 availRam = getAvailableRAM();
+    int bufferSize = 2; // Default
+    if (availRam > 4ULL * 1024 * 1024 * 1024) {
+        bufferSize = 4;
+    } else if (availRam < 2ULL * 1024 * 1024 * 1024) {
+        bufferSize = 1;
+    }
+    qDebug() << "[BatchProcessor] Available RAM:" << availRam / (1024 * 1024) << "MB, setting buffer size to:" << bufferSize;
+
+    auto readBuffer = std::make_shared<BoundedBuffer<ReadData>>(bufferSize);
+    auto detectBuffer = std::make_shared<BoundedBuffer<DetectedData>>(bufferSize);
 
     const int total = inputFiles.size();
     BatchProcessor *self = this;

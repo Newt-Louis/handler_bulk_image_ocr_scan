@@ -491,7 +491,7 @@ ImageProcessor::ImageProcessor(const ProcessingOptions &options)
     : m_options(options)
 {
 #ifdef AUTOPHOTO_HAS_OPENCV
-    cv::setNumThreads(4);
+    cv::setNumThreads(2);
     cv::setUseOptimized(true);
 #endif
 }
