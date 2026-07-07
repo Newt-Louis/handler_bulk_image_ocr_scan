@@ -11,6 +11,8 @@
 #include <QImage>
 #include <QImageReader>
 #include <QStringList>
+#include <QDateTime>
+#include <QColor>
 
 #include <algorithm>
 #include <cmath>
@@ -99,6 +101,43 @@ cv::Rect privacyRect(const cv::Rect &rect, const cv::Size &bounds)
     const int right = std::min(bounds.width, rect.x + rect.width + padX);
     const int bottom = std::min(bounds.height, rect.y + rect.height + padBottom);
     return cv::Rect(x, y, std::max(1, right - x), std::max(1, bottom - y));
+}
+
+void applyTimestamp(cv::Mat &image, const ProcessingOptions &options)
+{
+    if (!options.timestampEnabled) return;
+    
+    QString text = QDateTime::currentDateTime().toString(options.timestampFormat);
+    int fontFace = cv::FONT_HERSHEY_SIMPLEX;
+    double fontScale = options.timestampSize / 24.0;
+    int thickness = std::max(1, static_cast<int>(fontScale * 2));
+    
+    int baseline = 0;
+    cv::Size textSize = cv::getTextSize(text.toStdString(), fontFace, fontScale, thickness, &baseline);
+    
+    int x = 0, y = 0;
+    int margin = 10;
+    if (options.timestampPosition == QStringLiteral("TopLeft")) {
+        x = margin;
+        y = textSize.height + margin;
+    } else if (options.timestampPosition == QStringLiteral("TopRight")) {
+        x = image.cols - textSize.width - margin;
+        y = textSize.height + margin;
+    } else if (options.timestampPosition == QStringLiteral("BottomLeft")) {
+        x = margin;
+        y = image.rows - margin;
+    } else if (options.timestampPosition == QStringLiteral("BottomRight")) {
+        x = image.cols - textSize.width - margin;
+        y = image.rows - margin;
+    } else {
+        x = options.timestampX;
+        y = options.timestampY;
+    }
+    
+    QColor qc(options.timestampColor);
+    cv::Scalar color(qc.blue(), qc.green(), qc.red());
+    
+    cv::putText(image, text.toStdString(), cv::Point(x, y), fontFace, fontScale, color, thickness, cv::LINE_AA);
 }
 
 void applyBlur(cv::Mat &image, const cv::Rect &face, const QString &mode, int strength)
@@ -595,6 +634,8 @@ ProcessingResult ImageProcessor::processFile(const QString &sourcePath, const QS
             ++facesBlurred;
         }
     }
+    
+    applyTimestamp(image, m_options);
 
     QDir().mkpath(QFileInfo(targetPath).absolutePath());
     bool saved = false;

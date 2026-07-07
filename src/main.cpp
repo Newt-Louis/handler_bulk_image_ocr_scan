@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
     const QCommandLineOption noRotateOption(QStringLiteral("no-rotate"), QStringLiteral("Disable EXIF auto-rotation."));
     const QCommandLineOption blurModeOption(QStringLiteral("blur-mode"), QStringLiteral("Blur mode: gaussian or pixelate."), QStringLiteral("mode"), QStringLiteral("gaussian"));
     const QCommandLineOption strengthOption(QStringLiteral("strength"), QStringLiteral("Blur strength from 1 to 100."), QStringLiteral("value"), QStringLiteral("100"));
-    const QCommandLineOption detectionSensitivityOption(QStringLiteral("detection-sensitivity"), QStringLiteral("Detection sensitivity from 0 to 100."), QStringLiteral("value"), QStringLiteral("35"));
+    const QCommandLineOption detectionSensitivityOption(QStringLiteral("detection-sensitivity"), QStringLiteral("Detection sensitivity from 0 to 100."), QStringLiteral("value"), QStringLiteral("50"));
     const QCommandLineOption noSizeFilterOption(QStringLiteral("no-size-filter"), QStringLiteral("Disable box size filter."));
     const QCommandLineOption noSkinFilterOption(QStringLiteral("no-skin-filter"), QStringLiteral("Disable skin-color filter."));
     const QCommandLineOption noCascadeCrossCheckOption(QStringLiteral("no-cascade-cross-check"), QStringLiteral("Disable cascade cross-check filter."));

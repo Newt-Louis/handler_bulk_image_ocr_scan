@@ -130,12 +130,43 @@ Thread Writer:
 
 ---
 
+## Nhiệm vụ 12: Xóa ký tự `/` dư thừa ở đường dẫn output ✅
+
+- [x] **12.1** Xóa ký tự `/` dư thừa ở đầu đường dẫn thư mục output hiển thị bên dưới nút "Choose output folder".
+
+---
+
+## Nhiệm vụ 13: Sửa lỗi Scrollbar/Scrolling
+
+- [x] **13.1** Sửa lỗi Scrollbar/Scrolling ở menu (`ToolPanel.qml`) không cuộn được khi kéo thả thanh cuộn (chỉ dùng con lăn chuột mới cuộn được).
+
+---
+
+## Nhiệm vụ 14: Cập nhật giá trị mặc định Detection Sensitivity
+
+- [x] **14.1** Thay đổi mặc định giá trị Detection Sensitivity (độ nhạy nhận diện khuôn mặt YuNet) thành 50% thay vì 0% khi mới mở ứng dụng.
+
+---
+
+## Nhiệm vụ 15: Sửa lỗi Progress Bar
+
+- [x] **15.1** Sửa lỗi Progress Bar không cập nhật tiến trình % khi nhấn Start chạy xử lý hàng loạt.
+
+---
+
+## Nhiệm vụ 16: Tính năng Timestamp Watermark
+
+- [x] **16.1** Cho phép chèn ngày/tháng/năm giờ/phút/giây lên ảnh, tùy chọn vị trí (4 góc hoặc custom) và text đơn sắc.
+
+---
+
 ## Thứ tự thực hiện
 
 1. ~~**Nhiệm vụ 8**: Detection 640px + Intel opt~~ ✅
 2. ~~**Nhiệm vụ 9**: Feature toggles~~ ✅
 3. ~~**Nhiệm vụ 10**: Producer-consumer pipeline~~ ✅
 4. **Nhiệm vụ 11**: Memory monitoring + CPU throttle fine-tune
+5. **Nhiệm vụ 12 - 16**: UI/Bugfixes và tính năng mới
 
 ---
 

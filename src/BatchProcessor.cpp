@@ -16,6 +16,7 @@
 
 #include <stdexcept>
 #include <thread>
+#include <functional>
 
 #ifdef AUTOPHOTO_HAS_OPENCV
 #include <opencv2/imgcodecs.hpp>
@@ -259,7 +260,8 @@ void writerStage(std::shared_ptr<BoundedBuffer<DetectedData>> input,
                  std::atomic_bool &cancelled,
                  std::atomic_bool &paused,
                  std::atomic_int &processed,
-                 std::atomic_int &failed)
+                 std::atomic_int &failed,
+                 std::function<void(int, int)> progressCallback = nullptr)
 {
     qDebug() << "[Writer] Starting.";
 
@@ -295,6 +297,12 @@ void writerStage(std::shared_ptr<BoundedBuffer<DetectedData>> input,
                     }
                 }
                 qDebug() << "[Writer] Applied blur to" << data->faces.size() << "faces in item" << itemCount;
+            }
+            
+            try {
+                applyTimestamp(data->image, options);
+            } catch (const std::exception &e) {
+                qDebug() << "[Writer] Timestamp exception:" << e.what();
             }
 
             QDir().mkpath(QFileInfo(data->targetPath).absolutePath());
@@ -351,6 +359,10 @@ void writerStage(std::shared_ptr<BoundedBuffer<DetectedData>> input,
             qDebug() << "[Writer] FAILED to write" << data->targetPath;
         }
         ++itemCount;
+        
+        if (progressCallback) {
+            progressCallback(processed.load(), failed.load());
+        }
     }
 
     qDebug() << "[Writer] Done. Processed:" << processed.load() << "Failed:" << failed.load();
@@ -392,7 +404,14 @@ void BatchProcessor::start(const QStringList &inputFiles,
                            bool cascadeCrossCheckEnabled,
                            bool compressionEnabled,
                            int compressionLevel,
-                           const QString &outputFormat)
+                           const QString &outputFormat,
+                           bool timestampEnabled,
+                           const QString &timestampFormat,
+                           const QString &timestampPosition,
+                           const QString &timestampColor,
+                           int timestampSize,
+                           int timestampX,
+                           int timestampY)
 {
     if (m_running) return;
     if (inputFiles.isEmpty()) { emit failed(tr("No input images selected.")); return; }
@@ -438,7 +457,15 @@ void BatchProcessor::start(const QStringList &inputFiles,
         cascadeCrossCheckEnabled,
         compressionEnabled,
         qBound(0, compressionLevel, 100),
-        outputFormat
+        outputFormat,
+        QStringLiteral("yunet"),
+        timestampEnabled,
+        timestampFormat,
+        timestampPosition,
+        timestampColor,
+        timestampSize,
+        timestampX,
+        timestampY
     };
 
     auto readBuffer = std::make_shared<BoundedBuffer<ReadData>>(1);
@@ -485,7 +512,14 @@ void BatchProcessor::start(const QStringList &inputFiles,
             processedCount, failedCount, detectedFaces
         ] {
             try {
-                writerStage(detectBuffer, options, cancelled, paused, *processedCount, *failedCount);
+                writerStage(detectBuffer, options, cancelled, paused, *processedCount, *failedCount, [self, total](int p, int f) {
+                    QMetaObject::invokeMethod(self, [self, p, f, total]() {
+                        self->setProcessedImages(p);
+                        self->setFailedImages(f);
+                        self->setProgress(total > 0 ? ((p + f) * 100 / total) : 0);
+                        self->setStatusText(self->tr("Processing: %1/%2").arg(p + f).arg(total));
+                    }, Qt::QueuedConnection);
+                });
             } catch (const std::exception &e) {
                 qDebug() << "[Writer] FATAL:" << e.what();
             } catch (...) {

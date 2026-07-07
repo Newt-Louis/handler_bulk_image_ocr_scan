@@ -8,7 +8,7 @@ struct ProcessingOptions
     bool blurFaces = true;
     QString blurMode = QStringLiteral("gaussian");
     int strength = 100;
-    float detectionSensitivity = 0.35f;
+    float detectionSensitivity = 0.50f;
     bool sizeFilterEnabled = true;
     bool skinColorFilterEnabled = true;
     bool cascadeCrossCheckEnabled = true;
@@ -16,6 +16,13 @@ struct ProcessingOptions
     int compressionLevel = 0;
     QString outputFormat = QStringLiteral("jpg");
     QString detector = QStringLiteral("yunet");
+    bool timestampEnabled = false;
+    QString timestampFormat = QStringLiteral("yyyy-MM-dd HH:mm:ss");
+    QString timestampPosition = QStringLiteral("BottomRight");
+    QString timestampColor = QStringLiteral("#FFFFFF");
+    int timestampSize = 24;
+    int timestampX = 10;
+    int timestampY = 10;
 };
 
 struct ProcessingResult

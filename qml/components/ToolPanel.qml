@@ -14,7 +14,7 @@ Rectangle {
     property bool blurFaces: true
     property string blurMode: "gaussian"
     property int strength: 100
-    property int detectionSensitivity: 35
+    property int detectionSensitivity: 50
     property bool sizeFilterEnabled: true
     property bool skinColorFilterEnabled: true
     property bool cascadeCrossCheckEnabled: true
@@ -23,6 +23,13 @@ Rectangle {
     property bool rotateEnabled: true
     property bool compressionEnabled: false
     property string renamePattern: "autophoto"
+    property bool timestampEnabled: false
+    property string timestampFormat: "yyyy-MM-dd HH:mm:ss"
+    property string timestampPosition: "BottomRight"
+    property string timestampColor: "#FFFFFF"
+    property int timestampSize: 24
+    property int timestampX: 10
+    property int timestampY: 10
     property bool running: false
     property bool paused: false
     property int progress: 0
@@ -45,19 +52,22 @@ Rectangle {
 
     Flickable {
         id: flickable
-        anchors.left: parent.left
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        anchors.right: scrollBar.left
+        anchors.fill: parent
         anchors.margins: 12
         contentHeight: contentColumn.implicitHeight
         clip: true
         flickableDirection: Flickable.VerticalFlick
         boundsBehavior: Flickable.StopAtBounds
 
+        ScrollBar.vertical: ScrollBar {
+            id: scrollBar
+            policy: ScrollBar.AsNeeded
+            interactive: true
+        }
+
         Column {
             id: contentColumn
-            width: flickable.width
+            width: flickable.width - 12
             spacing: 10
 
             Label {
@@ -354,24 +364,71 @@ Rectangle {
                         Layout.fillWidth: true
                         id: formatCombo
                         model: ["JPG", "PNG", "WEBP"]
+                        currentIndex: {
+                            var fmt = root.outputFormat.toLowerCase();
+                            if (fmt === "png") return 1;
+                            if (fmt === "webp") return 2;
+                            return 0;
+                        }
                         enabled: !root.running && root.compressionEnabled
                         font.pixelSize: 12
-                        onCurrentIndexChanged: root.outputFormat = model[currentIndex].toLowerCase()
+                        onActivated: function(index) {
+                            root.outputFormat = model[index].toLowerCase();
+                        }
+                    }
+                }
+            }
+
+            GroupBox {
+                width: parent.width
+                title: "Timestamp Watermark"
+                
+                ColumnLayout {
+                    anchors.fill: parent
+                    spacing: 6
+                    
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Switch {
+                            checked: root.timestampEnabled
+                            text: "Enable watermark"
+                            enabled: !root.running
+                            onCheckedChanged: root.timestampEnabled = checked
+                        }
+                    }
+                    
+                    ComboBox {
+                        Layout.fillWidth: true
+                        model: ["BottomRight", "BottomLeft", "TopRight", "TopLeft", "Custom"]
+                        currentIndex: Math.max(0, model.indexOf(root.timestampPosition))
+                        enabled: !root.running && root.timestampEnabled
+                        font.pixelSize: 12
+                        onActivated: function(index) {
+                            root.timestampPosition = model[index];
+                        }
+                    }
+                    
+                    RowLayout {
+                        Layout.fillWidth: true
+                        visible: root.timestampPosition === "Custom"
+                        TextField {
+                            Layout.fillWidth: true
+                            placeholderText: "X"
+                            text: root.timestampX.toString()
+                            enabled: !root.running && root.timestampEnabled
+                            font.pixelSize: 12
+                            onTextChanged: root.timestampX = parseInt(text) || 0
+                        }
+                        TextField {
+                            Layout.fillWidth: true
+                            placeholderText: "Y"
+                            text: root.timestampY.toString()
+                            enabled: !root.running && root.timestampEnabled
+                            font.pixelSize: 12
+                            onTextChanged: root.timestampY = parseInt(text) || 0
+                        }
                     }
                 }
             }
         }
-    }
-
-    ScrollBar {
-        id: scrollBar
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        anchors.margins: 4
-        width: 8
-        policy: ScrollBar.AsNeeded
-        size: flickable.height / flickable.contentHeight
-        position: flickable.originY / (flickable.contentHeight - flickable.height)
-    }
-}
+    }}

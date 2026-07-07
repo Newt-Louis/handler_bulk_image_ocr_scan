@@ -133,6 +133,14 @@ bool PreviewController::compressionEnabled() const
     return m_compressionEnabled;
 }
 
+bool PreviewController::timestampEnabled() const { return m_timestampEnabled; }
+QString PreviewController::timestampFormat() const { return m_timestampFormat; }
+QString PreviewController::timestampPosition() const { return m_timestampPosition; }
+QString PreviewController::timestampColor() const { return m_timestampColor; }
+int PreviewController::timestampSize() const { return m_timestampSize; }
+int PreviewController::timestampX() const { return m_timestampX; }
+int PreviewController::timestampY() const { return m_timestampY; }
+
 void PreviewController::requestPreview(const QString &filePath)
 {
     if (m_sourcePath == filePath && !m_previewUrl.isEmpty()) {
@@ -279,6 +287,49 @@ void PreviewController::setCompressionEnabled(bool enabled)
     m_debounceTimer.start();
 }
 
+void PreviewController::setTimestampEnabled(bool enabled) {
+    if (m_timestampEnabled == enabled) return;
+    m_timestampEnabled = enabled;
+    emit timestampEnabledChanged();
+    m_debounceTimer.start();
+}
+void PreviewController::setTimestampFormat(const QString &format) {
+    if (m_timestampFormat == format) return;
+    m_timestampFormat = format;
+    emit timestampFormatChanged();
+    m_debounceTimer.start();
+}
+void PreviewController::setTimestampPosition(const QString &position) {
+    if (m_timestampPosition == position) return;
+    m_timestampPosition = position;
+    emit timestampPositionChanged();
+    m_debounceTimer.start();
+}
+void PreviewController::setTimestampColor(const QString &color) {
+    if (m_timestampColor == color) return;
+    m_timestampColor = color;
+    emit timestampColorChanged();
+    m_debounceTimer.start();
+}
+void PreviewController::setTimestampSize(int size) {
+    if (m_timestampSize == size) return;
+    m_timestampSize = size;
+    emit timestampSizeChanged();
+    m_debounceTimer.start();
+}
+void PreviewController::setTimestampX(int x) {
+    if (m_timestampX == x) return;
+    m_timestampX = x;
+    emit timestampXChanged();
+    m_debounceTimer.start();
+}
+void PreviewController::setTimestampY(int y) {
+    if (m_timestampY == y) return;
+    m_timestampY = y;
+    emit timestampYChanged();
+    m_debounceTimer.start();
+}
+
 void PreviewController::regenerateFast()
 {
     if (m_sourcePath.isEmpty()) {
@@ -358,26 +409,37 @@ void PreviewController::regenerate()
     }
 
     const QString sourcePath = m_sourcePath;
-    const QString mode = m_blurMode;
-    const bool blurFaces = m_blurFaces;
-    const int strength = m_strength;
-    const float detectionSensitivity = m_detectionSensitivity;
-    const bool sizeFilterEnabled = m_sizeFilterEnabled;
-    const bool skinColorFilterEnabled = m_skinColorFilterEnabled;
-    const bool cascadeCrossCheckEnabled = m_cascadeCrossCheckEnabled;
-    const int compressionLevel = m_compressionLevel;
-    const QString outputFormat = m_outputFormat;
-    const bool rotateEnabled = m_rotateEnabled;
-    const bool compressionEnabled = m_compressionEnabled;
     const quint64 requestId = ++m_requestId;
     const QString targetPath = cacheFilePath(sourcePath, requestId);
     const QPointer<PreviewController> guard(this);
 
+    ProcessingOptions options {
+        m_rotateEnabled,
+        m_blurFaces,
+        m_blurMode,
+        m_strength,
+        m_detectionSensitivity,
+        m_sizeFilterEnabled,
+        m_skinColorFilterEnabled,
+        m_cascadeCrossCheckEnabled,
+        m_compressionEnabled,
+        m_compressionLevel,
+        m_outputFormat,
+        QStringLiteral("yunet"),
+        m_timestampEnabled,
+        m_timestampFormat,
+        m_timestampPosition,
+        m_timestampColor,
+        m_timestampSize,
+        m_timestampX,
+        m_timestampY
+    };
+
     setBusy(true);
 
-    QThread *worker = QThread::create([sourcePath, mode, blurFaces, strength, detectionSensitivity, sizeFilterEnabled, skinColorFilterEnabled, cascadeCrossCheckEnabled, compressionLevel, outputFormat, rotateEnabled, compressionEnabled, targetPath, guard, requestId] {
+    QThread *worker = QThread::create([sourcePath, targetPath, options, guard, requestId] {
 #ifdef AUTOPHOTO_HAS_OPENCV
-        ImageProcessor processor({rotateEnabled, blurFaces, mode, strength, detectionSensitivity, sizeFilterEnabled, skinColorFilterEnabled, cascadeCrossCheckEnabled, compressionEnabled, compressionLevel, outputFormat, QStringLiteral("yunet")});
+        ImageProcessor processor(options);
         const ProcessingResult result = processor.processFile(sourcePath, targetPath);
         if (!guard) {
             return;

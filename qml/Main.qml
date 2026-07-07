@@ -36,8 +36,8 @@ ApplicationWindow {
         var text = String(url)
         if (text.indexOf("file://") === 0) {
             var path = decodeURIComponent(text.slice(7))
-            // On Windows: file:///F:/path → slice(7) = /F:/path → strip leading /
-            if (path.indexOf("/:") === 0 && path.length > 2 && path.charAt(2) === ":") {
+            // On Windows: file:///F:/path -> slice(7) = /F:/path
+            if (path.length > 2 && path.charAt(0) === "/" && path.charAt(2) === ":") {
                 path = path.slice(1)
             }
             return path
@@ -238,7 +238,7 @@ ApplicationWindow {
 
                             ProgressBar {
                                 Layout.fillWidth: true
-                                value: batchProcessor.progress / 100
+                                value: batchProcessor.progress / 100.0
                             }
 
                             RowLayout {
@@ -283,7 +283,14 @@ ApplicationWindow {
                                             previewController.cascadeCrossCheckEnabled,
                                             previewController.compressionEnabled,
                                             previewController.compressionLevel,
-                                            previewController.outputFormat
+                                            previewController.outputFormat,
+                                            previewController.timestampEnabled,
+                                            previewController.timestampFormat,
+                                            previewController.timestampPosition,
+                                            previewController.timestampColor,
+                                            previewController.timestampSize,
+                                            previewController.timestampX,
+                                            previewController.timestampY
                                         )
                                     }
                                 }
@@ -324,7 +331,7 @@ ApplicationWindow {
                 blurFaces: previewController.blurFaces
                 blurMode: previewController.blurMode
                 strength: previewController.strength
-                detectionSensitivity: previewController.detectionSensitivity
+                detectionSensitivity: Math.round(previewController.detectionSensitivity * 100)
                 sizeFilterEnabled: previewController.sizeFilterEnabled
                 skinColorFilterEnabled: previewController.skinColorFilterEnabled
                 cascadeCrossCheckEnabled: previewController.cascadeCrossCheckEnabled
@@ -332,6 +339,13 @@ ApplicationWindow {
                 outputFormat: previewController.outputFormat
                 rotateEnabled: previewController.rotateEnabled
                 compressionEnabled: previewController.compressionEnabled
+                timestampEnabled: previewController.timestampEnabled
+                timestampFormat: previewController.timestampFormat
+                timestampPosition: previewController.timestampPosition
+                timestampColor: previewController.timestampColor
+                timestampSize: previewController.timestampSize
+                timestampX: previewController.timestampX
+                timestampY: previewController.timestampY
                 running: batchProcessor.running
                 paused: batchProcessor.paused
                 progress: batchProcessor.progress
@@ -353,6 +367,13 @@ ApplicationWindow {
                 onOutputFormatChanged: previewController.outputFormat = outputFormat
                 onRotateEnabledChanged: previewController.rotateEnabled = rotateEnabled
                 onCompressionEnabledChanged: previewController.compressionEnabled = compressionEnabled
+                onTimestampEnabledChanged: previewController.timestampEnabled = timestampEnabled
+                onTimestampFormatChanged: previewController.timestampFormat = timestampFormat
+                onTimestampPositionChanged: previewController.timestampPosition = timestampPosition
+                onTimestampColorChanged: previewController.timestampColor = timestampColor
+                onTimestampSizeChanged: previewController.timestampSize = timestampSize
+                onTimestampXChanged: previewController.timestampX = timestampX
+                onTimestampYChanged: previewController.timestampY = timestampY
                 onPauseBatch: batchProcessor.pause()
                 onResumeBatch: batchProcessor.resume()
                 onStopBatch: batchProcessor.stop()

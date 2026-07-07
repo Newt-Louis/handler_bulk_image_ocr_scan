@@ -20,6 +20,13 @@ class PreviewController final : public QObject
     Q_PROPERTY(QString outputFormat READ outputFormat WRITE setOutputFormat NOTIFY outputFormatChanged)
     Q_PROPERTY(bool rotateEnabled READ rotateEnabled WRITE setRotateEnabled NOTIFY rotateEnabledChanged)
     Q_PROPERTY(bool compressionEnabled READ compressionEnabled WRITE setCompressionEnabled NOTIFY compressionEnabledChanged)
+    Q_PROPERTY(bool timestampEnabled READ timestampEnabled WRITE setTimestampEnabled NOTIFY timestampEnabledChanged)
+    Q_PROPERTY(QString timestampFormat READ timestampFormat WRITE setTimestampFormat NOTIFY timestampFormatChanged)
+    Q_PROPERTY(QString timestampPosition READ timestampPosition WRITE setTimestampPosition NOTIFY timestampPositionChanged)
+    Q_PROPERTY(QString timestampColor READ timestampColor WRITE setTimestampColor NOTIFY timestampColorChanged)
+    Q_PROPERTY(int timestampSize READ timestampSize WRITE setTimestampSize NOTIFY timestampSizeChanged)
+    Q_PROPERTY(int timestampX READ timestampX WRITE setTimestampX NOTIFY timestampXChanged)
+    Q_PROPERTY(int timestampY READ timestampY WRITE setTimestampY NOTIFY timestampYChanged)
 
 public:
     explicit PreviewController(QObject *parent = nullptr);
@@ -37,6 +44,13 @@ public:
     QString outputFormat() const;
     bool rotateEnabled() const;
     bool compressionEnabled() const;
+    bool timestampEnabled() const;
+    QString timestampFormat() const;
+    QString timestampPosition() const;
+    QString timestampColor() const;
+    int timestampSize() const;
+    int timestampX() const;
+    int timestampY() const;
 
     Q_INVOKABLE void requestPreview(const QString &filePath);
     Q_INVOKABLE void clear();
@@ -53,6 +67,13 @@ public slots:
     void setOutputFormat(const QString &format);
     void setRotateEnabled(bool enabled);
     void setCompressionEnabled(bool enabled);
+    void setTimestampEnabled(bool enabled);
+    void setTimestampFormat(const QString &format);
+    void setTimestampPosition(const QString &position);
+    void setTimestampColor(const QString &color);
+    void setTimestampSize(int size);
+    void setTimestampX(int x);
+    void setTimestampY(int y);
 
 signals:
     void previewUrlChanged();
@@ -68,6 +89,13 @@ signals:
     void outputFormatChanged();
     void rotateEnabledChanged();
     void compressionEnabledChanged();
+    void timestampEnabledChanged();
+    void timestampFormatChanged();
+    void timestampPositionChanged();
+    void timestampColorChanged();
+    void timestampSizeChanged();
+    void timestampXChanged();
+    void timestampYChanged();
     void previewFailed(const QString &message);
 
 private:
@@ -84,7 +112,7 @@ private:
     bool m_busy = false;
     bool m_blurFaces = true;
     int m_strength = 100;
-    float m_detectionSensitivity = 0.35f;
+    float m_detectionSensitivity = 0.50f;
     bool m_sizeFilterEnabled = true;
     bool m_skinColorFilterEnabled = true;
     bool m_cascadeCrossCheckEnabled = true;
@@ -92,6 +120,13 @@ private:
     QString m_outputFormat = QStringLiteral("jpg");
     bool m_rotateEnabled = true;
     bool m_compressionEnabled = false;
+    bool m_timestampEnabled = false;
+    QString m_timestampFormat = QStringLiteral("yyyy-MM-dd HH:mm:ss");
+    QString m_timestampPosition = QStringLiteral("BottomRight");
+    QString m_timestampColor = QStringLiteral("#FFFFFF");
+    int m_timestampSize = 24;
+    int m_timestampX = 10;
+    int m_timestampY = 10;
     quint64 m_requestId = 0;
     QTimer m_debounceTimer;
 };

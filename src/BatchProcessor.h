@@ -46,7 +46,14 @@ public:
                            bool cascadeCrossCheckEnabled,
                            bool compressionEnabled,
                            int compressionLevel,
-                           const QString &outputFormat);
+                           const QString &outputFormat,
+                           bool timestampEnabled,
+                           const QString &timestampFormat,
+                           const QString &timestampPosition,
+                           const QString &timestampColor,
+                           int timestampSize,
+                           int timestampX,
+                           int timestampY);
     Q_INVOKABLE void pause();
     Q_INVOKABLE void resume();
     Q_INVOKABLE void stop();
