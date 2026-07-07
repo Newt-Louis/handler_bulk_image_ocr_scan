@@ -120,7 +120,7 @@ private:
     QString m_outputFormat = QStringLiteral("jpg");
     bool m_rotateEnabled = true;
     bool m_compressionEnabled = false;
-    bool m_timestampEnabled = false;
+    bool m_timestampEnabled = true;
     QString m_timestampFormat = QStringLiteral("yyyy-MM-dd HH:mm:ss");
     QString m_timestampPosition = QStringLiteral("BottomRight");
     QString m_timestampColor = QStringLiteral("#FFFFFF");

@@ -360,38 +360,6 @@ void PreviewController::regenerateFast()
     }
 
     QThreadPool::globalInstance()->start(QRunnable::create([sourcePath, fastPath, guard] {
-#ifdef AUTOPHOTO_HAS_OPENCV
-        cv::Mat image = readImageWithResolvedOrientation(sourcePath);
-        if (image.empty()) {
-            return;
-        }
-
-        const int maxDim = 800;
-        if (image.cols > maxDim || image.rows > maxDim) {
-            double scale = static_cast<double>(maxDim) / (std::max)(image.cols, image.rows);
-            cv::Mat resized;
-            cv::resize(image, resized, cv::Size(), scale, scale, cv::INTER_AREA);
-            image = resized;
-        }
-
-        QDir().mkpath(QFileInfo(fastPath).absolutePath());
-        cv::imwrite(fastPath.toStdString(), image);
-
-        if (!guard) {
-            return;
-        }
-        QObject *target = guard.data();
-        if (!target) {
-            return;
-        }
-        QMetaObject::invokeMethod(target, [guard, fastPath] {
-            PreviewController *self = guard.data();
-            if (!self) {
-                return;
-            }
-            self->setPreviewUrl(QUrl::fromLocalFile(fastPath));
-        }, Qt::QueuedConnection);
-#else
         QImage image = readImageWithResolvedOrientation(sourcePath);
         if (image.isNull()) {
             return;
@@ -413,7 +381,6 @@ void PreviewController::regenerateFast()
             }
             self->setPreviewUrl(QUrl::fromLocalFile(fastPath));
         }, Qt::QueuedConnection);
-#endif
     }));
 }
 

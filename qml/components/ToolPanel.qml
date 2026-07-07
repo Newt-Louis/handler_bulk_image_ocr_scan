@@ -23,7 +23,7 @@ Rectangle {
     property bool rotateEnabled: true
     property bool compressionEnabled: true
     property string renamePattern: "autophoto"
-    property bool timestampEnabled: false
+    property bool timestampEnabled: true
     property string timestampFormat: "yyyy-MM-dd HH:mm:ss"
     property string timestampPosition: "BottomRight"
     property string timestampColor: "#FFFFFF"
@@ -50,24 +50,18 @@ Rectangle {
     Material.theme: Material.Light
     Material.accent: Material.Teal
 
-    Flickable {
-        id: flickable
+    ScrollView {
+        id: scrollView
         anchors.fill: parent
         anchors.margins: 12
-        contentHeight: contentColumn.implicitHeight
         clip: true
-        flickableDirection: Flickable.VerticalFlick
-        boundsBehavior: Flickable.StopAtBounds
-
-        ScrollBar.vertical: ScrollBar {
-            id: scrollBar
-            policy: ScrollBar.AsNeeded
-            interactive: true
-        }
+        contentWidth: availableWidth
+        ScrollBar.vertical.interactive: true
+        ScrollBar.vertical.policy: ScrollBar.AsNeeded
 
         Column {
             id: contentColumn
-            width: flickable.width - 12
+            width: scrollView.availableWidth - 15 // Leave space so scrollbar doesn't overlap
             spacing: 10
 
             Label {
