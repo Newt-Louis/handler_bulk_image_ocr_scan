@@ -17,7 +17,8 @@ struct ProcessingOptions
     QString outputFormat = QStringLiteral("jpg");
     QString detector = QStringLiteral("yunet");
     bool timestampEnabled = false;
-    QString timestampFormat = QStringLiteral("yyyy-MM-dd HH:mm:ss");
+    QString timestampCustomText = QStringLiteral("");
+    QString timestampFormat = QStringLiteral("dd/MM/yyyy HH:mm:ss");
     QString timestampPosition = QStringLiteral("BottomRight");
     QString timestampColor = QStringLiteral("#FFFFFF");
     int timestampSize = 24;

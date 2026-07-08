@@ -21,6 +21,7 @@ class PreviewController final : public QObject
     Q_PROPERTY(bool rotateEnabled READ rotateEnabled WRITE setRotateEnabled NOTIFY rotateEnabledChanged)
     Q_PROPERTY(bool compressionEnabled READ compressionEnabled WRITE setCompressionEnabled NOTIFY compressionEnabledChanged)
     Q_PROPERTY(bool timestampEnabled READ timestampEnabled WRITE setTimestampEnabled NOTIFY timestampEnabledChanged)
+    Q_PROPERTY(QString timestampCustomText READ timestampCustomText WRITE setTimestampCustomText NOTIFY timestampCustomTextChanged)
     Q_PROPERTY(QString timestampFormat READ timestampFormat WRITE setTimestampFormat NOTIFY timestampFormatChanged)
     Q_PROPERTY(QString timestampPosition READ timestampPosition WRITE setTimestampPosition NOTIFY timestampPositionChanged)
     Q_PROPERTY(QString timestampColor READ timestampColor WRITE setTimestampColor NOTIFY timestampColorChanged)
@@ -45,6 +46,7 @@ public:
     bool rotateEnabled() const;
     bool compressionEnabled() const;
     bool timestampEnabled() const;
+    QString timestampCustomText() const;
     QString timestampFormat() const;
     QString timestampPosition() const;
     QString timestampColor() const;
@@ -68,6 +70,7 @@ public slots:
     void setRotateEnabled(bool enabled);
     void setCompressionEnabled(bool enabled);
     void setTimestampEnabled(bool enabled);
+    void setTimestampCustomText(const QString &text);
     void setTimestampFormat(const QString &format);
     void setTimestampPosition(const QString &position);
     void setTimestampColor(const QString &color);
@@ -90,6 +93,7 @@ signals:
     void rotateEnabledChanged();
     void compressionEnabledChanged();
     void timestampEnabledChanged();
+    void timestampCustomTextChanged();
     void timestampFormatChanged();
     void timestampPositionChanged();
     void timestampColorChanged();
@@ -121,7 +125,8 @@ private:
     bool m_rotateEnabled = true;
     bool m_compressionEnabled = false;
     bool m_timestampEnabled = true;
-    QString m_timestampFormat = QStringLiteral("yyyy-MM-dd HH:mm:ss");
+    QString m_timestampCustomText = QStringLiteral("");
+    QString m_timestampFormat = QStringLiteral("dd/MM/yyyy HH:mm:ss");
     QString m_timestampPosition = QStringLiteral("BottomRight");
     QString m_timestampColor = QStringLiteral("#FFFFFF");
     int m_timestampSize = 24;

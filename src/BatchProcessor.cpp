@@ -336,7 +336,7 @@ void writerStage(std::shared_ptr<BoundedBuffer<DetectedData>> input,
             }
             
             try {
-                applyTimestamp(data->image, options);
+                applyTimestamp(data->image, options, data->sourcePath);
             } catch (const std::exception &e) {
                 qDebug() << "[Writer] Timestamp exception:" << e.what();
             }
@@ -446,6 +446,7 @@ void BatchProcessor::start(const QStringList &inputFiles,
                            int compressionLevel,
                            const QString &outputFormat,
                            bool timestampEnabled,
+                           const QString &timestampCustomText,
                            const QString &timestampFormat,
                            const QString &timestampPosition,
                            const QString &timestampColor,
@@ -500,6 +501,7 @@ void BatchProcessor::start(const QStringList &inputFiles,
         outputFormat,
         QStringLiteral("yunet"),
         timestampEnabled,
+        timestampCustomText,
         timestampFormat,
         timestampPosition,
         timestampColor,

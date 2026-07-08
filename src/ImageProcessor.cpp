@@ -103,41 +103,58 @@ cv::Rect privacyRect(const cv::Rect &rect, const cv::Size &bounds)
     return cv::Rect(x, y, std::max(1, right - x), std::max(1, bottom - y));
 }
 
-void applyTimestamp(cv::Mat &image, const ProcessingOptions &options)
+void applyTimestamp(cv::Mat &image, const ProcessingOptions &options, const QString &sourcePath)
 {
     if (!options.timestampEnabled) return;
     
-    QString text = QDateTime::currentDateTime().toString(options.timestampFormat);
+    QFileInfo fi(sourcePath);
+    QString fileTimeText = fi.birthTime().isValid() ? fi.birthTime().toString(options.timestampFormat) : fi.lastModified().toString(options.timestampFormat);
+    QString userText = options.timestampCustomText;
+    
     int fontFace = cv::FONT_HERSHEY_SIMPLEX;
     double fontScale = options.timestampSize / 24.0;
     int thickness = std::max(1, static_cast<int>(fontScale * 2));
     
     int baseline = 0;
-    cv::Size textSize = cv::getTextSize(text.toStdString(), fontFace, fontScale, thickness, &baseline);
+    cv::Size userTextSize = userText.isEmpty() ? cv::Size(0, 0) : cv::getTextSize(userText.toStdString(), fontFace, fontScale, thickness, &baseline);
+    cv::Size timeTextSize = cv::getTextSize(fileTimeText.toStdString(), fontFace, fontScale, thickness, &baseline);
     
-    int x = 0, y = 0;
+    int lineSpacing = userText.isEmpty() ? 0 : 10;
+    int blockHeight = userTextSize.height + lineSpacing + timeTextSize.height;
+    int maxWidth = std::max(userTextSize.width, timeTextSize.width);
+    
+    int x = 0, y1 = 0, y2 = 0;
     int margin = 10;
+    
     if (options.timestampPosition == QStringLiteral("TopLeft")) {
         x = margin;
-        y = textSize.height + margin;
+        y1 = margin + (userText.isEmpty() ? 0 : userTextSize.height);
+        y2 = userText.isEmpty() ? margin + timeTextSize.height : y1 + lineSpacing + timeTextSize.height;
     } else if (options.timestampPosition == QStringLiteral("TopRight")) {
-        x = image.cols - textSize.width - margin;
-        y = textSize.height + margin;
+        x = image.cols - maxWidth - margin;
+        y1 = margin + (userText.isEmpty() ? 0 : userTextSize.height);
+        y2 = userText.isEmpty() ? margin + timeTextSize.height : y1 + lineSpacing + timeTextSize.height;
     } else if (options.timestampPosition == QStringLiteral("BottomLeft")) {
         x = margin;
-        y = image.rows - margin;
+        y2 = image.rows - margin;
+        y1 = y2 - timeTextSize.height - lineSpacing;
     } else if (options.timestampPosition == QStringLiteral("BottomRight")) {
-        x = image.cols - textSize.width - margin;
-        y = image.rows - margin;
+        x = image.cols - maxWidth - margin;
+        y2 = image.rows - margin;
+        y1 = y2 - timeTextSize.height - lineSpacing;
     } else {
         x = options.timestampX;
-        y = options.timestampY;
+        y1 = options.timestampY;
+        y2 = y1 + lineSpacing + timeTextSize.height;
     }
     
     QColor qc(options.timestampColor);
     cv::Scalar color(qc.blue(), qc.green(), qc.red());
     
-    cv::putText(image, text.toStdString(), cv::Point(x, y), fontFace, fontScale, color, thickness, cv::LINE_AA);
+    if (!userText.isEmpty()) {
+        cv::putText(image, userText.toStdString(), cv::Point(x, y1), fontFace, fontScale, color, thickness, cv::LINE_AA);
+    }
+    cv::putText(image, fileTimeText.toStdString(), cv::Point(x, y2), fontFace, fontScale, color, thickness, cv::LINE_AA);
 }
 
 void applyBlur(cv::Mat &image, const cv::Rect &face, const QString &mode, int strength)
@@ -635,7 +652,7 @@ ProcessingResult ImageProcessor::processFile(const QString &sourcePath, const QS
         }
     }
     
-    applyTimestamp(image, m_options);
+    applyTimestamp(image, m_options, sourcePath);
 
     QDir().mkpath(QFileInfo(targetPath).absolutePath());
     bool saved = false;

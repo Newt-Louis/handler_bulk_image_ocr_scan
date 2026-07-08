@@ -148,7 +148,21 @@ bool PreviewController::compressionEnabled() const
 }
 
 bool PreviewController::timestampEnabled() const { return m_timestampEnabled; }
+QString PreviewController::timestampCustomText() const { return m_timestampCustomText; }
 QString PreviewController::timestampFormat() const { return m_timestampFormat; }
+
+void PreviewController::setTimestampCustomText(const QString &text) {
+    if (m_timestampCustomText == text) return;
+    m_timestampCustomText = text;
+    emit timestampCustomTextChanged();
+    m_debounceTimer.start();
+}
+void PreviewController::setTimestampFormat(const QString &format) {
+    if (m_timestampFormat == format) return;
+    m_timestampFormat = format;
+    emit timestampFormatChanged();
+    m_debounceTimer.start();
+}
 QString PreviewController::timestampPosition() const { return m_timestampPosition; }
 QString PreviewController::timestampColor() const { return m_timestampColor; }
 int PreviewController::timestampSize() const { return m_timestampSize; }
@@ -307,12 +321,6 @@ void PreviewController::setTimestampEnabled(bool enabled) {
     emit timestampEnabledChanged();
     m_debounceTimer.start();
 }
-void PreviewController::setTimestampFormat(const QString &format) {
-    if (m_timestampFormat == format) return;
-    m_timestampFormat = format;
-    emit timestampFormatChanged();
-    m_debounceTimer.start();
-}
 void PreviewController::setTimestampPosition(const QString &position) {
     if (m_timestampPosition == position) return;
     m_timestampPosition = position;
@@ -414,6 +422,7 @@ void PreviewController::regenerate()
         m_outputFormat,
         QStringLiteral("yunet"),
         m_timestampEnabled,
+        m_timestampCustomText,
         m_timestampFormat,
         m_timestampPosition,
         m_timestampColor,

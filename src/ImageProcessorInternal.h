@@ -24,7 +24,7 @@ std::vector<cv::Rect> filterByBoxSize(const std::vector<cv::Rect> &faces, const 
 std::vector<cv::Rect> filterBySkinColor(const cv::Mat &image, const std::vector<cv::Rect> &faces, float detectionSensitivity);
 std::vector<cv::Rect> filterCascadeCrossCheck(const cv::Mat &image, const std::vector<cv::Rect> &yuNetFaces, const QString &cascadePath);
 
-void applyTimestamp(cv::Mat &image, const ProcessingOptions &options);
+void applyTimestamp(cv::Mat &image, const ProcessingOptions &options, const QString &sourcePath);
 
 // Blur
 void applyBlur(cv::Mat &image, const cv::Rect &face, const QString &mode, int strength);

@@ -48,6 +48,7 @@ public:
                            int compressionLevel,
                            const QString &outputFormat,
                            bool timestampEnabled,
+                           const QString &timestampCustomText,
                            const QString &timestampFormat,
                            const QString &timestampPosition,
                            const QString &timestampColor,

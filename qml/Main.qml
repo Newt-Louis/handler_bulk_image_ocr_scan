@@ -254,7 +254,7 @@ ApplicationWindow {
                                 }
 
                                 Label {
-                                    text: batchProcessor.processedImages + "/" + batchProcessor.totalImages
+                                    text: batchProcessor.processedImages + "/" + batchProcessor.totalImages + " (" + batchProcessor.progress + "%)"
                                     color: "#374151"
                                     font.pixelSize: 13
                                 }
@@ -285,6 +285,7 @@ ApplicationWindow {
                                             previewController.compressionLevel,
                                             previewController.outputFormat,
                                             previewController.timestampEnabled,
+                                            previewController.timestampCustomText,
                                             previewController.timestampFormat,
                                             previewController.timestampPosition,
                                             previewController.timestampColor,
@@ -340,6 +341,7 @@ ApplicationWindow {
                 rotateEnabled: previewController.rotateEnabled
                 compressionEnabled: previewController.compressionEnabled
                 timestampEnabled: previewController.timestampEnabled
+                timestampCustomText: previewController.timestampCustomText
                 timestampFormat: previewController.timestampFormat
                 timestampPosition: previewController.timestampPosition
                 timestampColor: previewController.timestampColor
@@ -368,6 +370,7 @@ ApplicationWindow {
                 onRotateEnabledChanged: previewController.rotateEnabled = rotateEnabled
                 onCompressionEnabledChanged: previewController.compressionEnabled = compressionEnabled
                 onTimestampEnabledChanged: previewController.timestampEnabled = timestampEnabled
+                onTimestampCustomTextChanged: previewController.timestampCustomText = timestampCustomText
                 onTimestampFormatChanged: previewController.timestampFormat = timestampFormat
                 onTimestampPositionChanged: previewController.timestampPosition = timestampPosition
                 onTimestampColorChanged: previewController.timestampColor = timestampColor

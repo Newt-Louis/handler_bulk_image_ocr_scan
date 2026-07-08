@@ -21,16 +21,17 @@ Rectangle {
     property int compressionLevel: 0
     property string outputFormat: "jpg"
     property bool rotateEnabled: true
-    property bool compressionEnabled: true
+    property bool compressionEnabled: false
     property string renamePattern: "autophoto"
     property bool timestampEnabled: true
-    property string timestampFormat: "yyyy-MM-dd HH:mm:ss"
+    property string timestampCustomText: ""
+    property string timestampFormat: "dd/MM/yyyy HH:mm:ss"
     property string timestampPosition: "BottomRight"
     property string timestampColor: "#FFFFFF"
     property int timestampSize: 24
     property int timestampX: 10
     property int timestampY: 10
-    property bool running: false
+    property bool running: true
     property bool paused: false
     property int progress: 0
     property int processedImages: 0
@@ -61,7 +62,7 @@ Rectangle {
 
         Column {
             id: contentColumn
-            width: scrollView.availableWidth - 15 // Leave space so scrollbar doesn't overlap
+            width: scrollView.availableWidth - 24 // Leave more space so scrollbar is comfortably separated
             spacing: 10
 
             Label {
@@ -368,6 +369,95 @@ Rectangle {
                         font.pixelSize: 12
                         onActivated: function(index) {
                             root.outputFormat = model[index].toLowerCase();
+                        }
+                    }
+                }
+            }
+
+            GroupBox {
+                width: parent.width
+                title: "Timestamp Watermark"
+
+                ColumnLayout {
+                    anchors.fill: parent
+                    spacing: 6
+
+                    Switch {
+                        text: "Enable Timestamp"
+                        checked: root.timestampEnabled
+                        enabled: !root.running
+                        font.pixelSize: 12
+                        onToggled: root.timestampEnabled = checked
+                    }
+
+                    TextField {
+                        Layout.fillWidth: true
+                        text: root.timestampCustomText
+                        placeholderText: "Custom text (e.g. Company Name)"
+                        enabled: !root.running && root.timestampEnabled
+                        font.pixelSize: 12
+                        onTextChanged: root.timestampCustomText = text
+                    }
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 6
+
+                        ComboBox {
+                            Layout.fillWidth: true
+                            model: [
+                                "dd/MM/yyyy", "MM/dd/yyyy", "yyyy/MM/dd", 
+                                "dd-MM-yyyy", "MM-dd-yyyy", "yyyy-MM-dd",
+                                "dd/MM", "MM/dd",
+                                "dd-MM", "MM-dd"
+                            ]
+                            currentIndex: {
+                                var parts = root.timestampFormat.split(" ");
+                                var d = parts[0] || "dd/MM/yyyy";
+                                var idx = model.indexOf(d);
+                                return idx >= 0 ? idx : 0;
+                            }
+                            enabled: !root.running && root.timestampEnabled
+                            font.pixelSize: 12
+                            onActivated: function(index) {
+                                var parts = root.timestampFormat.split(" ");
+                                var t = parts.length > 1 ? parts[1] : "HH:mm:ss";
+                                root.timestampFormat = model[index] + " " + t;
+                            }
+                        }
+
+                        ComboBox {
+                            Layout.fillWidth: true
+                            model: ["HH:mm:ss", "HH:mm"]
+                            currentIndex: {
+                                var parts = root.timestampFormat.split(" ");
+                                var t = parts.length > 1 ? parts[1] : "HH:mm:ss";
+                                return t === "HH:mm" ? 1 : 0;
+                            }
+                            enabled: !root.running && root.timestampEnabled
+                            font.pixelSize: 12
+                            onActivated: function(index) {
+                                var parts = root.timestampFormat.split(" ");
+                                var d = parts[0] || "dd/MM/yyyy";
+                                root.timestampFormat = d + " " + model[index];
+                            }
+                        }
+                    }
+
+                    ComboBox {
+                        Layout.fillWidth: true
+                        model: ["TopLeft", "TopRight", "BottomLeft", "BottomRight"]
+                        currentIndex: {
+                            var pos = root.timestampPosition;
+                            if (pos === "TopLeft") return 0;
+                            if (pos === "TopRight") return 1;
+                            if (pos === "BottomLeft") return 2;
+                            return 3;
+                        }
+                        enabled: !root.running && root.timestampEnabled
+                        font.pixelSize: 12
+                        onActivated: function(index) {
+                            root.timestampPosition = model[index];
                         }
                     }
                 }
