@@ -28,6 +28,7 @@ class PreviewController final : public QObject
     Q_PROPERTY(int timestampSize READ timestampSize WRITE setTimestampSize NOTIFY timestampSizeChanged)
     Q_PROPERTY(int timestampX READ timestampX WRITE setTimestampX NOTIFY timestampXChanged)
     Q_PROPERTY(int timestampY READ timestampY WRITE setTimestampY NOTIFY timestampYChanged)
+    Q_PROPERTY(QString timestampFont READ timestampFont WRITE setTimestampFont NOTIFY timestampFontChanged)
 
 public:
     explicit PreviewController(QObject *parent = nullptr);
@@ -53,6 +54,7 @@ public:
     int timestampSize() const;
     int timestampX() const;
     int timestampY() const;
+    QString timestampFont() const;
 
     Q_INVOKABLE void requestPreview(const QString &filePath);
     Q_INVOKABLE void clear();
@@ -77,6 +79,7 @@ public slots:
     void setTimestampSize(int size);
     void setTimestampX(int x);
     void setTimestampY(int y);
+    void setTimestampFont(const QString &font);
 
 signals:
     void previewUrlChanged();
@@ -100,6 +103,7 @@ signals:
     void timestampSizeChanged();
     void timestampXChanged();
     void timestampYChanged();
+    void timestampFontChanged();
     void previewFailed(const QString &message);
 
 private:
@@ -120,10 +124,10 @@ private:
     bool m_sizeFilterEnabled = true;
     bool m_skinColorFilterEnabled = true;
     bool m_cascadeCrossCheckEnabled = true;
-    int m_compressionLevel = 0;
+    int m_compressionLevel = 50;
     QString m_outputFormat = QStringLiteral("jpg");
     bool m_rotateEnabled = true;
-    bool m_compressionEnabled = false;
+    bool m_compressionEnabled = true;
     bool m_timestampEnabled = true;
     QString m_timestampCustomText = QStringLiteral("");
     QString m_timestampFormat = QStringLiteral("dd/MM/yyyy HH:mm:ss");
@@ -132,6 +136,7 @@ private:
     int m_timestampSize = 24;
     int m_timestampX = 10;
     int m_timestampY = 10;
+    QString m_timestampFont = QStringLiteral("Arial");
     quint64 m_requestId = 0;
     QTimer m_debounceTimer;
 };

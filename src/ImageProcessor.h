@@ -24,6 +24,7 @@ struct ProcessingOptions
     int timestampSize = 24;
     int timestampX = 10;
     int timestampY = 10;
+    QString timestampFont = QStringLiteral("Arial");
 };
 
 struct ProcessingResult

@@ -18,10 +18,10 @@ Rectangle {
     property bool sizeFilterEnabled: true
     property bool skinColorFilterEnabled: true
     property bool cascadeCrossCheckEnabled: true
-    property int compressionLevel: 0
+    property int compressionLevel: 50
     property string outputFormat: "jpg"
     property bool rotateEnabled: true
-    property bool compressionEnabled: false
+    property bool compressionEnabled: true
     property string renamePattern: "autophoto"
     property bool timestampEnabled: true
     property string timestampCustomText: ""
@@ -31,6 +31,7 @@ Rectangle {
     property int timestampSize: 24
     property int timestampX: 10
     property int timestampY: 10
+    property string timestampFont: "Arial"
     property bool running: true
     property bool paused: false
     property int progress: 0
@@ -390,21 +391,96 @@ Rectangle {
                         onToggled: root.timestampEnabled = checked
                     }
 
-                    TextField {
-                        Layout.fillWidth: true
-                        text: root.timestampCustomText
-                        placeholderText: "Custom text (e.g. Company Name)"
-                        enabled: !root.running && root.timestampEnabled
-                        font.pixelSize: 12
-                        onTextChanged: root.timestampCustomText = text
-                    }
-
+                    // 1. Position Selector
                     RowLayout {
                         Layout.fillWidth: true
                         spacing: 6
 
                         ComboBox {
                             Layout.fillWidth: true
+                            Layout.preferredHeight: 28
+                            topPadding: 0; bottomPadding: 0
+                            model: ["TopLeft", "TopRight", "BottomLeft", "BottomRight"]
+                            currentIndex: {
+                                var pos = root.timestampPosition;
+                                if (pos === "TopLeft") return 0;
+                                if (pos === "TopRight") return 1;
+                                if (pos === "BottomLeft") return 2;
+                                return 3;
+                            }
+                            enabled: !root.running && root.timestampEnabled
+                            font.pixelSize: 11
+                            onActivated: function(index) {
+                                root.timestampPosition = model[index];
+                            }
+                            visible: root.timestampPosition !== "Custom"
+                        }
+
+                        RowLayout {
+                            Layout.fillWidth: true
+                            visible: root.timestampPosition === "Custom"
+                            spacing: 4
+                            
+                            Label { text: "X:"; font.pixelSize: 11 }
+                            TextField {
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 28
+                                topPadding: 0; bottomPadding: 0
+                                text: root.timestampX.toString()
+                                validator: IntValidator { bottom: 0; top: 9999 }
+                                enabled: !root.running && root.timestampEnabled
+                                font.pixelSize: 11
+                                onTextChanged: if(text) root.timestampX = parseInt(text)
+                            }
+                            Label { text: "Y:"; font.pixelSize: 11 }
+                            TextField {
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 28
+                                topPadding: 0; bottomPadding: 0
+                                text: root.timestampY.toString()
+                                validator: IntValidator { bottom: 0; top: 9999 }
+                                enabled: !root.running && root.timestampEnabled
+                                font.pixelSize: 11
+                                onTextChanged: if(text) root.timestampY = parseInt(text)
+                            }
+                        }
+
+                        Switch {
+                            text: "Custom"
+                            font.pixelSize: 11
+                            checked: root.timestampPosition === "Custom"
+                            enabled: !root.running && root.timestampEnabled
+                            onToggled: {
+                                if (checked) {
+                                    root.timestampPosition = "Custom";
+                                } else {
+                                    root.timestampPosition = "BottomRight";
+                                }
+                            }
+                        }
+                    }
+
+                    // 2. Custom Text Input
+                    TextField {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 28
+                        topPadding: 0; bottomPadding: 0
+                        text: root.timestampCustomText
+                        placeholderText: "Custom text (e.g. Company Name)"
+                        enabled: !root.running && root.timestampEnabled
+                        font.pixelSize: 11
+                        onTextChanged: root.timestampCustomText = text
+                    }
+
+                    // 3. Date Format
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 6
+
+                        ComboBox {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 28
+                            topPadding: 0; bottomPadding: 0
                             model: [
                                 "dd/MM/yyyy", "MM/dd/yyyy", "yyyy/MM/dd", 
                                 "dd-MM-yyyy", "MM-dd-yyyy", "yyyy-MM-dd",
@@ -418,7 +494,7 @@ Rectangle {
                                 return idx >= 0 ? idx : 0;
                             }
                             enabled: !root.running && root.timestampEnabled
-                            font.pixelSize: 12
+                            font.pixelSize: 11
                             onActivated: function(index) {
                                 var parts = root.timestampFormat.split(" ");
                                 var t = parts.length > 1 ? parts[1] : "HH:mm:ss";
@@ -428,6 +504,8 @@ Rectangle {
 
                         ComboBox {
                             Layout.fillWidth: true
+                            Layout.preferredHeight: 28
+                            topPadding: 0; bottomPadding: 0
                             model: ["HH:mm:ss", "HH:mm"]
                             currentIndex: {
                                 var parts = root.timestampFormat.split(" ");
@@ -435,7 +513,7 @@ Rectangle {
                                 return t === "HH:mm" ? 1 : 0;
                             }
                             enabled: !root.running && root.timestampEnabled
-                            font.pixelSize: 12
+                            font.pixelSize: 11
                             onActivated: function(index) {
                                 var parts = root.timestampFormat.split(" ");
                                 var d = parts[0] || "dd/MM/yyyy";
@@ -444,20 +522,106 @@ Rectangle {
                         }
                     }
 
+                    // 4a. Font
                     ComboBox {
+                        id: fontCombo
                         Layout.fillWidth: true
-                        model: ["TopLeft", "TopRight", "BottomLeft", "BottomRight"]
-                        currentIndex: {
-                            var pos = root.timestampPosition;
-                            if (pos === "TopLeft") return 0;
-                            if (pos === "TopRight") return 1;
-                            if (pos === "BottomLeft") return 2;
-                            return 3;
-                        }
+                        Layout.preferredHeight: 28
+                        topPadding: 0; bottomPadding: 0
+                        model: ["Arial", "Courier New", "Times New Roman", "Comic Sans MS", "Verdana", "Impact", "Georgia", "Trebuchet MS", "Tahoma", "Lucida Console"]
+                        currentIndex: Math.max(0, model.indexOf(root.timestampFont))
                         enabled: !root.running && root.timestampEnabled
-                        font.pixelSize: 12
+                        font.pixelSize: 11
                         onActivated: function(index) {
-                            root.timestampPosition = model[index];
+                            root.timestampFont = model[index];
+                        }
+                    }
+
+                    // 4b. Size (30%) + Color (70%)
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 6
+
+                        RowLayout {
+                            Layout.fillWidth: true
+                            Layout.preferredWidth: 30
+                            spacing: 4
+                            Label { text: "Size:"; font.pixelSize: 11 }
+                            TextField {
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 28
+                                topPadding: 0; bottomPadding: 0
+                                text: root.timestampSize.toString()
+                                validator: IntValidator { bottom: 10; top: 200 }
+                                enabled: !root.running && root.timestampEnabled
+                                font.pixelSize: 11
+                                onTextChanged: if(text) root.timestampSize = parseInt(text)
+                            }
+                        }
+
+                        RowLayout {
+                            Layout.fillWidth: true
+                            Layout.preferredWidth: 70
+                            spacing: 4
+                            Label { text: "Color:"; font.pixelSize: 11 }
+                            ComboBox {
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 28
+                                topPadding: 0; bottomPadding: 0
+                                model: ["#FFFFFF", "#000000", "#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#00FFFF", "#FF00FF"]
+                                currentIndex: Math.max(0, model.indexOf(root.timestampColor.toUpperCase()))
+                                enabled: !root.running && root.timestampEnabled
+                                delegate: ItemDelegate {
+                                    width: parent.width
+                                    height: 28
+                                    Rectangle {
+                                        anchors.centerIn: parent
+                                        width: 40; height: 16
+                                        color: modelData
+                                        border.color: "#ccc"
+                                    }
+                                }
+                                contentItem: Item {
+                                    width: 40; height: 16
+                                    anchors.centerIn: parent
+                                    Rectangle {
+                                        anchors.centerIn: parent
+                                        width: 40; height: 16
+                                        color: root.timestampColor
+                                        border.color: "#ccc"
+                                    }
+                                }
+                                onActivated: function(index) {
+                                    root.timestampColor = model[index];
+                                }
+                            }
+                        }
+                    }
+
+                    // 5. Preview box
+                    Rectangle {
+                        Layout.fillWidth: true
+                        height: 60
+                        color: "#e5e7eb"
+                        border.color: "#d1d5db"
+                        radius: 4
+                        clip: true
+                        
+                        Item {
+                            anchors.centerIn: parent
+                            width: mainText.implicitWidth
+                            height: mainText.implicitHeight
+
+                            Label {
+                                id: mainText
+                                anchors.centerIn: parent
+                                text: "AaBbCcDdEe"
+                                font.family: root.timestampFont
+                                font.pixelSize: root.timestampSize
+                                color: root.timestampColor
+                                style: Text.Outline
+                                styleColor: "#c8000000"
+                            }
                         }
                     }
                 }

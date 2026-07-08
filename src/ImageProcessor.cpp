@@ -13,6 +13,10 @@
 #include <QStringList>
 #include <QDateTime>
 #include <QColor>
+#include <QPainter>
+#include <QFont>
+#include <QFontMetrics>
+#include <QPainterPath>
 
 #include <algorithm>
 #include <cmath>
@@ -111,50 +115,75 @@ void applyTimestamp(cv::Mat &image, const ProcessingOptions &options, const QStr
     QString fileTimeText = fi.birthTime().isValid() ? fi.birthTime().toString(options.timestampFormat) : fi.lastModified().toString(options.timestampFormat);
     QString userText = options.timestampCustomText;
     
-    int fontFace = cv::FONT_HERSHEY_SIMPLEX;
-    double fontScale = options.timestampSize / 24.0;
-    int thickness = std::max(1, static_cast<int>(fontScale * 2));
+    qDebug() << "[Timestamp] Enabled:" << options.timestampEnabled 
+             << "Pos:" << options.timestampPosition 
+             << "CustomText:" << userText
+             << "TimeText:" << fileTimeText
+             << "Format:" << options.timestampFormat;
     
-    int baseline = 0;
-    cv::Size userTextSize = userText.isEmpty() ? cv::Size(0, 0) : cv::getTextSize(userText.toStdString(), fontFace, fontScale, thickness, &baseline);
-    cv::Size timeTextSize = cv::getTextSize(fileTimeText.toStdString(), fontFace, fontScale, thickness, &baseline);
+    QImage::Format fmt = QImage::Format_BGR888;
+    if (image.channels() == 4) fmt = QImage::Format_ARGB32;
+    else if (image.channels() == 1) fmt = QImage::Format_Grayscale8;
     
-    int lineSpacing = userText.isEmpty() ? 0 : 10;
-    int blockHeight = userTextSize.height + lineSpacing + timeTextSize.height;
-    int maxWidth = std::max(userTextSize.width, timeTextSize.width);
+    QImage qimg(image.data, image.cols, image.rows, static_cast<int>(image.step), fmt);
+    QPainter painter(&qimg);
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setRenderHint(QPainter::TextAntialiasing);
+    
+    double baseScale = std::max(1.0, image.rows / 1000.0);
+    int pixelSize = static_cast<int>(options.timestampSize * baseScale);
+    
+    QFont font(options.timestampFont);
+    font.setPixelSize(pixelSize);
+    painter.setFont(font);
+    
+    QFontMetrics metrics(font);
+    int userTextHeight = userText.isEmpty() ? 0 : metrics.height();
+    int timeTextHeight = metrics.height();
+    int userTextWidth = userText.isEmpty() ? 0 : metrics.horizontalAdvance(userText);
+    int timeTextWidth = metrics.horizontalAdvance(fileTimeText);
+    
+    int lineSpacing = userText.isEmpty() ? 0 : static_cast<int>(10 * baseScale);
+    int maxWidth = std::max(userTextWidth, timeTextWidth);
     
     int x = 0, y1 = 0, y2 = 0;
-    int margin = 10;
+    int margin = static_cast<int>(20 * baseScale);
     
     if (options.timestampPosition == QStringLiteral("TopLeft")) {
         x = margin;
-        y1 = margin + (userText.isEmpty() ? 0 : userTextSize.height);
-        y2 = userText.isEmpty() ? margin + timeTextSize.height : y1 + lineSpacing + timeTextSize.height;
+        y1 = margin + (userText.isEmpty() ? 0 : metrics.ascent());
+        y2 = userText.isEmpty() ? margin + metrics.ascent() : margin + userTextHeight + lineSpacing + metrics.ascent();
     } else if (options.timestampPosition == QStringLiteral("TopRight")) {
         x = image.cols - maxWidth - margin;
-        y1 = margin + (userText.isEmpty() ? 0 : userTextSize.height);
-        y2 = userText.isEmpty() ? margin + timeTextSize.height : y1 + lineSpacing + timeTextSize.height;
+        y1 = margin + (userText.isEmpty() ? 0 : metrics.ascent());
+        y2 = userText.isEmpty() ? margin + metrics.ascent() : margin + userTextHeight + lineSpacing + metrics.ascent();
     } else if (options.timestampPosition == QStringLiteral("BottomLeft")) {
         x = margin;
-        y2 = image.rows - margin;
-        y1 = y2 - timeTextSize.height - lineSpacing;
+        y2 = image.rows - margin - metrics.descent();
+        y1 = y2 - timeTextHeight - lineSpacing;
     } else if (options.timestampPosition == QStringLiteral("BottomRight")) {
         x = image.cols - maxWidth - margin;
-        y2 = image.rows - margin;
-        y1 = y2 - timeTextSize.height - lineSpacing;
+        y2 = image.rows - margin - metrics.descent();
+        y1 = y2 - timeTextHeight - lineSpacing;
     } else {
         x = options.timestampX;
-        y1 = options.timestampY;
-        y2 = y1 + lineSpacing + timeTextSize.height;
+        int startY = options.timestampY;
+        y1 = startY + (userText.isEmpty() ? 0 : metrics.ascent());
+        y2 = userText.isEmpty() ? startY + metrics.ascent() : startY + userTextHeight + lineSpacing + metrics.ascent();
     }
     
     QColor qc(options.timestampColor);
-    cv::Scalar color(qc.blue(), qc.green(), qc.red());
+    int outlineWidth = static_cast<int>(std::max(1.0, 2.0 * baseScale));
     
+    QPainterPath path;
     if (!userText.isEmpty()) {
-        cv::putText(image, userText.toStdString(), cv::Point(x, y1), fontFace, fontScale, color, thickness, cv::LINE_AA);
+        path.addText(x, y1, font, userText);
     }
-    cv::putText(image, fileTimeText.toStdString(), cv::Point(x, y2), fontFace, fontScale, color, thickness, cv::LINE_AA);
+    path.addText(x, y2, font, fileTimeText);
+    
+    painter.setPen(QPen(QColor(0, 0, 0, 200), outlineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    painter.setBrush(qc);
+    painter.drawPath(path);
 }
 
 void applyBlur(cv::Mat &image, const cv::Rect &face, const QString &mode, int strength)

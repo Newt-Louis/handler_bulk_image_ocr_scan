@@ -452,7 +452,8 @@ void BatchProcessor::start(const QStringList &inputFiles,
                            const QString &timestampColor,
                            int timestampSize,
                            int timestampX,
-                           int timestampY)
+                           int timestampY,
+                           const QString &timestampFont)
 {
     if (m_running) return;
     if (inputFiles.isEmpty()) { emit failed(tr("No input images selected.")); return; }
@@ -507,7 +508,8 @@ void BatchProcessor::start(const QStringList &inputFiles,
         timestampColor,
         timestampSize,
         timestampX,
-        timestampY
+        timestampY,
+        timestampFont
     };
 
     quint64 availRam = getAvailableRAM();

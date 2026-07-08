@@ -352,6 +352,16 @@ void PreviewController::setTimestampY(int y) {
     m_debounceTimer.start();
 }
 
+QString PreviewController::timestampFont() const { return m_timestampFont; }
+
+void PreviewController::setTimestampFont(const QString &font)
+{
+    if (m_timestampFont == font) return;
+    m_timestampFont = font;
+    emit timestampFontChanged();
+    m_debounceTimer.start();
+}
+
 void PreviewController::regenerateFast()
 {
     if (m_sourcePath.isEmpty()) {
@@ -398,7 +408,7 @@ void PreviewController::regenerate()
         return;
     }
 
-    if (!m_blurFaces && m_compressionLevel <= 0) {
+    if (!m_blurFaces && m_compressionLevel <= 0 && !m_timestampEnabled) {
         regenerateFast();
         return;
     }
@@ -428,7 +438,8 @@ void PreviewController::regenerate()
         m_timestampColor,
         m_timestampSize,
         m_timestampX,
-        m_timestampY
+        m_timestampY,
+        m_timestampFont
     };
 
     setBusy(true);

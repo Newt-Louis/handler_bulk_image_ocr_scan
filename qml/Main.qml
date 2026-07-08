@@ -291,7 +291,8 @@ ApplicationWindow {
                                             previewController.timestampColor,
                                             previewController.timestampSize,
                                             previewController.timestampX,
-                                            previewController.timestampY
+                                            previewController.timestampY,
+                                            previewController.timestampFont
                                         )
                                     }
                                 }
@@ -348,6 +349,7 @@ ApplicationWindow {
                 timestampSize: previewController.timestampSize
                 timestampX: previewController.timestampX
                 timestampY: previewController.timestampY
+                timestampFont: previewController.timestampFont
                 running: batchProcessor.running
                 paused: batchProcessor.paused
                 progress: batchProcessor.progress
@@ -377,6 +379,7 @@ ApplicationWindow {
                 onTimestampSizeChanged: previewController.timestampSize = timestampSize
                 onTimestampXChanged: previewController.timestampX = timestampX
                 onTimestampYChanged: previewController.timestampY = timestampY
+                onTimestampFontChanged: previewController.timestampFont = timestampFont
                 onPauseBatch: batchProcessor.pause()
                 onResumeBatch: batchProcessor.resume()
                 onStopBatch: batchProcessor.stop()

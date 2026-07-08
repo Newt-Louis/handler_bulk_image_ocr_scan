@@ -54,7 +54,8 @@ public:
                            const QString &timestampColor,
                            int timestampSize,
                            int timestampX,
-                           int timestampY);
+                           int timestampY,
+                           const QString &timestampFont);
     Q_INVOKABLE void pause();
     Q_INVOKABLE void resume();
     Q_INVOKABLE void stop();
