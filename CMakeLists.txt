@@ -100,15 +100,27 @@ endif()
 
 set(AUTOPHOTO_YUNET_MODEL "${CMAKE_CURRENT_SOURCE_DIR}/models/face_detection_yunet_2023mar.onnx")
 if(EXISTS "${AUTOPHOTO_YUNET_MODEL}")
-    add_custom_command(TARGET autophoto POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:autophoto>/models"
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${AUTOPHOTO_YUNET_MODEL}"
-            "$<TARGET_FILE_DIR:autophoto>/models/face_detection_yunet_2023mar.onnx"
-    )
     if(APPLE)
+        # On macOS this must go in Contents/Resources, NOT Contents/MacOS
+        # (which is what TARGET_FILE_DIR points to). A data file dropped
+        # next to the executable in Contents/MacOS gets swept into the
+        # code-signing seal as if it were a code resource, and later
+        # signing/repackaging passes (macdeployqt, dylibbundler, CPack)
+        # break because a .onnx file isn't actually signed code.
+        add_custom_command(TARGET autophoto POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_BUNDLE_CONTENT_DIR:autophoto>/Resources/models"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${AUTOPHOTO_YUNET_MODEL}"
+                "$<TARGET_BUNDLE_CONTENT_DIR:autophoto>/Resources/models/face_detection_yunet_2023mar.onnx"
+        )
         install(FILES "${AUTOPHOTO_YUNET_MODEL}" DESTINATION "AutoPhoto.app/Contents/Resources/models")
     else()
+        add_custom_command(TARGET autophoto POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:autophoto>/models"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${AUTOPHOTO_YUNET_MODEL}"
+                "$<TARGET_FILE_DIR:autophoto>/models/face_detection_yunet_2023mar.onnx"
+        )
         install(FILES "${AUTOPHOTO_YUNET_MODEL}" DESTINATION "${CMAKE_INSTALL_BINDIR}/models")
     endif()
 else()
@@ -156,7 +168,7 @@ endif()
 # qt_generate_deploy_app_script(), so QML imports get deployed correctly too.
 set(AUTOPHOTO_DEPLOY_TOOL_OPTIONS "")
 if(APPLE)
-    list(APPEND AUTOPHOTO_DEPLOY_TOOL_OPTIONS --hardened-runtime)
+    # --hardened-runtime removed: not supported by macdeployqt in Qt 6.11.1
 endif()
 # NOTE: previously this included --no-compiler-runtime for WIN32, which tells
 # windeployqt to skip the MSVC compiler runtime (vcruntime140.dll, msvcp140.dll,
